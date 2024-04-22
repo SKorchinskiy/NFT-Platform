@@ -23,11 +23,16 @@ contract MarketCreateContract {
 
     mapping(uint256 => NFT) nft_assets;
 
+    error InappropriateListingFee(uint256 expected_fee, uint256 received_fee);
+    error InappropriateTokenCost(uint256 expected_amount, uint256 received_amount);
+    error OwnershipRejection(string message);
+
     function create_nft_asset(address _nft_contract, uint256 _token_id, uint256 _price) external payable {
-        require(
-            msg.value == listing_fee,
-            "Listing fee must be paid to list a token! The fee is 0.025 ether!"
-        );
+        if (msg.value != listing_fee)
+            revert InappropriateListingFee({
+                expected_fee: listing_fee,
+                received_fee: msg.value
+            });
         
         token_seq_id++;
 
@@ -48,10 +53,12 @@ contract MarketCreateContract {
 
     function purchase_nft(address _nft_contract, uint256 seq_id) external payable {
         NFT storage token = nft_assets[seq_id];
-        require(
-            msg.value == token.token_price,
-            "Token price doesn't equal to received amount of ether!"
-        );
+
+        if (msg.value != token.token_price)
+            revert InappropriateTokenCost({
+                expected_amount: token.token_price,
+                received_amount: msg.value
+            });
 
         token.token_holder = payable(msg.sender);
         token.token_seller.transfer(token.token_price);
@@ -61,10 +68,10 @@ contract MarketCreateContract {
 
     function cancel_nft_listing(address _nft_contract, uint256 _token_id) external {
         NFT storage token = nft_assets[_token_id];
-        require(
-            msg.sender == token.token_seller,
-            "Listing can only be canceled by token seller!"
-        );
+        if (msg.sender != token.token_seller)
+            revert OwnershipRejection({
+                message: "Listing can only be canceled by token owner!"
+            });
 
         IERC721(_nft_contract).transferFrom(address(this), msg.sender, _token_id);
         token.token_holder = payable(msg.sender);
@@ -125,10 +132,10 @@ contract MarketCreateContract {
     }
 
     function withdraw_profit() external {
-        require(
-            msg.sender == holder,
-            "Only the owner of the contract can withdraw profit!"
-        );
+        if (msg.sender != holder)
+            revert OwnershipRejection({
+                message: "Only the owner of the contract can withdraw profit!"
+            });
 
         holder.transfer(address(this).balance);
     }
