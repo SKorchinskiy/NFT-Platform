@@ -64,17 +64,28 @@ contract MarketCreateContract {
         string message
     );
 
-    function create_nft_asset(
-        address _nft_contract, 
-        uint256 _token_id,
-        uint256 _price
-    ) external payable returns(NFT memory) {
+    modifier validateCreationFee() {
         if (msg.value != listing_fee)
             revert InappropriateListingFee({
                 expected_fee: listing_fee,
                 received_fee: msg.value
             });
-        
+        _;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != holder)
+            revert OwnershipRejection({
+                message: "Only the owner of the contract can withdraw profit!"
+            });
+        _;
+    }
+
+    function create_nft_asset(
+        address _nft_contract, 
+        uint256 _token_id,
+        uint256 _price
+    ) external payable validateCreationFee returns(NFT memory) {
         token_seq_id++;
 
         address payable seller = payable(msg.sender);
@@ -203,12 +214,7 @@ contract MarketCreateContract {
         return listed_user_tokens;
     }
 
-    function withdraw_profit() external {
-        if (msg.sender != holder)
-            revert OwnershipRejection({
-                message: "Only the owner of the contract can withdraw profit!"
-            });
-
+    function withdraw_profit() external onlyOwner {
         uint256 amount = address(this).balance; 
         
         holder.transfer(amount);
