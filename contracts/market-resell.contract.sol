@@ -23,6 +23,8 @@ contract MarketResellContract {
         Status status;
     }
 
+    mapping(uint256 => NFT) nft_assets;
+
     event TokenListed(
         uint256 token_id,
         address token_seller,
@@ -30,13 +32,11 @@ contract MarketResellContract {
         uint256 token_price,
         Status token_status
     );
-
     event TokenListingCanceled(
         uint256 token_id,
         address token_owner,
         Status token_status
     );
-
     event TokenPurchased(
         uint256 token_id,
         address token_buyer,
@@ -44,25 +44,48 @@ contract MarketResellContract {
         Status token_status
     );
 
-    mapping(uint256 => NFT) nft_assets;
+    error OwnershipRejection(
+        string message
+    );
+    error nonActiveToken(
+        uint256 token_id,
+        Status token_status
+    );
+    error InappropriateTokenCost(
+        uint256 expected_amount, 
+        uint256 received_amount
+    );
+    error DuplicateTokenListing(
+        uint256 token_id
+    );
+    error InappropriateListingFee(
+        uint256 expected_fee, 
+        uint256 received_fee
+    );
+
+    modifier validateListingFee() {
+        if (msg.value != listing_fee)
+            revert InappropriateListingFee({
+                expected_fee: listing_fee,
+                received_fee: msg.value
+            });
+        _;
+    }
 
     constructor() {
         market_adr = payable(msg.sender);
     }
 
-    function list_token(uint256 _token_id, uint256 _token_price) external payable {
-        require(
-            nft_service.ownerOf(_token_id) == msg.sender,
-            "Permission denied! You must own nft with provided id!"
-        );
-        require(
-            nft_assets[_token_id].token_id == 0,
-            "Received nft-token has been already listed!"
-        );
-        require(
-            msg.value == listing_fee,
-            "Listing fee must be equal to 0.0025 ether"
-        );
+    function list_token(uint256 _token_id, uint256 _token_price) external payable validateListingFee {
+        if (nft_service.ownerOf(_token_id) != msg.sender) {
+            revert OwnershipRejection({
+                message: "Permission denied! You must own nft with provided id!"
+            });
+        } else if (nft_assets[_token_id].token_id != 0) {
+            revert DuplicateTokenListing({
+                token_id: _token_id
+            });
+        }
 
         address payable nft_owner = payable(msg.sender);
         NFT memory nft_repr = NFT({
@@ -85,14 +108,16 @@ contract MarketResellContract {
         address payable request_adr = payable(msg.sender);
         NFT storage target_nft = nft_assets[_token_id];
         
-        require(
-            request_adr == target_nft.token_seller,
-            "This action can be performed only by nft owner!"
-        );
-        require(
-            target_nft.status == Status.ACTIVE,
-            "Requested nft is not active!"
-        );
+        if (request_adr != target_nft.token_seller){
+            revert OwnershipRejection({
+                message: "This action can be performed only by nft owner!"
+            });
+        } else if (target_nft.status != Status.ACTIVE){
+            revert nonActiveToken({
+                token_id: target_nft.token_id,
+                token_status: target_nft.status
+            });
+        }
 
         target_nft.status = Status.CANCELED;
         nft_service.transferFrom(
@@ -107,14 +132,17 @@ contract MarketResellContract {
         NFT storage target_nft = nft_assets[_token_id];
         uint256 proposed_price = msg.value;
 
-        require(
-            target_nft.status == Status.ACTIVE,
-            "Requested nft is not active!"
-        );
-        require(
-            target_nft.token_price == proposed_price,
-            "Proposed price is not equal to nft price!"
-        );
+        if (target_nft.status != Status.ACTIVE){
+            revert nonActiveToken({
+                token_id: target_nft.token_id,
+                token_status: target_nft.status
+            });
+        } else if (target_nft.token_price != proposed_price){
+            revert InappropriateTokenCost({
+                expected_amount: target_nft.token_price,
+                received_amount: proposed_price
+            });
+        }
 
         target_nft.status = Status.SOLD;
 
