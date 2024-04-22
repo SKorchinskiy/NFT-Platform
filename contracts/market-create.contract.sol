@@ -23,11 +23,52 @@ contract MarketCreateContract {
 
     mapping(uint256 => NFT) nft_assets;
 
-    error InappropriateListingFee(uint256 expected_fee, uint256 received_fee);
-    error InappropriateTokenCost(uint256 expected_amount, uint256 received_amount);
-    error OwnershipRejection(string message);
+    event NFTAssetCreated(
+        uint256 seq_id, 
+        uint256 token_id, 
+        address token_seller,
+        address token_holder,
+        uint256 token_price,
+        address nft_contract
+    );
+    event NFTPurchased(
+        uint256 seq_id,
+        uint256 token_id,
+        address token_seller,
+        address token_buyer,
+        uint256 token_price,
+        address nft_contract
+    );
+    event NFTListingCanceled(
+        uint256 seq_id,
+        uint256 token_id,
+        address token_seller,
+        address token_holder,
+        uint256 token_price,
+        address nft_contract
+    );
+    event ProfitWithdraw(
+        address receiver,
+        uint256 amount
+    );
 
-    function create_nft_asset(address _nft_contract, uint256 _token_id, uint256 _price) external payable {
+    error InappropriateListingFee(
+        uint256 expected_fee, 
+        uint256 received_fee
+    );
+    error InappropriateTokenCost(
+        uint256 expected_amount, 
+        uint256 received_amount
+    );
+    error OwnershipRejection(
+        string message
+    );
+
+    function create_nft_asset(
+        address _nft_contract, 
+        uint256 _token_id,
+        uint256 _price
+    ) external payable returns(NFT memory) {
         if (msg.value != listing_fee)
             revert InappropriateListingFee({
                 expected_fee: listing_fee,
@@ -49,9 +90,20 @@ contract MarketCreateContract {
 
         nft_assets[token_seq_id] = nft_asset;
         IERC721(_nft_contract).transferFrom(seller, address(this), _token_id);
+        
+        emit NFTAssetCreated({
+            seq_id: nft_asset.seq_id,
+            token_id: nft_asset.token_id,
+            token_seller: nft_asset.token_seller,
+            token_holder: nft_asset.token_holder,
+            token_price: nft_asset.token_price,
+            nft_contract: nft_asset.nft_contract
+        });
+
+        return nft_assets[token_seq_id];
     }
 
-    function purchase_nft(address _nft_contract, uint256 seq_id) external payable {
+    function purchase_nft(address _nft_contract, uint256 seq_id) external payable returns(NFT memory) {
         NFT storage token = nft_assets[seq_id];
 
         if (msg.value != token.token_price)
@@ -64,6 +116,17 @@ contract MarketCreateContract {
         token.token_seller.transfer(token.token_price);
         IERC721(_nft_contract).transferFrom(address(this), msg.sender, token.token_id);
         sold_seq_id++;
+        
+        emit NFTPurchased({
+            seq_id: token.seq_id,
+            token_id: token.token_id,
+            token_seller: token.token_seller,
+            token_buyer: msg.sender,
+            token_price: token.token_price,
+            nft_contract: token.nft_contract
+        });
+        
+        return token;
     }
 
     function cancel_nft_listing(address _nft_contract, uint256 _token_id) external {
@@ -75,6 +138,15 @@ contract MarketCreateContract {
 
         IERC721(_nft_contract).transferFrom(address(this), msg.sender, _token_id);
         token.token_holder = payable(msg.sender);
+
+        emit NFTListingCanceled({
+            seq_id: token.seq_id,
+            token_id: token.token_id,
+            token_seller: token.token_seller,
+            token_holder: token.token_holder,
+            token_price: token.token_price,
+            nft_contract: token.nft_contract
+        });
     }
 
     function get_all_available_nfts() external view returns(NFT[] memory) {
@@ -137,6 +209,12 @@ contract MarketCreateContract {
                 message: "Only the owner of the contract can withdraw profit!"
             });
 
-        holder.transfer(address(this).balance);
+        uint256 amount = address(this).balance; 
+        
+        holder.transfer(amount);
+        emit ProfitWithdraw({
+            receiver: msg.sender, 
+            amount: amount
+        });
     }
 }
