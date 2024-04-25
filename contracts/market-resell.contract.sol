@@ -23,7 +23,7 @@ contract MarketResellContract {
         Status status;
     }
 
-    mapping(uint256 => NFT) nft_assets;
+    mapping(uint256 => NFT) public nft_assets;
 
     event TokenListed(
         uint256 token_id,
@@ -72,7 +72,8 @@ contract MarketResellContract {
         _;
     }
 
-    constructor() {
+    constructor(ERC721Enumerable _nft) {
+        nft_service = _nft;
         market_adr = payable(msg.sender);
     }
 
@@ -92,16 +93,24 @@ contract MarketResellContract {
             token_id: _token_id,
             token_price: _token_price,
             token_seller: nft_owner,
-            token_holder: market_adr,
+            token_holder: payable(address(this)),
             status: Status.ACTIVE
         });
 
         nft_assets[_token_id] = nft_repr;
         nft_service.transferFrom(
             nft_owner, 
-            market_adr, 
+            address(this), 
             _token_id
         );
+
+        emit TokenListed({
+            token_id: _token_id,
+            token_seller: nft_owner,
+            token_holder: address(this),
+            token_price: _token_price,
+            token_status: Status.ACTIVE
+        });
     }
 
     function cancel_token_listing(uint256 _token_id) external {
@@ -125,6 +134,13 @@ contract MarketResellContract {
             target_nft.token_seller, 
             target_nft.token_id
         );
+
+        emit TokenListingCanceled({
+            token_id: _token_id,
+            token_owner: target_nft.token_seller,
+            token_status: target_nft.status
+        });
+        delete nft_assets[_token_id];
     }
 
     function purchase_listed_nft(uint256 _token_id) external payable {
@@ -152,6 +168,14 @@ contract MarketResellContract {
             _token_id
         );
         target_nft.token_seller.transfer(proposed_price);
+
+        emit TokenPurchased({
+            token_id: _token_id,
+            token_buyer: msg.sender,
+            token_price: msg.value,
+            token_status: target_nft.status
+        });
+        delete nft_assets[_token_id];
     }
 
     function get_listing_fee() external view returns(uint256) {
@@ -165,12 +189,15 @@ contract MarketResellContract {
 
     function get_listed_nft() external view returns(NFT[] memory) {
         uint256 supply = nft_service.totalSupply();
+        uint256 current_id = 0;
         NFT[] memory tokens = new NFT[](supply);
         
         for (uint256 index = 0; index < supply; index++) {
-            uint256 token_id = nft_service.tokenByIndex(supply);
-            NFT storage token = nft_assets[token_id];
-            tokens[index] = token;
+            uint256 token_id = nft_service.tokenByIndex(index);
+            if (nft_assets[token_id].token_holder == address(this)) {
+                NFT storage token = nft_assets[token_id];
+                tokens[current_id++] = token;
+            }
         }
 
         return tokens;
