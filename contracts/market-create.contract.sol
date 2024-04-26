@@ -5,12 +5,14 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract MarketCreateContract {
     address payable holder;
+    address payable owner;
     
-    uint256 minting_fee = 0.075 ether;
-    uint256 listing_fee = 0.025 ether;
+    uint256 minting_fee = 0.0075 ether;
+    uint256 listing_fee = 0.0025 ether;
 
     uint256 token_seq_id;
-    uint256 sold_seq_id;
+
+    enum Status { NONE, LISTED, SOLD, CANCELED }
 
     struct NFT {
         uint256 seq_id;
@@ -19,6 +21,7 @@ contract MarketCreateContract {
         address payable token_holder;
         uint256 token_price;
         address nft_contract;
+        Status token_status;
     }
 
     mapping(uint256 => NFT) nft_assets;
@@ -74,11 +77,16 @@ contract MarketCreateContract {
     }
 
     modifier onlyOwner() {
-        if (msg.sender != holder)
+        if (msg.sender != owner)
             revert OwnershipRejection({
                 message: "Only the owner of the contract can withdraw profit!"
             });
         _;
+    }
+
+    constructor() {
+        holder = payable(address(this));
+        owner = payable(msg.sender);
     }
 
     function create_nft_asset(
@@ -96,10 +104,12 @@ contract MarketCreateContract {
             token_seller: seller,
             token_holder: holder,
             token_price: _price,
-            nft_contract: _nft_contract
+            nft_contract: _nft_contract,
+            token_status: Status.LISTED
         });
 
         nft_assets[token_seq_id] = nft_asset;
+        
         IERC721(_nft_contract).transferFrom(seller, address(this), _token_id);
         
         emit NFTAssetCreated({
@@ -124,9 +134,10 @@ contract MarketCreateContract {
             });
 
         token.token_holder = payable(msg.sender);
+        token.token_status = Status.SOLD;
+
         token.token_seller.transfer(token.token_price);
         IERC721(_nft_contract).transferFrom(address(this), msg.sender, token.token_id);
-        sold_seq_id++;
         
         emit NFTPurchased({
             seq_id: token.seq_id,
@@ -147,8 +158,10 @@ contract MarketCreateContract {
                 message: "Listing can only be canceled by token owner!"
             });
 
-        IERC721(_nft_contract).transferFrom(address(this), msg.sender, _token_id);
         token.token_holder = payable(msg.sender);
+        token.token_status = Status.CANCELED;
+        
+        IERC721(_nft_contract).transferFrom(address(this), msg.sender, _token_id);
 
         emit NFTListingCanceled({
             seq_id: token.seq_id,
@@ -162,11 +175,24 @@ contract MarketCreateContract {
 
     function get_all_available_nfts() external view returns(NFT[] memory) {
         uint256 item_id = 0;
-        uint256 available_supply = token_seq_id - sold_seq_id;
+        uint256 available_supply = 0;
+        
+        for (uint256 iter = 1; iter <= token_seq_id; iter++) {
+            if (
+                nft_assets[iter].token_holder == address(this) && 
+                nft_assets[iter].token_status == Status.LISTED
+            ) {
+                available_supply++;
+            }
+        }
+        
         NFT[] memory available_tokens = new NFT[](available_supply);
 
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
-            if (nft_assets[iter].token_holder == address(this)) {
+            if (
+                nft_assets[iter].token_holder == address(this) && 
+                nft_assets[iter].token_status == Status.LISTED
+            ) {
                 available_tokens[item_id++] = nft_assets[iter];
             }
         }
@@ -176,17 +202,23 @@ contract MarketCreateContract {
 
     function get_user_owned_nfts() external view returns(NFT[] memory) {
         uint256 user_token_count = 0;
-        uint256 user_token_seq_id = 0;
-
-        for (uint256 iter = 0; iter < token_seq_id; iter++) {
-            if (nft_assets[iter].token_holder == msg.sender) {
+        for (uint256 iter = 1; iter <= token_seq_id; iter++) {
+            if (
+                nft_assets[iter].token_holder == msg.sender && 
+                nft_assets[iter].token_status == Status.SOLD
+            ) {
                 user_token_count++;
             }
         }
 
         NFT[] memory user_tokens = new NFT[](user_token_count);
-        for (uint256 iter = 0; iter < token_seq_id; iter++) {
-            if (nft_assets[iter].token_holder == msg.sender) {
+
+        uint256 user_token_seq_id = 0;
+        for (uint256 iter = 1; iter <= token_seq_id; iter++) {
+            if (
+                nft_assets[iter].token_holder == msg.sender && 
+                nft_assets[iter].token_status == Status.SOLD
+            ) {
                 user_tokens[user_token_seq_id++] = nft_assets[iter];
             }
         }
@@ -196,17 +228,23 @@ contract MarketCreateContract {
 
     function get_user_listed_nfts() external view returns(NFT[] memory) {
         uint256 listed_user_token_count = 0;
-        uint256 listed_user_token_seq_id = 0;
-
-        for (uint256 iter = 0; iter < token_seq_id; iter++) {
-            if (nft_assets[iter].token_holder == address(this)) {
+        for (uint256 iter = 1; iter <= token_seq_id; iter++) {
+            if (
+                nft_assets[iter].token_seller == msg.sender && 
+                nft_assets[iter].token_status == Status.LISTED
+            ) {
                 listed_user_token_count++;
             }
         }
 
         NFT[] memory listed_user_tokens = new NFT[](listed_user_token_count);
-        for (uint256 iter = 0; iter < token_seq_id; iter++) {
-            if (nft_assets[iter].token_holder == address(this)) {
+
+        uint256 listed_user_token_seq_id = 0;
+        for (uint256 iter = 1; iter <= token_seq_id; iter++) {
+            if (
+                nft_assets[iter].token_seller == msg.sender && 
+                nft_assets[iter].token_status == Status.LISTED
+            ) {
                 listed_user_tokens[listed_user_token_seq_id++] = nft_assets[iter];
             }
         }
@@ -217,7 +255,7 @@ contract MarketCreateContract {
     function withdraw_profit() external onlyOwner {
         uint256 amount = address(this).balance; 
         
-        holder.transfer(amount);
+        owner.transfer(amount);
         emit ProfitWithdraw({
             receiver: msg.sender, 
             amount: amount
