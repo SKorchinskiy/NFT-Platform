@@ -12,7 +12,8 @@
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.2",
     "hardhat": "^2.22.3",
-    "solc": "^0.8.20"
+    "solc": "^0.8.20",
+    "web3": "^4.8.0"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0"
