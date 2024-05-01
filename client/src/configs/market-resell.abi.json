@@ -1,0 +1,331 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "contract ERC721Enumerable",
+        "name": "_nft",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "DuplicateTokenListing",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "expected_fee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "received_fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "InappropriateListingFee",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "expected_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "received_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "InappropriateTokenCost",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "OwnershipRejection",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum MarketResellContract.Status",
+        "name": "token_status",
+        "type": "uint8"
+      }
+    ],
+    "name": "nonActiveToken",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token_seller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token_holder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token_price",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum MarketResellContract.Status",
+        "name": "token_status",
+        "type": "uint8"
+      }
+    ],
+    "name": "TokenListed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token_owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum MarketResellContract.Status",
+        "name": "token_status",
+        "type": "uint8"
+      }
+    ],
+    "name": "TokenListingCanceled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token_buyer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token_price",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum MarketResellContract.Status",
+        "name": "token_status",
+        "type": "uint8"
+      }
+    ],
+    "name": "TokenPurchased",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_token_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancel_token_listing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "get_listed_nft",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "token_id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "token_price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_seller",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_holder",
+            "type": "address"
+          },
+          {
+            "internalType": "enum MarketResellContract.Status",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct MarketResellContract.NFT[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "get_listing_fee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_token_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "get_nft_price",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_token_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_token_price",
+        "type": "uint256"
+      }
+    ],
+    "name": "list_token",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "nft_assets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "token_price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address payable",
+        "name": "token_seller",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "token_holder",
+        "type": "address"
+      },
+      {
+        "internalType": "enum MarketResellContract.Status",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_token_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "purchase_listed_nft",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
