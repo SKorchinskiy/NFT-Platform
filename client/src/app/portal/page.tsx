@@ -7,8 +7,9 @@ import { MetamaskContext } from "../providers/metamask.provider";
 
 import MarketResellABI from "../../configs/market-resell.abi.json";
 import NFTCollectionABI from "../../configs/nft-collection.abi.json";
-import NFTCard from "./_components/nft-card/nft-card.component";
 import { NFT as PureNFT } from "./_components/nft-card/nft-card.component";
+import { contract_addresses } from "@/configs/constants";
+import NFTCardList from "./_components/nft-card-list/nft-card-list.component";
 
 type NFT = {
   status: BigInt;
@@ -21,7 +22,15 @@ type NFT = {
 export default function Portal() {
   const { address } = useContext(AddressContext);
   const [addressNftTokens, setAddressNftTokens] = useState<Array<Object>>([]);
-  const [nftPureData, setNFTPureData] = useState<Array<PureNFT>>([]);
+  const [nftPureData, setNFTPureData] = useState<
+    Array<{
+      attributes: Array<Object>;
+      description: string;
+      external_url: string;
+      image: string;
+      name: string;
+    }>
+  >([]);
 
   const { provider } = useContext(MetamaskContext);
 
@@ -31,7 +40,7 @@ export default function Portal() {
         const web3 = new Web3(provider);
         const resellContract = new web3.eth.Contract(
           MarketResellABI,
-          "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          contract_addresses.marketResellContract,
           {
             from: address,
             gasPrice: "20000000000",
@@ -50,13 +59,14 @@ export default function Portal() {
         // TODO separate to another function
         const nftCollection = new web3.eth.Contract(
           NFTCollectionABI,
-          "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          contract_addresses.nftCollectionContract,
           {
             from: address,
             gasPrice: "20000000000",
           }
         );
         const tokenURIs = [];
+        setNFTPureData([]);
         for (let token of addressTokens) {
           const tokenURI = (await nftCollection.methods
             .tokenURI(token.token_id)
@@ -79,10 +89,12 @@ export default function Portal() {
   }, [nftPureData]);
 
   return nftPureData ? (
-    <Fragment>
-      {nftPureData.map((nft, index) => (
-        <NFTCard key={index} nft={nft} />
-      ))}
-    </Fragment>
+    <div
+      style={{
+        position: "relative",
+      }}
+    >
+      <NFTCardList nfts={nftPureData} />
+    </div>
   ) : null;
 }
