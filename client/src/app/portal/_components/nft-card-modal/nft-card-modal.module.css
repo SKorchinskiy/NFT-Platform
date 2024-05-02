@@ -1,0 +1,21 @@
+.sell-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #9eb8d9;
+  margin-right: 50px;
+  padding: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: monospace;
+  font-size: 20px;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: 500ms;
+}
+
+.sell-button:hover {
+  transform: scale(103%);
+  background: rgba(106, 125, 148);
+}
