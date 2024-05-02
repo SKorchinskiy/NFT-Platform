@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Navbar from "./_components/navbar/navbar.component";
 import AddressProvider from "./providers/address.provider";
 import MetamaskProvider from "./providers/metamask.provider";
+import "./global.styles.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={inter.className}
-        style={{
-          backgroundColor: "grey",
-        }}
-      >
+      <body className={inter.className}>
         <MetamaskProvider>
           <AddressProvider>
             <Navbar />
