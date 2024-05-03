@@ -1,28 +1,35 @@
 import Image from "next/image";
 import styles from "./nft-card.module.css";
 
-import { Fragment, useState } from "react";
-import NFTCardModal from "../nft-card-modal/nft-card-modal.component";
+import { Fragment } from "react";
+import { NFT } from "../nft-card-list/nft-card-list.component";
 
-export type NFT = {
-  nft: {
-    attributes: Array<Object>;
-    description: string;
-    external_url: string;
-    image: string;
-    name: string;
-  };
-};
+export enum Status {
+  NONE,
+  CANCELED,
+  ACTIVE,
+  SOLD,
+}
 
-export default function NFTCard({ nft }: NFT) {
-  const [isCardModalOpen, setIsCardModalOpen] = useState<boolean>(false);
-
-  const toggleIsCardModalOpen = () =>
-    setIsCardModalOpen((prevState) => !prevState);
-
+export default function NFTCard({
+  nft,
+  toggleIsCardModalOpen,
+  activeTokenHandler,
+}: {
+  nft: NFT;
+  isCardModalOpen: boolean;
+  toggleIsCardModalOpen: Function;
+  activeTokenHandler: Function;
+}) {
   return (
     <Fragment>
-      <div className={styles["card-container"]} onClick={toggleIsCardModalOpen}>
+      <div
+        className={styles["card-container"]}
+        onClick={(e) => {
+          activeTokenHandler(nft.token_id);
+          toggleIsCardModalOpen();
+        }}
+      >
         <Image
           src={nft.image}
           alt="nft"
@@ -48,29 +55,12 @@ export default function NFTCard({ nft }: NFT) {
             <p>Owned by YOU</p>
             <p>{nft.name}</p>
             <p>{nft.description}</p>
+            <p>{Number(nft.token_price) / 1e18} ETH</p>
+            <p>{Status[Number(nft.status)]}</p>
           </div>
         </div>
         <div className={styles["card-overlay"]} />
       </div>
-      {isCardModalOpen ? (
-        <Fragment>
-          <NFTCardModal
-            nft={nft}
-            toggleIsCardModalOpen={toggleIsCardModalOpen}
-          />
-          <div
-            style={{
-              position: "absolute",
-              top: -100,
-              bottom: -100,
-              left: -100,
-              right: -100,
-              background: "rgba(0, 0, 0, 0.4)",
-              zIndex: 1,
-            }}
-          />
-        </Fragment>
-      ) : null}
     </Fragment>
   );
 }

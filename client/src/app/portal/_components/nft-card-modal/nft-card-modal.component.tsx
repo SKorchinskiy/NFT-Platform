@@ -1,18 +1,100 @@
 import Image from "next/image";
-import { NFT } from "../nft-card/nft-card.component";
 import styles from "./nft-card-modal.module.css";
 
-import { useState } from "react";
+import { useContext, useMemo, useState } from "react";
 
-type NFTModalProps = NFT & {
+import { TokensContext } from "@/app/providers/nft-tokens.provider";
+import { AddressContext } from "@/app/providers/address.provider";
+
+import useResellContract from "@/app/hooks/useResellContract.hook";
+import useNFTCollectionContract from "@/app/hooks/useNftCollectionContract.hook";
+import { contract_addresses } from "@/configs/constants";
+
+import { Status } from "../nft-card/nft-card.component";
+import { NFT } from "../nft-card-list/nft-card-list.component";
+
+type NFTModalProps = {
+  tokenIndex: number;
   toggleIsCardModalOpen: Function;
+  activeTokenHandler: Function;
 };
 
 export default function NFTCardModal({
-  nft,
+  tokenIndex,
   toggleIsCardModalOpen,
+  activeTokenHandler,
 }: NFTModalProps) {
   const [tokenPrice, setTokenPrice] = useState<number>(1e18);
+
+  const { tokens, allTokens } = useContext(TokensContext);
+  const { address } = useContext(AddressContext);
+  console.log({ tokens, allTokens, tokenIndex });
+  const nft = useMemo(
+    () =>
+      [...tokens, ...allTokens].find((token) => {
+        console.log({ here: token }, Number(token.token_id), tokenIndex);
+        return Number(token.token_id) == tokenIndex;
+      }) || ({} as NFT),
+    [tokenIndex, tokens, allTokens]
+  );
+  console.log({ nft });
+
+  const resellContract = useResellContract();
+  const nftCollectionContract = useNFTCollectionContract();
+
+  const listTokenForSale = async () => {
+    if (address && nftCollectionContract && resellContract) {
+      await nftCollectionContract.methods
+        .setApprovalForAll(contract_addresses.marketResellContract, true)
+        .call({
+          from: address,
+        });
+
+      const listing_fee = (
+        (await resellContract.methods.get_listing_fee().call({
+          from: address,
+        })) as number
+      ).toString();
+
+      console.log({ listing_fee });
+      await resellContract.methods.list_token(nft.token_id, tokenPrice).send({
+        from: address,
+        value: listing_fee,
+      });
+    }
+  };
+
+  const cancelTokenListing = async () => {
+    if (address && nftCollectionContract && resellContract) {
+      await nftCollectionContract.methods
+        .setApprovalForAll(contract_addresses.marketResellContract, true)
+        .call({
+          from: address,
+        });
+      await resellContract.methods.cancel_token_listing(nft.token_id).send({
+        from: address,
+      });
+    }
+  };
+
+  const buyListedToken = async () => {
+    if (address && nftCollectionContract && resellContract) {
+      await nftCollectionContract.methods
+        .setApprovalForAll(contract_addresses.marketResellContract, true)
+        .call({
+          from: address,
+        });
+      const tokenPrice = (await resellContract.methods
+        .get_nft_price(nft.token_id)
+        .call({
+          from: address,
+        })) as number;
+      await resellContract.methods.purchase_listed_nft(nft.token_id).send({
+        from: address,
+        value: tokenPrice.toString(),
+      });
+    }
+  };
 
   return (
     <div
@@ -21,13 +103,14 @@ export default function NFTCardModal({
         background: "rgb(238, 245, 255, 0.9)",
         left: 200,
         right: 200,
-        top: -20,
-        bottom: 300,
+        top: 70,
+        height: 450,
         zIndex: 2,
         borderRadius: "10px",
         display: "grid",
         gridTemplateColumns: "repeat(2, auto)",
         boxShadow: "15px 20px 15px rgba(0, 0, 0, 0.3)",
+        padding: 50,
       }}
     >
       <div
@@ -40,6 +123,30 @@ export default function NFTCardModal({
         onClick={(e) => toggleIsCardModalOpen()}
       >
         <Image src="/close-sign.png" alt="close" width={35} height={20} />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: 250,
+          left: 5,
+          cursor: "pointer",
+        }}
+        onClick={(e) =>
+          activeTokenHandler((tokenIndex - 1 + tokens.length) % tokens.length)
+        }
+      >
+        <Image src="/arrow-left.png" alt="close" width={40} height={40} />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: 250,
+          right: 5,
+          cursor: "pointer",
+        }}
+        onClick={(e) => activeTokenHandler((tokenIndex + 1) % tokens.length)}
+      >
+        <Image src="/arrow-right.png" alt="close" width={40} height={40} />
       </div>
       <div
         style={{
@@ -120,7 +227,16 @@ export default function NFTCardModal({
               }}
             />
           </div>
-          <div className={styles["sell-button"]}>Sell token</div>
+          {Number(nft.status) == Status.ACTIVE &&
+          nft.token_seller == address ? (
+            <div className={styles["sell-button"]} onClick={cancelTokenListing}>
+              Cancel listing
+            </div>
+          ) : (
+            <div className={styles["sell-button"]} onClick={buyListedToken}>
+              Buy token
+            </div>
+          )}
         </div>
       </div>
     </div>

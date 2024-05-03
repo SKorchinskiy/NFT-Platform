@@ -4,6 +4,7 @@ import Navbar from "./_components/navbar/navbar.component";
 import AddressProvider from "./providers/address.provider";
 import MetamaskProvider from "./providers/metamask.provider";
 import "./global.styles.css";
+import NftTokensProvider from "./providers/nft-tokens.provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,8 +23,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <MetamaskProvider>
           <AddressProvider>
-            <Navbar />
-            {children}
+            <NftTokensProvider>
+              <Navbar />
+              {children}
+            </NftTokensProvider>
           </AddressProvider>
         </MetamaskProvider>
       </body>
