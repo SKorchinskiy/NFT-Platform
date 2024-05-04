@@ -1,4 +1,5 @@
 import Image from "next/image";
+import styles from "./profile-details.module.css";
 
 type ProfileDetailsParams = {
   address: string;
@@ -10,38 +11,10 @@ export default function ProfileDetails({
   balance,
 }: ProfileDetailsParams) {
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: "center",
-        fontFamily: "monospace",
-        fontSize: "12px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-        }}
-      >
-        <p
-          style={{
-            userSelect: "none",
-          }}
-        >
-          {address}
-        </p>
-        <p
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "5px",
-            userSelect: "none",
-          }}
-        >
+    <div className={styles["profile-details-container"]}>
+      <div className={styles["details-content"]}>
+        <p style={{ userSelect: "none" }}>{address}</p>
+        <p className={styles["balance-info"]}>
           <span>{balance}</span>
           <span>ETH</span>
         </p>
@@ -52,9 +25,7 @@ export default function ProfileDetails({
           width={40}
           height={30}
           alt="user"
-          style={{
-            userSelect: "none",
-          }}
+          style={{ userSelect: "none" }}
         />
       </div>
     </div>

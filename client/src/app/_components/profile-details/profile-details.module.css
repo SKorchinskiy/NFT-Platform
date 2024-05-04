@@ -1,0 +1,21 @@
+.profile-details-container {
+  display: flex;
+  width: 100%;
+  justifycontent: space-between;
+  alignitems: center;
+  fontfamily: monospace;
+  fontsize: 12px;
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.balance-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  user-select: none;
+}
