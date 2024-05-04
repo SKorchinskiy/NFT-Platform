@@ -1,7 +1,7 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import NFTCard from "../nft-card/nft-card.component";
-import { TokensContext } from "@/app/providers/nft-tokens.provider";
 import NFTCardModal from "../nft-card-modal/nft-card-modal.component";
+import styles from "./nft-card-list.module.css";
 
 export type NFT = {
   attributes: Array<Object>;
@@ -14,6 +14,7 @@ export type NFT = {
   token_id: BigInt;
   token_price: BigInt;
   token_seller: string;
+  tknId: BigInt;
 };
 
 export type NFTs = Array<NFT>;
@@ -27,25 +28,13 @@ export default function NFTCardList({ nfts }: { nfts: Array<NFT> }) {
 
   const activeTokenHandler = (tokenInd: number) => setActiveToken(tokenInd);
 
+  useEffect(() => {
+    console.log({ activeToken });
+  }, [activeToken]);
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        width: "100%",
-        margin: "auto",
-        background: "rgba(0, 0, 0, 0.1)",
-        borderRadius: "10px",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 300px)",
-          rowGap: "50px",
-          padding: "50px",
-        }}
-      >
+    <div className={styles["card-list-container"]}>
+      <div className={styles["list-cards"]}>
         {nfts.map((nft, index) => (
           <NFTCard
             key={index}
@@ -60,20 +49,11 @@ export default function NFTCardList({ nfts }: { nfts: Array<NFT> }) {
         <Fragment>
           <NFTCardModal
             tokenIndex={activeToken}
+            nfts={nfts}
             toggleIsCardModalOpen={toggleIsCardModalOpen}
             activeTokenHandler={activeTokenHandler}
           />
-          <div
-            style={{
-              position: "absolute",
-              top: -100,
-              bottom: -200,
-              left: -100,
-              right: -100,
-              background: "rgba(0, 0, 0, 0.5)",
-              zIndex: 1,
-            }}
-          />
+          <div className={styles["overlay"]} />
         </Fragment>
       ) : null}
     </div>
