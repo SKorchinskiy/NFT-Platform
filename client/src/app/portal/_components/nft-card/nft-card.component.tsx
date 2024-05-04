@@ -26,7 +26,7 @@ export default function NFTCard({
       <div
         className={styles["card-container"]}
         onClick={(e) => {
-          activeTokenHandler(nft.token_id);
+          activeTokenHandler(nft.tknId);
           toggleIsCardModalOpen();
         }}
       >
@@ -35,23 +35,10 @@ export default function NFTCard({
           alt="nft"
           width={200}
           height={200}
-          style={{
-            borderRadius: "10px 10px 0px 0px",
-          }}
+          style={{ borderRadius: "10px 10px 0px 0px" }}
         />
-        <div
-          style={{
-            background: "red",
-            borderRadius: "0px 0px 10px 10px",
-          }}
-        >
-          <div
-            style={{
-              marginLeft: "15px",
-              fontFamily: "fantasy",
-              fontSize: "18px",
-            }}
-          >
+        <div className={styles["card-details-container"]}>
+          <div className={styles["card-details"]}>
             <p>Owned by YOU</p>
             <p>{nft.name}</p>
             <p>{nft.description}</p>

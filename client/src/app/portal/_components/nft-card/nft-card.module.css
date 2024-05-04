@@ -11,6 +11,17 @@
   transform: scale(105%);
 }
 
+.card-details-container {
+  background: red;
+  border-radius: 0px 0px 10px 10px;
+}
+
+.card-details {
+  margin-left: 15px;
+  font-family: fantasy;
+  font-size: 18px;
+}
+
 .card-overlay {
   position: absolute;
   top: 0px;
