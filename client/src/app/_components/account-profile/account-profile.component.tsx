@@ -1,8 +1,8 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { AddressInfo } from "../navbar/navbar.component";
 import ProfileDetails from "../profile-details/profile-details.component";
 import { AddressContext } from "@/app/providers/address.provider";
+import styles from "./account-profile.module.css";
 
 export default function AccountProfile() {
   const { address, balance, updateSelectedAddress } =
@@ -22,33 +22,15 @@ export default function AccountProfile() {
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 200,
-        height: detailsOpen ? 300 : 30,
-        padding: "15px",
-        background: "#F6851A",
-        borderRadius: "5px",
-        cursor: "pointer",
-        boxShadow: "5px 3px 10px rgba(119, 59, 14)",
-        position: "absolute",
-        zIndex: 1,
-        right: 0,
-      }}
+      style={{ height: detailsOpen ? 300 : 30 }}
+      className={styles["account-profile-container"]}
       onClick={toggleDetailsOpen}
     >
       <ProfileDetails address={formatedAddress} balance={formatedBalance} />
       {detailsOpen ? (
         <Fragment>
           <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 5,
-            }}
+            className={styles["address-switch-container"]}
             onClick={() => {}}
           >
             <Image
@@ -56,17 +38,11 @@ export default function AccountProfile() {
               alt="switch"
               width={30}
               height={30}
-              style={{
-                userSelect: "none",
-              }}
+              style={{ userSelect: "none" }}
             />
           </div>
           <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: 5,
-            }}
+            className={styles["account-exit"]}
             onClick={() => updateSelectedAddress("")}
           >
             <Image
@@ -74,9 +50,7 @@ export default function AccountProfile() {
               alt="disconnect"
               width={30}
               height={30}
-              style={{
-                userSelect: "none",
-              }}
+              style={{ userSelect: "none" }}
             />
           </div>
         </Fragment>

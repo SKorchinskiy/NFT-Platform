@@ -1,0 +1,27 @@
+.account-profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  padding: 15px;
+  background: #f6851a;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 5px 3px 10px rgba(119, 59, 14);
+  position: absolute;
+  z-index: 1;
+  right: 0;
+}
+
+.address-switch-container {
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+}
+
+.account-exit {
+  position: absolute;
+  bottom: 0;
+  right: 5px;
+}
