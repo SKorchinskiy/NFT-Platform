@@ -1,3 +1,82 @@
+.modal-container {
+  position: absolute;
+  background: rgb(238, 245, 255, 0.9);
+  left: 200px;
+  right: 200px;
+  top: 70px;
+  height: 450px;
+  z-index: 2;
+  borderradius: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  boxshadow: 15px 20px 15px rgba(0, 0, 0, 0.3);
+  padding: 50px;
+}
+
+.atr-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.atr-arrow-left {
+  position: absolute;
+  top: 250px;
+  left: 5px;
+  cursor: pointer;
+}
+
+.atr-arrow-right {
+  position: absolute;
+  top: 250px;
+  right: 5px;
+  cursor: pointer;
+}
+
+.atr-nft-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nft-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 50px;
+}
+
+.nft-details-info {
+  font-family: monospace;
+  font-size: 20px;
+}
+
+.nft-interactive-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.token-input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.token-input {
+  margin-right: 50px;
+  border-radius: 5px;
+  border: 0px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.atr-ethereum-pic {
+  position: absolute;
+  right: 80px;
+  margin-top: 8px;
+}
+
 .sell-button {
   display: flex;
   justify-content: center;
