@@ -1,8 +1,8 @@
 import { AddressContext } from "@/app/providers/address.provider";
 import { MetamaskContext } from "@/app/providers/metamask.provider";
-import Image from "next/image";
 import { useContext } from "react";
 import { Web3 } from "web3";
+import styles from "./connect-wallet.module.css";
 
 export default function ConnectWallet() {
   const { updateSelectedAddress } = useContext(AddressContext);
@@ -36,31 +36,10 @@ export default function ConnectWallet() {
 
   return (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: 200,
-        height: 30,
-        background: "#F6851A",
-        padding: "15px",
-        borderRadius: "5px",
-        cursor: "pointer",
-        boxShadow: "5px 3px 10px rgba(119, 59, 14)",
-      }}
+      className={styles["connect-wallet-container"]}
       onClick={connectMetamask}
     >
-      <p
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          width: "100%",
-          fontWeight: "bold",
-          fontFamily: "monospace",
-          fontSize: "14px",
-          userSelect: "none",
-        }}
-      >
+      <p className={styles["connect-text-content"]}>
         {/* <Image src="/metamask-icon.png" alt="metamask" width={20} height={20} /> */}
         <span>Connect Wallet</span>
         {/* <Image src="/metamask-icon.png" alt="metamask" width={20} height={20} /> */}
