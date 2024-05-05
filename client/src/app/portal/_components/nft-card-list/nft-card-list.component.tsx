@@ -1,36 +1,57 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import NFTCard from "../nft-card/nft-card.component";
 import NFTCardModal from "../nft-card-modal/nft-card-modal.component";
 import styles from "./nft-card-list.module.css";
+import { NFT, NFTs } from "@/app/types/nft.type";
 
-export type NFT = {
-  attributes: Array<Object>;
-  description: string;
-  external_url: string;
-  image: string;
-  name: string;
-  status: BigInt;
-  token_holder: string;
-  token_id: BigInt;
-  token_price: BigInt;
-  token_seller: string;
-  tknId: BigInt;
-};
+type CardListProps = { nfts: NFTs };
 
-export type NFTs = Array<NFT>;
-
-export default function NFTCardList({ nfts }: { nfts: Array<NFT> }) {
-  const [activeToken, setActiveToken] = useState<number>(0);
+export default function NFTCardList({ nfts }: CardListProps) {
+  const [activeToken, setActiveToken] = useState<NFT>(nfts[0]);
   const [isCardModalOpen, setIsCardModalOpen] = useState<boolean>(false);
+
+  const compressedTokenIds = useMemo(
+    () =>
+      nfts.reduce(
+        (accumulated, currentValue, index) => ({
+          ...accumulated,
+          [currentValue.token_id.toString()]: index,
+        }),
+        {}
+      ),
+    [nfts]
+  ) as {
+    [key: string]: number;
+  };
 
   const toggleIsCardModalOpen = () =>
     setIsCardModalOpen((prevState) => !prevState);
 
-  const activeTokenHandler = (tokenInd: number) => setActiveToken(tokenInd);
+  const initTokenHandler = (token_id: number) =>
+    setActiveToken(
+      nfts.find((nft) => Number(nft.token_id) == token_id) || nfts[0]
+    );
 
-  useEffect(() => {
-    console.log({ activeToken });
-  }, [activeToken]);
+  const activeTokenHandler = (action: -1 | 1) => {
+    setActiveToken((prevValue: NFT) => {
+      const MOD = nfts.length;
+      const targetCompressedId: number =
+        (compressedTokenIds[prevValue.token_id.toString()] + action + MOD) %
+        MOD;
+      return (
+        nfts.find(
+          (token) =>
+            token.token_id.toString() ==
+            Object.entries(compressedTokenIds).reduce((acc, [key, value]) => {
+              if (targetCompressedId == value) {
+                acc = key;
+              }
+              return acc;
+            }, "")
+        ) || nfts[0]
+      );
+    });
+  };
 
   return (
     <div className={styles["card-list-container"]}>
@@ -39,17 +60,15 @@ export default function NFTCardList({ nfts }: { nfts: Array<NFT> }) {
           <NFTCard
             key={index}
             nft={nft}
-            isCardModalOpen={isCardModalOpen}
             toggleIsCardModalOpen={toggleIsCardModalOpen}
-            activeTokenHandler={activeTokenHandler}
+            initTokenHandler={initTokenHandler}
           />
         ))}
       </div>
       {isCardModalOpen ? (
         <Fragment>
           <NFTCardModal
-            tokenIndex={activeToken}
-            nfts={nfts}
+            nft={activeToken}
             toggleIsCardModalOpen={toggleIsCardModalOpen}
             activeTokenHandler={activeTokenHandler}
           />
