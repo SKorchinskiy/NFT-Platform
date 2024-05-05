@@ -2,7 +2,7 @@ import Image from "next/image";
 import styles from "./nft-card.module.css";
 
 import { Fragment } from "react";
-import { NFT } from "../nft-card-list/nft-card-list.component";
+import { NFT } from "@/app/types/nft.type";
 
 export enum Status {
   NONE,
@@ -11,22 +11,23 @@ export enum Status {
   SOLD,
 }
 
+type CardProps = {
+  nft: NFT;
+  toggleIsCardModalOpen: Function;
+  initTokenHandler: Function;
+};
+
 export default function NFTCard({
   nft,
   toggleIsCardModalOpen,
-  activeTokenHandler,
-}: {
-  nft: NFT;
-  isCardModalOpen: boolean;
-  toggleIsCardModalOpen: Function;
-  activeTokenHandler: Function;
-}) {
+  initTokenHandler,
+}: CardProps) {
   return (
     <Fragment>
       <div
         className={styles["card-container"]}
         onClick={(e) => {
-          activeTokenHandler(nft.tknId);
+          initTokenHandler(nft.token_id);
           toggleIsCardModalOpen();
         }}
       >

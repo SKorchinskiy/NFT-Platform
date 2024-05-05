@@ -5,7 +5,7 @@ import { TokensContext } from "../providers/nft-tokens.provider";
 import NFTCardList from "../portal/_components/nft-card-list/nft-card-list.component";
 
 export default function MarketplacePage() {
-  const { allTokens } = useContext(TokensContext);
+  const { marketTokens } = useContext(TokensContext);
 
-  return <NFTCardList nfts={allTokens} />;
+  return <NFTCardList nfts={marketTokens} />;
 }
