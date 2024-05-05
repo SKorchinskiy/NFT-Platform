@@ -1,10 +1,10 @@
 .profile-details-container {
   display: flex;
   width: 100%;
-  justifycontent: space-between;
-  alignitems: center;
-  fontfamily: monospace;
-  fontsize: 12px;
+  justify-content: space-between;
+  align-items: center;
+  font-family: monospace;
+  font-size: 12px;
 }
 
 .details-content {
