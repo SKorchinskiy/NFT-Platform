@@ -15,21 +15,23 @@ import NFTCollectionABI from "../../configs/nft-collection.abi.json";
 import { NFT, NFTs } from "../types/nft.type";
 
 export const TokensContext = createContext({
-  marketTokens: [] as NFTs,
   tokens: [] as NFTs,
+  marketTokens: [] as NFTs,
+  purchasedTokens: [] as NFTs,
   resetTokens: (newTokens: NFTs) => {},
   removeFromMarket: (token_id: BigInt) => {},
   removeFromPersonal: (token_id: BigInt) => {},
 });
 
-// status: BigInt;
-// token_holder: string;
-// token_id: BigInt;
-// token_price: BigInt;
-// token_seller: string;
+// attributes: Array<Object>;
+// description: string;
+// external_url: string;
+// image: string;
+// name: string;
 
 export default function NftTokensProvider({ children }: PropsWithChildren) {
   const [marketTokens, setMarketTokens] = useState<NFTs>([]);
+  const [purchasedTokens, setPurchasedTokens] = useState<NFTs>([]);
   const [tokens, setTokens] = useState<NFTs>([]);
 
   const resetTokens = (newTokens: NFTs) => setTokens(newTokens);
@@ -48,6 +50,53 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
     setTokens((prevState) =>
       prevState.filter((token) => token.token_id !== token_id)
     );
+
+  useEffect(() => {
+    const getPurchasedTokens = async () => {
+      try {
+        if (address && resellContract && nftCollectionContract) {
+          const purchasedTokensData = (await resellContract.methods
+            .get_purchased_tokens()
+            .call({ from: address, gas: "3000000" })) as Array<{
+            status: BigInt;
+            token_holder: string;
+            token_id: BigInt;
+            token_price: BigInt;
+            token_seller: string;
+          }>;
+
+          const tokens_data = [] as NFTs;
+          for (const token of purchasedTokensData) {
+            const tokenURI = (await nftCollectionContract.methods
+              .tokenURI(token.token_id)
+              .call({ from: address })) as string;
+            const ipfsURI = tokenURI.replace(
+              "ipfs://",
+              `https://ipfs.io/ipfs/`
+            );
+
+            const data = (await (await fetch(ipfsURI)).json()) as {
+              attributes: Array<Object>;
+              description: string;
+              external_url: string;
+              image: string;
+              name: string;
+            };
+            data.image = data.image.replace("ipfs://", `https://ipfs.io/ipfs/`);
+
+            tokens_data.push({ ...data, ...token });
+          }
+
+          console.log({ tokens_data });
+          setPurchasedTokens(tokens_data);
+        }
+      } catch (e) {
+        console.log({ e });
+      }
+    };
+
+    getPurchasedTokens();
+  }, [resellContract, nftCollectionContract, address, marketTokens]);
 
   useEffect(() => {
     const getPersonalTokens = async (
@@ -99,7 +148,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
 
     if (address && nftCollectionContract)
       getPersonalTokens(address, nftCollectionContract);
-  }, [address, nftCollectionContract, marketTokens]);
+  }, [address, nftCollectionContract, marketTokens]); // TODO: eliminate extra rerendering due to cyclic dependency with tokens <-> marketTokens
 
   useEffect(() => {
     const getMarketNftTokens = async () => {
@@ -141,13 +190,14 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
     };
 
     getMarketNftTokens();
-  }, [address, nftCollectionContract, resellContract, tokens]);
+  }, [address, nftCollectionContract, resellContract, tokens]); // TODO: eliminate extra rerendering due to cyclic dependency with tokens <-> marketTokens
 
   return (
     <TokensContext.Provider
       value={{
-        marketTokens,
         tokens,
+        marketTokens,
+        purchasedTokens,
         resetTokens,
         removeFromMarket,
         removeFromPersonal,
