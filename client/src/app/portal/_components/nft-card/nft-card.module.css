@@ -1,8 +1,10 @@
 .card-container {
   display: flex;
   flex-direction: column;
+  width: 250px;
   margin: auto;
-  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
   position: relative;
   transition-duration: 500ms;
 }
@@ -12,14 +14,19 @@
 }
 
 .card-details-container {
-  background: red;
+  background: rgba(246, 246, 246, 1);
   border-radius: 0px 0px 10px 10px;
 }
 
 .card-details {
   margin-left: 15px;
-  font-family: fantasy;
-  font-size: 18px;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+.card-details p {
+  display: grid;
+  grid-template-columns: repeat(2, 100px);
 }
 
 .card-overlay {

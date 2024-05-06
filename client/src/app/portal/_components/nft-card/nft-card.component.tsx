@@ -1,8 +1,9 @@
 import Image from "next/image";
 import styles from "./nft-card.module.css";
 
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { NFT } from "@/app/types/nft.type";
+import { AddressContext } from "@/app/providers/address.provider";
 
 export enum Status {
   NONE,
@@ -22,6 +23,8 @@ export default function NFTCard({
   toggleIsCardModalOpen,
   initTokenHandler,
 }: CardProps) {
+  const { address } = useContext(AddressContext);
+
   return (
     <Fragment>
       <div
@@ -34,17 +37,32 @@ export default function NFTCard({
         <Image
           src={nft.image}
           alt="nft"
-          width={200}
-          height={200}
+          width={250}
+          height={250}
           style={{ borderRadius: "10px 10px 0px 0px" }}
         />
         <div className={styles["card-details-container"]}>
           <div className={styles["card-details"]}>
-            <p>Owned by YOU</p>
-            <p>{nft.name}</p>
-            <p>{nft.description}</p>
-            <p>{Number(nft.token_price) / 1e18} ETH</p>
-            <p>{Status[Number(nft.status)]}</p>
+            <p>
+              <b>Owned by: </b>
+              {nft.token_seller == address
+                ? "YOU"
+                : (() => {
+                    const head = nft.token_seller.slice(0, 5);
+                    const tail = nft.token_seller.slice(address.length - 5);
+                    return `${head}...${tail}`;
+                  })()}
+            </p>
+            <p>
+              <b>Collection: </b> {nft.name}
+            </p>
+            <p>
+              <b>Description: </b> {nft.description}
+            </p>
+            <p>
+              <b>Price: </b>
+              {Number(nft.token_price) / 1e18} ETH
+            </p>
           </div>
         </div>
         <div className={styles["card-overlay"]} />
