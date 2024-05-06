@@ -1,0 +1,54 @@
+.carousel-item {
+  position: absolute;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 50px;
+  cursor: pointer;
+}
+
+.carousel-item:nth-child(1) {
+  left: 10px;
+  animation-name: slide;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+.carousel-item:nth-child(2) {
+  left: 450px;
+  animation-name: slide;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+.carousel-item:nth-child(3) {
+  left: 850px;
+  animation-name: slide;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+.carousel-item:nth-child(4) {
+  left: 10px;
+}
+.carousel-item:nth-child(5) {
+  left: 450px;
+}
+.carousel-item:nth-child(6) {
+  left: 850px;
+}
+
+@keyframes slide {
+  0% {
+    top: 0px;
+    transform: rotate(0deg);
+  }
+
+  50% {
+    top: 20px;
+    transform: rotate(10deg);
+    opacity: 0.8;
+  }
+
+  100% {
+    top: 0px;
+    transform: rotate(0deg);
+    opacity: 0.8;
+  }
+}
