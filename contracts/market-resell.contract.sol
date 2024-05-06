@@ -24,6 +24,7 @@ contract MarketResellContract {
     }
 
     mapping(uint256 => NFT) public nft_assets;
+    mapping(uint256 => NFT) public purchase_history;
 
     event TokenListed(
         uint256 token_id,
@@ -160,14 +161,16 @@ contract MarketResellContract {
             });
         }
 
-        target_nft.status = Status.SOLD;
 
         nft_service.transferFrom(
             target_nft.token_holder, 
             buyer, 
             _token_id
         );
+        
+        target_nft.status = Status.SOLD;
         target_nft.token_seller.transfer(proposed_price);
+        target_nft.token_holder = payable(msg.sender);
 
         emit TokenPurchased({
             token_id: _token_id,
@@ -175,6 +178,18 @@ contract MarketResellContract {
             token_price: msg.value,
             token_status: target_nft.status
         });
+
+        NFT memory nft_repr = NFT({
+            token_id: target_nft.token_id,
+            token_price: target_nft.token_price,
+            token_seller: target_nft.token_seller,
+            token_holder: target_nft.token_holder,
+            status: target_nft.status
+        });
+        
+        purchase_history[counter] = nft_repr;
+        counter++;
+
         delete nft_assets[_token_id];
     }
 
@@ -198,6 +213,17 @@ contract MarketResellContract {
                 NFT storage token = nft_assets[token_id];
                 tokens[current_id++] = token;
             }
+        }
+
+        return tokens;
+    }
+
+    function get_purchased_tokens() external view returns(NFT[] memory) {
+        NFT[] memory tokens = new NFT[](counter);
+
+        for (uint256 index = 0; index < counter; index++) {
+            NFT storage token = purchase_history[index];
+            tokens[index] = token;
         }
 
         return tokens;

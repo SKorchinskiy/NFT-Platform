@@ -259,6 +259,46 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "get_purchased_tokens",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "token_id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "token_price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_seller",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_holder",
+            "type": "address"
+          },
+          {
+            "internalType": "enum MarketResellContract.Status",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct MarketResellContract.NFT[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -285,6 +325,45 @@
       }
     ],
     "name": "nft_assets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "token_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "token_price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address payable",
+        "name": "token_seller",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "token_holder",
+        "type": "address"
+      },
+      {
+        "internalType": "enum MarketResellContract.Status",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "purchase_history",
     "outputs": [
       {
         "internalType": "uint256",
