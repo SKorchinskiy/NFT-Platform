@@ -1,15 +1,23 @@
-.modal-container {
+.modal-wrapper {
   position: absolute;
+  top: 100px;
+  bottom: 0;
+  right: 200px;
+  left: 200px;
+}
+
+.modal-container {
+  position: sticky;
   background: rgb(238, 245, 255, 0.9);
   left: 200px;
   right: 200px;
   top: 70px;
   height: 450px;
   z-index: 2;
-  borderradius: 10px;
+  border-radius: 10px;
   display: grid;
   grid-template-columns: repeat(2, auto);
-  boxshadow: 15px 20px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 15px 20px 15px rgba(0, 0, 0, 0.3);
   padding: 50px;
 }
 
