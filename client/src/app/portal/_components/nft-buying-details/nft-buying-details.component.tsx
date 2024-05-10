@@ -8,6 +8,8 @@ import { contract_addresses } from "@/configs/constants";
 import { Status } from "../nft-card/nft-card.component";
 import { TokensContext } from "@/app/providers/nft-tokens.provider";
 import { PopupContext } from "@/app/providers/popup.provider";
+import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
+import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 
 export default function NFTBuyingDetails({
   nft,
@@ -22,24 +24,31 @@ export default function NFTBuyingDetails({
 
   const resellContract = useResellContract();
   const nftCollectionContract = useNFTCollectionContract();
+  const nftCreateContract = useNftCreateContract();
+  const marketCreateContract = useNftMarketContract();
 
   const buyListedToken = async () => {
-    if (address && nftCollectionContract && resellContract) {
-      await nftCollectionContract.methods
-        .setApprovalForAll(contract_addresses.marketResellContract, true)
-        .call({ from: address, gas: "3000000" });
+    if (
+      address &&
+      nftCollectionContract &&
+      resellContract &&
+      nftCreateContract &&
+      marketCreateContract
+    ) {
+      if (nft.nft_contract && nft.seq_id) {
+        await marketCreateContract.methods
+          .purchase_nft(contract_addresses.nftCreateContract, nft.seq_id)
+          .send({ from: address, value: nft.token_price.toString() });
+      } else {
+        // await nftCollectionContract.methods
+        //   .setApprovalForAll(contract_addresses.marketResellContract, true)
+        //   .send({ from: address });
 
-      const tokenPrice = (await resellContract.methods
-        .get_nft_price(nft.token_id)
-        .call({
+        await resellContract.methods.purchase_listed_nft(nft.token_id).send({
           from: address,
-        })) as number;
-
-      await resellContract.methods.purchase_listed_nft(nft.token_id).send({
-        from: address,
-        value: tokenPrice.toString(),
-      });
-
+          value: nft.token_price.toString(),
+        });
+      }
       updateText(`Successfully bought NFT-token ${nft.token_id.toString()}`);
       removeFromMarket(nft.token_id);
       toggleIsCardModalOpen();
