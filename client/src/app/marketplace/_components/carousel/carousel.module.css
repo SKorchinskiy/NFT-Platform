@@ -4,24 +4,29 @@
   margin-right: 10px;
   padding: 50px;
   cursor: pointer;
+  transition-duration: 300ms;
+}
+
+.carousel-item:hover {
+  transform: scale(105%);
 }
 
 .carousel-item:nth-child(1) {
   left: 10px;
   animation-name: slide;
-  animation-duration: 3s;
+  animation-duration: 6s;
   animation-iteration-count: infinite;
 }
 .carousel-item:nth-child(2) {
   left: 450px;
   animation-name: slide;
-  animation-duration: 3s;
+  animation-duration: 6s;
   animation-iteration-count: infinite;
 }
 .carousel-item:nth-child(3) {
   left: 850px;
   animation-name: slide;
-  animation-duration: 3s;
+  animation-duration: 6s;
   animation-iteration-count: infinite;
 }
 .carousel-item:nth-child(4) {
@@ -40,15 +45,27 @@
     transform: rotate(0deg);
   }
 
-  50% {
+  25% {
     top: 20px;
     transform: rotate(10deg);
+    opacity: 0.8;
+  }
+
+  50% {
+    top: 0px;
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+
+  75% {
+    top: 20px;
+    transform: rotate(-10deg);
     opacity: 0.8;
   }
 
   100% {
     top: 0px;
     transform: rotate(0deg);
-    opacity: 0.8;
+    opacity: 0;
   }
 }

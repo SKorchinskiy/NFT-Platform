@@ -15,11 +15,9 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
   useEffect(() => {
     const newTokens = tokens.slice(3).concat(tokens[0], tokens[1], tokens[2]);
 
-    console.log({ newTokens });
-
     setTimeout(() => {
       setTokens(newTokens);
-    }, 3000);
+    }, 6000);
   }, [tokens]);
 
   return (
