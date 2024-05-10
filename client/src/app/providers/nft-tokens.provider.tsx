@@ -23,12 +23,6 @@ export const TokensContext = createContext({
   removeFromPersonal: (token_id: BigInt) => {},
 });
 
-// attributes: Array<Object>;
-// description: string;
-// external_url: string;
-// image: string;
-// name: string;
-
 export default function NftTokensProvider({ children }: PropsWithChildren) {
   const [marketTokens, setMarketTokens] = useState<NFTs>([]);
   const [purchasedTokens, setPurchasedTokens] = useState<NFTs>([]);
@@ -57,7 +51,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
         if (address && resellContract && nftCollectionContract) {
           const purchasedTokensData = (await resellContract.methods
             .get_purchased_tokens()
-            .call({ from: address, gas: "3000000" })) as Array<{
+            .call({ from: address })) as Array<{
             status: BigInt;
             token_holder: string;
             token_id: BigInt;
@@ -87,7 +81,6 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
             tokens_data.push({ ...data, ...token });
           }
 
-          console.log({ tokens_data });
           setPurchasedTokens(tokens_data);
         }
       } catch (e) {
