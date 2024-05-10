@@ -11,6 +11,7 @@
 
 .card-container:hover {
   transform: scale(105%);
+  bottom: 10px;
 }
 
 .card-details-container {
