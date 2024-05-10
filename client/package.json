@@ -11,6 +11,8 @@
   "dependencies": {
     "@metamask/providers": "^16.1.0",
     "@metamask/utils": "^8.4.0",
+    "ipfs-http-client": "^60.0.1",
+    "kubo-rpc-client": "^4.1.1",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
