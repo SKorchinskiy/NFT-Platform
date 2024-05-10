@@ -9,6 +9,8 @@ export type NFT = {
   token_id: BigInt;
   token_price: BigInt;
   token_seller: string;
+  nft_contract?: string;
+  seq_id?: BigInt;
 };
 
 export type NFTs = Array<NFT>;
