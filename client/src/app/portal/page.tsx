@@ -8,6 +8,7 @@ import NFTCardList from "./_components/nft-card-list/nft-card-list.component";
 import { Montserrat } from "next/font/google";
 import { Status } from "./_components/nft-card/nft-card.component";
 import { AddressContext } from "../providers/address.provider";
+import { CustomTokensContext } from "../providers/custom-tokens.provider";
 
 const nunito = Montserrat({
   subsets: ["latin"],
@@ -16,8 +17,9 @@ const nunito = Montserrat({
 });
 
 export default function Portal() {
-  const { tokens, marketTokens, purchasedTokens } = useContext(TokensContext);
   const { address } = useContext(AddressContext);
+  const { addressCustomTokens: customTokens } = useContext(CustomTokensContext);
+  const { tokens, marketTokens, purchasedTokens } = useContext(TokensContext);
 
   return tokens ? (
     <div>
@@ -100,6 +102,27 @@ export default function Portal() {
           )
           .slice(0, 8)}
       />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "rgba(0, 0, 0, 0.1)",
+          borderRadius: "10px",
+        }}
+      >
+        <p
+          style={{
+            fontSize: 36,
+            textTransform: "uppercase",
+            letterSpacing: 4,
+          }}
+          className={nunito.className}
+        >
+          <b>Custom Tokens</b>
+        </p>
+      </div>
+      <NFTCardList nfts={customTokens.slice(0, 8)} />
     </div>
   ) : null;
 }
