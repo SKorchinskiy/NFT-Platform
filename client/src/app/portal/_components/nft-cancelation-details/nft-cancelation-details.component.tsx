@@ -8,6 +8,8 @@ import { NFT } from "../../../types/nft.type";
 import { Status } from "../nft-card/nft-card.component";
 import { TokensContext } from "@/app/providers/nft-tokens.provider";
 import { PopupContext } from "@/app/providers/popup.provider";
+import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
+import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 
 export default function NFTCancelationDetails({
   nft,
@@ -22,17 +24,32 @@ export default function NFTCancelationDetails({
 
   const resellContract = useResellContract();
   const nftCollectionContract = useNFTCollectionContract();
+  const nftCreateContract = useNftCreateContract();
+  const marketCreateContract = useNftMarketContract();
 
   const cancelTokenListing = async () => {
-    if (address && nftCollectionContract && resellContract) {
-      await nftCollectionContract.methods
-        .setApprovalForAll(contract_addresses.marketResellContract, true)
-        .call({
+    if (
+      address &&
+      nftCollectionContract &&
+      resellContract &&
+      nftCreateContract &&
+      marketCreateContract
+    ) {
+      if (nft.nft_contract && nft.seq_id) {
+        await nftCreateContract.methods
+          .setApprovalForAll(contract_addresses.marketCreateContract, true)
+          .send({ from: address });
+        await marketCreateContract.methods
+          .cancel_nft_listing(contract_addresses.nftCreateContract, nft.seq_id)
+          .send({ from: address });
+      } else {
+        await nftCollectionContract.methods
+          .setApprovalForAll(contract_addresses.marketResellContract, true)
+          .send({ from: address });
+        await resellContract.methods.cancel_token_listing(nft.token_id).send({
           from: address,
         });
-      await resellContract.methods.cancel_token_listing(nft.token_id).send({
-        from: address,
-      });
+      }
 
       updateText(
         `Successfully canceled NFT-token listing ${nft.token_id.toString()}`
