@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract MarketNFTCreateContract is ERC721URIStorage {
     uint256 minting_fee = 0.0075 ether;
-    uint256 token_id;
+    uint256 public counter;
 
     address payable owner;
     address contractAddress;
@@ -57,35 +57,35 @@ contract MarketNFTCreateContract is ERC721URIStorage {
     }
 
     function create_token_wrapper(string memory tokenURI) external returns(uint256) {
-        token_id++;
+        counter++;
         
-        _mint(msg.sender, token_id);
-        _setTokenURI(token_id, tokenURI);
+        _mint(msg.sender, counter);
+        _setTokenURI(counter, tokenURI);
         setApprovalForAll(contractAddress, true);
 
         emit TokenWrapperCreated({
-            token_id: token_id,
+            token_id: counter,
             token_owner: msg.sender,
             token_uri: tokenURI,
             contract_address: contractAddress
         });
-        return token_id;
+        return counter;
     }
 
     function mint_token(string memory tokenURI) external payable validateMintingFee returns(uint256) {
-        token_id++;
+        counter++;
 
-        _mint(msg.sender, token_id);
-        _setTokenURI(token_id, tokenURI);
+        _mint(msg.sender, counter);
+        _setTokenURI(counter, tokenURI);
         setApprovalForAll(contractAddress, true);
 
         emit TokenMinted({
-            token_id: token_id,
+            token_id: counter,
             token_owner: msg.sender,
             token_uri: tokenURI,
             contract_address: contractAddress
         });
-        return token_id;
+        return counter;
     }
 
     function withdraw() external onlyOwner {
