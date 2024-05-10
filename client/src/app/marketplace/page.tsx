@@ -7,6 +7,7 @@ import NFTCardList from "../portal/_components/nft-card-list/nft-card-list.compo
 import { Montserrat } from "next/font/google";
 import { Status } from "../portal/_components/nft-card/nft-card.component";
 import Carousel from "./_components/carousel/carousel.component";
+import { CustomTokensContext } from "../providers/custom-tokens.provider";
 
 const nunito = Montserrat({
   subsets: ["latin"],
@@ -15,6 +16,7 @@ const nunito = Montserrat({
 });
 
 export default function MarketplacePage() {
+  const { marketCustomTokens: customTokens } = useContext(CustomTokensContext);
   const { marketTokens, purchasedTokens } = useContext(TokensContext);
 
   return (
@@ -46,6 +48,31 @@ export default function MarketplacePage() {
             (token) => token.status.toString() == Status["ACTIVE"].toString()
           )
           .slice(0, 8)}
+      />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "rgba(0, 0, 0, 0.1)",
+          borderRadius: "10px",
+        }}
+      >
+        <p
+          style={{
+            fontSize: 36,
+            textTransform: "uppercase",
+            letterSpacing: 4,
+          }}
+          className={nunito.className}
+        >
+          <b>Minted for Sale</b>
+        </p>
+      </div>
+      <NFTCardList
+        nfts={customTokens.filter((token) => {
+          return Number(token.token_price) / 1e18 >= 1;
+        })}
       />
       <div
         style={{
