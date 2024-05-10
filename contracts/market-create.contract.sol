@@ -8,11 +8,11 @@ contract MarketCreateContract {
     address payable owner;
     
     uint256 minting_fee = 0.0075 ether;
-    uint256 listing_fee = 0.0025 ether;
+    uint256 listing_fee = 0.0025 ether; 
 
     uint256 token_seq_id;
 
-    enum Status { NONE, LISTED, SOLD, CANCELED }
+    enum Status { NONE, CANCELED, ACTIVE, SOLD }
 
     struct NFT {
         uint256 seq_id;
@@ -21,7 +21,7 @@ contract MarketCreateContract {
         address payable token_holder;
         uint256 token_price;
         address nft_contract;
-        Status token_status;
+        Status status;
     }
 
     mapping(uint256 => NFT) nft_assets;
@@ -105,7 +105,7 @@ contract MarketCreateContract {
             token_holder: holder,
             token_price: _price,
             nft_contract: _nft_contract,
-            token_status: Status.LISTED
+            status: Status.ACTIVE
         });
 
         nft_assets[token_seq_id] = nft_asset;
@@ -134,7 +134,7 @@ contract MarketCreateContract {
             });
 
         token.token_holder = payable(msg.sender);
-        token.token_status = Status.SOLD;
+        token.status = Status.SOLD;
 
         token.token_seller.transfer(token.token_price);
         IERC721(_nft_contract).transferFrom(address(this), msg.sender, token.token_id);
@@ -159,7 +159,7 @@ contract MarketCreateContract {
             });
 
         token.token_holder = payable(msg.sender);
-        token.token_status = Status.CANCELED;
+        token.status = Status.CANCELED;
         
         IERC721(_nft_contract).transferFrom(address(this), msg.sender, _token_id);
 
@@ -180,7 +180,7 @@ contract MarketCreateContract {
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
             if (
                 nft_assets[iter].token_holder == address(this) && 
-                nft_assets[iter].token_status == Status.LISTED
+                nft_assets[iter].status == Status.ACTIVE
             ) {
                 available_supply++;
             }
@@ -191,7 +191,7 @@ contract MarketCreateContract {
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
             if (
                 nft_assets[iter].token_holder == address(this) && 
-                nft_assets[iter].token_status == Status.LISTED
+                nft_assets[iter].status == Status.ACTIVE
             ) {
                 available_tokens[item_id++] = nft_assets[iter];
             }
@@ -205,7 +205,7 @@ contract MarketCreateContract {
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
             if (
                 nft_assets[iter].token_holder == msg.sender && 
-                nft_assets[iter].token_status == Status.SOLD
+                nft_assets[iter].status == Status.SOLD
             ) {
                 user_token_count++;
             }
@@ -217,7 +217,7 @@ contract MarketCreateContract {
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
             if (
                 nft_assets[iter].token_holder == msg.sender && 
-                nft_assets[iter].token_status == Status.SOLD
+                nft_assets[iter].status == Status.SOLD
             ) {
                 user_tokens[user_token_seq_id++] = nft_assets[iter];
             }
@@ -231,7 +231,7 @@ contract MarketCreateContract {
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
             if (
                 nft_assets[iter].token_seller == msg.sender && 
-                nft_assets[iter].token_status == Status.LISTED
+                nft_assets[iter].status == Status.ACTIVE
             ) {
                 listed_user_token_count++;
             }
@@ -243,7 +243,7 @@ contract MarketCreateContract {
         for (uint256 iter = 1; iter <= token_seq_id; iter++) {
             if (
                 nft_assets[iter].token_seller == msg.sender && 
-                nft_assets[iter].token_status == Status.LISTED
+                nft_assets[iter].status == Status.ACTIVE
             ) {
                 listed_user_tokens[listed_user_token_seq_id++] = nft_assets[iter];
             }
