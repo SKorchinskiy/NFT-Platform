@@ -29,6 +29,12 @@ export default function Navbar() {
           </div>
           <div
             className={styles["nav-option"]}
+            onClick={() => router.push("/mint")}
+          >
+            Mint
+          </div>
+          <div
+            className={styles["nav-option"]}
             onClick={() => router.push("/portal")}
           >
             Portal
