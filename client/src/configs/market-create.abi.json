@@ -267,7 +267,7 @@
           },
           {
             "internalType": "enum MarketCreateContract.Status",
-            "name": "token_status",
+            "name": "status",
             "type": "uint8"
           }
         ],
@@ -317,7 +317,7 @@
           },
           {
             "internalType": "enum MarketCreateContract.Status",
-            "name": "token_status",
+            "name": "status",
             "type": "uint8"
           }
         ],
@@ -367,7 +367,7 @@
           },
           {
             "internalType": "enum MarketCreateContract.Status",
-            "name": "token_status",
+            "name": "status",
             "type": "uint8"
           }
         ],
@@ -417,7 +417,7 @@
           },
           {
             "internalType": "enum MarketCreateContract.Status",
-            "name": "token_status",
+            "name": "status",
             "type": "uint8"
           }
         ],
@@ -478,7 +478,7 @@
           },
           {
             "internalType": "enum MarketCreateContract.Status",
-            "name": "token_status",
+            "name": "status",
             "type": "uint8"
           }
         ],
