@@ -9,12 +9,13 @@ import { MetamaskContext } from "../providers/metamask.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 
 import NftCreateContractABI from "../../configs/market-nft-create.abi.json";
-import { contract_addresses } from "@/configs/constants";
+import { NetworkContext } from "../providers/network.provider";
 
 export default function useNftCreateContract() {
   const [nftCreateContract, setNftCreateContract] =
     useState<Contract<typeof NftCreateContractABI>>();
 
+  const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { provider } = useContext(MetamaskContext);
 
@@ -25,7 +26,7 @@ export default function useNftCreateContract() {
       const web3 = new Web3(provider);
       const contract = new web3.eth.Contract(
         NftCreateContractABI,
-        contract_addresses.nftCreateContract,
+        network.contracts.nftCreateContract,
         { from: address }
       );
 
@@ -35,7 +36,7 @@ export default function useNftCreateContract() {
     if (provider) {
       retrieveNftCreateContract(provider);
     }
-  }, [address, provider]);
+  }, [address, provider, network]);
 
   return nftCreateContract;
 }

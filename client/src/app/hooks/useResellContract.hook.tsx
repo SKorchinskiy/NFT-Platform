@@ -6,10 +6,10 @@ import { MetamaskContext } from "../providers/metamask.provider";
 
 import MarketResellABI from "../../configs/market-resell.abi.json";
 
-import { contract_addresses } from "@/configs/constants";
 import { AddressContext } from "../providers/address.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Contract } from "web3-eth-contract";
+import { NetworkContext } from "../providers/network.provider";
 
 export default function useResellContract() {
   const [resellContract, setResellContract] =
@@ -17,13 +17,14 @@ export default function useResellContract() {
 
   const { provider } = useContext(MetamaskContext);
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   useEffect(() => {
     const retrieveResellContract = async (provider: MetaMaskInpageProvider) => {
       const web3 = new Web3(provider);
       const contract = new web3.eth.Contract(
         MarketResellABI,
-        contract_addresses.marketResellContract,
+        network.contracts.marketResellContract,
         {
           from: address,
           gasPrice: "20000000000",
@@ -35,7 +36,7 @@ export default function useResellContract() {
     if (provider) {
       retrieveResellContract(provider);
     }
-  }, [provider, address]);
+  }, [provider, address, network]);
 
   return resellContract;
 }

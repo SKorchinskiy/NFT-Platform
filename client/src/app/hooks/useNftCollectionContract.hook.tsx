@@ -6,10 +6,10 @@ import { MetamaskContext } from "../providers/metamask.provider";
 
 import NFTCollectionABI from "../../configs/nft-collection.abi.json";
 
-import { contract_addresses } from "@/configs/constants";
 import { AddressContext } from "../providers/address.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Contract } from "web3-eth-contract";
+import { NetworkContext } from "../providers/network.provider";
 
 export default function useNFTCollectionContract() {
   const [nftCollectionContract, setNftCollectionContract] =
@@ -17,6 +17,7 @@ export default function useNFTCollectionContract() {
 
   const { provider } = useContext(MetamaskContext);
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   useEffect(() => {
     const retrieveNftCollectionContract = async (
@@ -25,7 +26,7 @@ export default function useNFTCollectionContract() {
       const web3 = new Web3(provider);
       const contract = new web3.eth.Contract(
         NFTCollectionABI,
-        contract_addresses.nftCollectionContract,
+        network.contracts.nftCollectionContract,
         {
           from: address,
         }
@@ -36,7 +37,7 @@ export default function useNFTCollectionContract() {
     if (provider) {
       retrieveNftCollectionContract(provider);
     }
-  }, [provider, address]);
+  }, [provider, address, network]);
 
   return nftCollectionContract;
 }
