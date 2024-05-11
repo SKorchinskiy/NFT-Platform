@@ -5,12 +5,12 @@ import { useContext, useState } from "react";
 import { AddressContext } from "@/app/providers/address.provider";
 import useNFTCollectionContract from "@/app/hooks/useNftCollectionContract.hook";
 import useResellContract from "@/app/hooks/useResellContract.hook";
-import { contract_addresses } from "@/configs/constants";
 import { Status } from "../nft-card/nft-card.component";
 import { TokensContext } from "@/app/providers/nft-tokens.provider";
 import { PopupContext } from "@/app/providers/popup.provider";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 export default function NFTListingDetails({
   nft,
@@ -21,6 +21,7 @@ export default function NFTListingDetails({
 }) {
   const [tokenPrice, setTokenPrice] = useState<number>(1e18);
 
+  const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { updateText } = useContext(PopupContext);
   const { removeFromPersonal } = useContext(TokensContext);
@@ -40,21 +41,21 @@ export default function NFTListingDetails({
     ) {
       if (nft.nft_contract) {
         await nftCreateContract.methods
-          .setApprovalForAll(contract_addresses.marketCreateContract, true)
+          .setApprovalForAll(network.contracts.marketCreateContract, true)
           .send({ from: address });
 
         const listing_fee = "2500000000000000";
 
         await marketCreateContract.methods
           .create_nft_asset(
-            contract_addresses.nftCreateContract,
+            network.contracts.nftCreateContract,
             nft.token_id,
             tokenPrice
           )
           .send({ from: address, value: listing_fee });
       } else {
         await nftCollectionContract.methods
-          .setApprovalForAll(contract_addresses.marketResellContract, true)
+          .setApprovalForAll(network.contracts.marketResellContract, true)
           .send({ from: address });
 
         const listing_fee = (
