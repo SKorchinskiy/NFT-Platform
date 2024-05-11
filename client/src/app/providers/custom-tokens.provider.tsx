@@ -15,7 +15,7 @@ import { AddressContext } from "./address.provider";
 
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
-import { contract_addresses } from "@/configs/constants";
+import { NetworkContext } from "./network.provider";
 
 export const CustomTokensContext = createContext({
   marketCustomTokens: [] as NFTs,
@@ -27,6 +27,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
   const [addressCustomTokens, setAddressCustomTokens] = useState<NFTs>([]);
 
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   const nftCreateContract = useNftCreateContract();
   const marketCreateContract = useNftMarketContract();
@@ -85,7 +86,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
                     "https://ipfs.io/ipfs/"
                   ),
                   token_price: BigInt(0),
-                  nft_contract: contract_addresses.nftCreateContract,
+                  nft_contract: network.contracts.nftCreateContract,
                 } as NFT);
               })
           )
@@ -96,7 +97,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
     };
 
     retrieveAddressCustomTokens();
-  }, [address, nftCreateContract]);
+  }, [address, nftCreateContract, network]);
 
   useEffect(() => {
     const retrieveCustomMarketTokens = async () => {
