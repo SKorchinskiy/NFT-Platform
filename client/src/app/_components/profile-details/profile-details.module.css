@@ -2,7 +2,6 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
-  align-items: center;
   font-family: monospace;
   font-size: 12px;
 }
@@ -11,6 +10,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  margin-top: -20px;
 }
 
 .balance-info {
