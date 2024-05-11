@@ -3,7 +3,8 @@
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import { AddressContext } from "@/app/providers/address.provider";
-import { PINATA_KEY, contract_addresses } from "@/configs/constants";
+import { NetworkContext } from "@/app/providers/network.provider";
+import { PINATA_KEY } from "@/configs/constants";
 import { ChangeEvent, useContext, useState } from "react";
 
 const DEFAULT_FORM_INPUT = {
@@ -17,6 +18,7 @@ export default function MintingForm() {
   const [formInput, setFormInput] = useState(DEFAULT_FORM_INPUT);
 
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   const nftCreateContract = useNftCreateContract();
   const nftMarketContract = useNftMarketContract();
@@ -139,7 +141,7 @@ export default function MintingForm() {
         );
         await nftMarketContract?.methods
           .create_nft_asset(
-            contract_addresses.nftCreateContract,
+            network.contracts.nftCreateContract,
             token_id,
             formInput.price * 1e18
           )
