@@ -8,7 +8,7 @@ import { AddressContext } from "@/app/providers/address.provider";
 import NFTCancelationDetails from "../nft-cancelation-details/nft-cancelation-details.component";
 import NFTBuyingDetails from "../nft-buying-details/nft-buying-details.component";
 import NFTPurchaseDetails from "../nft-purchase-details/nft-purchase-details.component";
-import { contract_addresses } from "@/configs/constants";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 type NFTModalProps = {
   nft: NFT;
@@ -24,6 +24,7 @@ export default function NFTCardModal({
   activeTokenHandler,
 }: NFTModalProps) {
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   return (
     <div className={styles["modal-wrapper"]}>
@@ -60,7 +61,7 @@ export default function NFTCardModal({
         {(() => {
           if (
             Number(nft.status) == Status.ACTIVE ||
-            nft.token_holder === contract_addresses.marketCreateContract
+            nft.token_holder === network.contracts.marketCreateContract
           ) {
             return nft.token_seller == address ? (
               <NFTCancelationDetails
