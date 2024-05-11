@@ -38,7 +38,7 @@ contract MarketBlindAuctionContract {
     }
 
     function create_auction (uint256 bidding_time, address _nft_contract, uint256 _token_id) external returns(Auction memory) {
-        require(msg.sender == IERC721(_nft_contract).ownerOf(_token_id), "You're not an owner!");
+        require(msg.sender == IERC721(_nft_contract).ownerOf(_token_id), "You are not an owner!");
         
         auctions_counter++;
         Auction memory auction = Auction({
@@ -90,7 +90,7 @@ contract MarketBlindAuctionContract {
     function withdraw() external payable {
         uint256 amount = pending_returns[msg.sender];
 
-        require(amount > 0, "You don't have any pending returns!");
+        require(amount > 0, "You do not have any pending returns!");
 
         pending_returns[msg.sender] = 0;
         payable(msg.sender).transfer(amount);
@@ -140,7 +140,7 @@ contract MarketBlindAuctionContract {
 
         Auction memory auction = auctions_list[auction_id];
 
-        require(block.timestamp > auction.auction_end_time, "Auctions hasn't ended yet!");
+        require(block.timestamp > auction.auction_end_time, "Auctions has not ended yet!");
         
         if (auction.highest_bid > 0) {
             uint256 pure_profit = auction.highest_bid - (auction.highest_bid / 100);
