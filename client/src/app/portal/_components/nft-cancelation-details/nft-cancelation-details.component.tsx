@@ -3,13 +3,13 @@ import { useContext } from "react";
 import useResellContract from "@/app/hooks/useResellContract.hook";
 import { AddressContext } from "@/app/providers/address.provider";
 import useNFTCollectionContract from "@/app/hooks/useNftCollectionContract.hook";
-import { contract_addresses } from "@/configs/constants";
 import { NFT } from "../../../types/nft.type";
 import { Status } from "../nft-card/nft-card.component";
 import { TokensContext } from "@/app/providers/nft-tokens.provider";
 import { PopupContext } from "@/app/providers/popup.provider";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 export default function NFTCancelationDetails({
   nft,
@@ -18,6 +18,7 @@ export default function NFTCancelationDetails({
   nft: NFT;
   toggleIsCardModalOpen: Function;
 }) {
+  const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { updateText } = useContext(PopupContext);
   const { removeFromMarket } = useContext(TokensContext);
@@ -37,14 +38,14 @@ export default function NFTCancelationDetails({
     ) {
       if (nft.nft_contract && nft.seq_id) {
         await nftCreateContract.methods
-          .setApprovalForAll(contract_addresses.marketCreateContract, true)
+          .setApprovalForAll(network.contracts.marketCreateContract, true)
           .send({ from: address });
         await marketCreateContract.methods
-          .cancel_nft_listing(contract_addresses.nftCreateContract, nft.seq_id)
+          .cancel_nft_listing(network.contracts.nftCreateContract, nft.seq_id)
           .send({ from: address });
       } else {
         await nftCollectionContract.methods
-          .setApprovalForAll(contract_addresses.marketResellContract, true)
+          .setApprovalForAll(network.contracts.marketResellContract, true)
           .send({ from: address });
         await resellContract.methods.cancel_token_listing(nft.token_id).send({
           from: address,

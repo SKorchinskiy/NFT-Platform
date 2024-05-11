@@ -4,12 +4,12 @@ import { useContext } from "react";
 import { AddressContext } from "@/app/providers/address.provider";
 import useResellContract from "@/app/hooks/useResellContract.hook";
 import useNFTCollectionContract from "@/app/hooks/useNftCollectionContract.hook";
-import { contract_addresses } from "@/configs/constants";
 import { Status } from "../nft-card/nft-card.component";
 import { TokensContext } from "@/app/providers/nft-tokens.provider";
 import { PopupContext } from "@/app/providers/popup.provider";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 export default function NFTBuyingDetails({
   nft,
@@ -18,6 +18,7 @@ export default function NFTBuyingDetails({
   nft: NFT;
   toggleIsCardModalOpen: Function;
 }) {
+  const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { updateText } = useContext(PopupContext);
   const { removeFromMarket } = useContext(TokensContext);
@@ -37,13 +38,9 @@ export default function NFTBuyingDetails({
     ) {
       if (nft.nft_contract && nft.seq_id) {
         await marketCreateContract.methods
-          .purchase_nft(contract_addresses.nftCreateContract, nft.seq_id)
+          .purchase_nft(network.contracts.nftCreateContract, nft.seq_id)
           .send({ from: address, value: nft.token_price.toString() });
       } else {
-        // await nftCollectionContract.methods
-        //   .setApprovalForAll(contract_addresses.marketResellContract, true)
-        //   .send({ from: address });
-
         await resellContract.methods.purchase_listed_nft(nft.token_id).send({
           from: address,
           value: nft.token_price.toString(),
