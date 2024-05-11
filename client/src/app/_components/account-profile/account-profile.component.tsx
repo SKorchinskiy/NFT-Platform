@@ -3,6 +3,8 @@ import Image from "next/image";
 import ProfileDetails from "../profile-details/profile-details.component";
 import { AddressContext } from "@/app/providers/address.provider";
 import styles from "./account-profile.module.css";
+import { BINANCE, ETHEREUM, HARDHAT, POLYGON } from "@/configs/networks";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 export default function AccountProfile() {
   const { address, balance, updateSelectedAddress } =
@@ -12,6 +14,8 @@ export default function AccountProfile() {
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
 
   const toggleDetailsOpen = () => setDetailsOpen((prevState) => !prevState);
+
+  const { network, switchNetwork } = useContext(NetworkContext);
 
   useEffect(() => {
     const head = address.slice(0, 5);
@@ -29,6 +33,28 @@ export default function AccountProfile() {
       <ProfileDetails address={formatedAddress} balance={formatedBalance} />
       {detailsOpen ? (
         <Fragment>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              height: "70%",
+              width: "100%",
+              overflow: "scroll",
+            }}
+          >
+            {["Ethereum", "Binance", "Polygon", "Hardhat"].map(
+              (network, index) => (
+                <div
+                  className={styles["chain-option"]}
+                  key={index}
+                  onClick={() => switchNetwork(network)}
+                >
+                  <span>{network}</span>
+                </div>
+              )
+            )}
+          </div>
           <div
             className={styles["address-switch-container"]}
             onClick={() => {}}
