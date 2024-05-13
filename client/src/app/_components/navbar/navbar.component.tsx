@@ -39,6 +39,12 @@ export default function Navbar() {
           >
             Portal
           </div>
+          <div
+            className={styles["nav-option"]}
+            onClick={() => router.push("/trade")}
+          >
+            Trade
+          </div>
         </div>
       </div>
       <div className={styles["nav-left"]}>
