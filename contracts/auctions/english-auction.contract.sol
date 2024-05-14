@@ -19,7 +19,13 @@ contract MarketEnglishAuctionContract {
         uint256 highest_bid;
     }
 
+    struct Bid {
+        uint256 deposit;
+        address bidder;
+    }
+
     mapping(uint256 => Auction) public auctions_list;
+    mapping(uint256 => Bid[]) public auctions_bids;
     mapping(address => uint256) pending_returns;
 
     constructor() {
@@ -74,7 +80,24 @@ contract MarketEnglishAuctionContract {
             highest_bid: auction.highest_bid
         });
 
+        auctions_bids[auction_id].push(Bid({
+            deposit: msg.value,
+            bidder: msg.sender
+        }));
+
         return true;
+    }
+
+    function get_all_auction_bids(uint256 auction_id) external view returns(Bid[] memory) {
+        uint256 bid_count = auctions_bids[auction_id].length;
+        Bid[] memory bids = new Bid[](bid_count);
+
+        for (uint256 bid_id = 0; bid_id < bid_count; bid_id++) {
+            Bid memory current_bid = auctions_bids[auction_id][bid_id];
+            bids[bid_id] = current_bid;
+        }
+
+        return bids;
     }
 
     function get_all_auctions() external view returns(Auction[] memory) {
