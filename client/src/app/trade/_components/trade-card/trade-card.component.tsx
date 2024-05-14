@@ -1,6 +1,7 @@
 import { NetworkContext } from "@/app/providers/network.provider";
 import { TradeTokens } from "@/app/types/trade-tokens.type";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
 
 type TradeCardProps = {
@@ -15,6 +16,8 @@ type TradeCardProps = {
 
 export default function TradeCard({ token }: TradeCardProps) {
   const { network } = useContext(NetworkContext);
+
+  const router = useRouter();
 
   return (
     <div
@@ -54,6 +57,9 @@ export default function TradeCard({ token }: TradeCardProps) {
             color: "white",
             cursor: "pointer",
           }}
+          onClick={() =>
+            router.push("trade/" + Number(token.auction_id).toString())
+          }
         >
           Participate
         </button>
@@ -105,7 +111,7 @@ export default function TradeCard({ token }: TradeCardProps) {
         </p>
         <p>Auction End Time: </p>
         <p>
-          {new Date(Number(token.auction_end_time) * 1000)
+          {new Date(Number(token.auction_end_time))
             .toISOString()
             .replace("T", " ")}
         </p>
