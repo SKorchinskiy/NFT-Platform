@@ -1,0 +1,14 @@
+.tokens-window-container {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
+  column-gap: 10px;
+  row-gap: 10px;
+  min-height: 200px;
+  max-height: 500px;
+  overflow: scroll;
+  background: red;
+  width: 620px;
+  padding: 25px;
+  border-radius: 5px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
