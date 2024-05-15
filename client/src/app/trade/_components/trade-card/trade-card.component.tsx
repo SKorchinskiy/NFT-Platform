@@ -1,3 +1,5 @@
+import styles from "./trade-card.module.css";
+
 import { NetworkContext } from "@/app/providers/network.provider";
 import { TradeTokens } from "@/app/types/trade-tokens.type";
 import Image from "next/image";
@@ -20,27 +22,8 @@ export default function TradeCard({ token }: TradeCardProps) {
   const router = useRouter();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        justifyContent: "space-around",
-        background: "whitesmoke",
-        padding: 50,
-        margin: 50,
-        overflow: "scroll",
-        border: "1px solid black",
-        borderRadius: 5,
-        boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-        }}
-      >
+    <div className={styles["trade-card-container"]}>
+      <div className={styles["trade-card-representation"]}>
         <Image
           src={token.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
           alt="nft"
@@ -48,15 +31,7 @@ export default function TradeCard({ token }: TradeCardProps) {
           height={200}
         />
         <button
-          style={{
-            padding: 15,
-            borderRadius: 5,
-            border: 0,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-            background: "black",
-            color: "white",
-            cursor: "pointer",
-          }}
+          className={styles["participation-button"]}
           onClick={() =>
             router.push("trade/" + Number(token.auction_id).toString())
           }
@@ -64,13 +39,7 @@ export default function TradeCard({ token }: TradeCardProps) {
           Participate
         </button>
       </div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 300px)",
-          gridAutoFlow: "row",
-        }}
-      >
+      <div className={styles["trade-card-details"]}>
         <p>Auction ID: </p>
         <p>{Number(token.auction_id)}</p>
         <p>Beneficiary: </p>
