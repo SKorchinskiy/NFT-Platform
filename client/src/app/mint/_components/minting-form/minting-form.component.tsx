@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./minting-form.module.css";
+
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import { AddressContext } from "@/app/providers/address.provider";
@@ -151,102 +153,43 @@ export default function MintingForm() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-around",
-        alignItems: "center",
-        width: 350,
-        height: 500,
-        background: "rgba(177, 178, 255, 0.9)",
-        borderRadius: 10,
-        boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
-        textTransform: "uppercase",
-        letterSpacing: "1px",
-        padding: 10,
-      }}
-    >
+    <div className={styles["minting-form-container"]}>
       <h3>Mint Your Own Token</h3>
       <input
         name="name"
         placeholder="Enter token name"
         type="text"
-        style={{
-          width: "70%",
-          borderRadius: 5,
-          border: 0,
-          padding: 20,
-          boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-        }}
+        className={styles["minting-form-field"]}
         onChange={onInputChange}
       />
       <input
         name="description"
         placeholder="Enter token description"
         type="text"
-        style={{
-          width: "70%",
-          borderRadius: 5,
-          border: 0,
-          padding: 20,
-          boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-        }}
+        className={styles["minting-form-field"]}
         onChange={onInputChange}
       />
       <input
         type="file"
-        style={{
-          width: "70%",
-          borderRadius: 5,
-          border: 0,
-          padding: 20,
-        }}
+        className={styles["file-upload-input"]}
         onChange={onFileUpload}
       />
       <input
         name="price"
         placeholder="Enter token price"
         type="number"
-        style={{
-          width: "70%",
-          borderRadius: 5,
-          border: 0,
-          padding: 20,
-          boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-        }}
+        className={styles["minting-form-field"]}
         onChange={onInputChange}
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-          alignItems: "center",
-          width: "100%",
-          height: "80px",
-        }}
-      >
+      <div className={styles["form-buttons-container"]}>
         <button
-          style={{
-            width: "80%",
-            borderRadius: 5,
-            border: 0,
-            padding: 10,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-          }}
+          className={styles["minting-form-button"]}
           onClick={() => mintNftToken()}
         >
           Mint Token
         </button>
         <button
-          style={{
-            width: "80%",
-            borderRadius: 5,
-            border: 0,
-            padding: 10,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-          }}
+          className={styles["minting-form-button"]}
           onClick={() => mintAndListToken()}
         >
           Mint & List Token

@@ -1,0 +1,46 @@
+.minting-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 350px;
+  height: 500px;
+  background: rgba(177, 178, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px;
+}
+
+.minting-form-field {
+  width: 70%;
+  border-radius: 5px;
+  border: 0px;
+  padding: 20px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.file-upload-input {
+  width: 70%;
+  border-radius: 5px;
+  border: 0px;
+  padding: 20px;
+}
+
+.form-buttons-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+}
+
+.minting-form-button {
+  width: 80%;
+  border-radius: 5px;
+  border: 0px;
+  padding: 10px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
