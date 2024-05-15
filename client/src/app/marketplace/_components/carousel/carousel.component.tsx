@@ -22,16 +22,7 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          position: "relative",
-          transitionDuration: "500ms",
-          background: "rgba(0, 0, 0, 0.1)",
-          width: "100%",
-          height: "350px",
-        }}
-      >
+      <div className={styles["carousel-container"]}>
         {tokens.slice(0, 6).map((nft, index) => (
           <div
             key={index}
@@ -46,10 +37,7 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
               alt="nft"
               width={300}
               height={300}
-              style={{
-                borderRadius: "10px",
-                boxShadow: "10px 10px 15px rgba(0, 0, 0, 0.5)",
-              }}
+              className={styles["carousel-item-image"]}
             />
           </div>
         ))}
@@ -62,17 +50,7 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
             isScrollable={false}
             activeTokenHandler={() => {}}
           />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              background: "rgba(0, 0, 0, 0.7)",
-              zIndex: 1,
-            }}
-          />
+          <div className={styles["carousel-overlay"]} />
         </>
       ) : null}
     </>
