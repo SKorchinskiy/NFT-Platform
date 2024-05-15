@@ -1,0 +1,15 @@
+.popup-container {
+  position: absolute;
+  right: 50;
+  bottom: 50;
+  background: rgba(179, 225, 172, 0.8);
+  padding-left: 100;
+  padding-right: 100;
+  padding-top: 30;
+  padding-bottom: 30;
+  border-radius: 5;
+  box-shadow: 10px 5px 10px rgba(0, 0, 0, 0.5);
+  font-family: monospace;
+  text-transform: uppercase;
+  color: black;
+}
