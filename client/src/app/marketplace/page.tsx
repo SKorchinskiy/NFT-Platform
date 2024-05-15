@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./page.module.css";
+
 import { useContext } from "react";
 import { TokensContext } from "../providers/nft-tokens.provider";
 import NFTCardList from "../portal/_components/nft-card-list/nft-card-list.component";
@@ -22,23 +24,8 @@ export default function MarketplacePage() {
   return (
     <div>
       <Carousel nfts={marketTokens} />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["section-heading"]}>
+        <p className={styles["section-heading-title"].concat(nunito.className)}>
           <b>For sale</b>
         </p>
       </div>
@@ -49,23 +36,8 @@ export default function MarketplacePage() {
           )
           .slice(0, 8)}
       />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["section-heading"]}>
+        <p className={styles["section-heading-title"].concat(nunito.className)}>
           <b>Minted for Sale</b>
         </p>
       </div>
@@ -74,23 +46,8 @@ export default function MarketplacePage() {
           return Number(token.token_price) / 1e18 >= 1;
         })}
       />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["section-heading"]}>
+        <p className={styles["section-heading-title"].concat(nunito.className)}>
           <b>Recently Purchased</b>
         </p>
       </div>
