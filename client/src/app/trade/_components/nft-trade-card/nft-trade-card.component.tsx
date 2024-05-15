@@ -1,5 +1,7 @@
-import { NFT } from "@/app/types/nft.type";
 import Image from "next/image";
+import styles from "./nft-trade-card.module.css";
+
+import { NFT } from "@/app/types/nft.type";
 
 type NftTradeCardProps = {
   nft: NFT;
@@ -17,10 +19,8 @@ export default function NftTradeCard({
       <Image
         src={nft.image}
         alt="nft"
+        className={styles["nft-card-image"]}
         style={{
-          borderRadius: 5,
-          boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
-          cursor: "pointer",
           border:
             nftForTrade && nftForTrade.token_id === nft.token_id
               ? "2px solid blue"
