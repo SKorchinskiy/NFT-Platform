@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./page.module.css";
+
 import { NetworkContext } from "@/app/providers/network.provider";
 import { TradeTokensContext } from "@/app/providers/trade-tokens.provider";
 import Image from "next/image";
@@ -8,11 +10,7 @@ import TimeOut from "./_components/time-out/time-out.component";
 import BidsList from "./_components/bids-list/bids-list.component";
 import { BidsContext } from "@/app/providers/bids.provider";
 
-type AuctionPageProps = {
-  params: {
-    auction_id: string;
-  };
-};
+type AuctionPageProps = { params: { auction_id: string } };
 
 export default function AuctionPage({
   params: { auction_id },
@@ -33,18 +31,10 @@ export default function AuctionPage({
 
   return (
     <Fragment>
-      <div style={{ display: "flex", height: "600px" }}>
+      <div className={styles["auction-details-container"]}>
         {target_token ? (
           <Fragment>
-            <div
-              style={{
-                width: "50%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <div className={styles["auction-details"]}>
               <Image
                 src={target_token.image.replace(
                   "ipfs://",
@@ -53,34 +43,14 @@ export default function AuctionPage({
                 alt="token"
                 width={400}
                 height={400}
-                style={{
-                  borderRadius: 5,
-                  boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
-                }}
+                className={styles["token-image"]}
               />
               <TimeOut
                 end_time={Number(target_token.auction_end_time) * 1000}
               />
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(2, 300px)",
-                  gridAutoFlow: "row",
-                  background: "whitesmoke",
-                  padding: 50,
-                  boxSizing: "border-box",
-                  borderRadius: 5,
-                  boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
-                }}
-              >
+            <div className={styles["auction-description-container"]}>
+              <div className={styles["auction-description"]}>
                 <p>Auction ID: </p>
                 <p>{Number(target_token.auction_id)}</p>
                 <p>Beneficiary: </p>
