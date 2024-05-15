@@ -1,0 +1,12 @@
+.bid-list-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
+  height: 500px;
+  overflow: scroll;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
