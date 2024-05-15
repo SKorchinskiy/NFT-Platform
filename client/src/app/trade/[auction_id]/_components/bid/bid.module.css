@@ -1,0 +1,10 @@
+.bid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: whitesmoke;
+  color: black;
+  width: 500px;
+  border-radius: 5px;
+  margin: auto;
+  padding: 20px;
+}
