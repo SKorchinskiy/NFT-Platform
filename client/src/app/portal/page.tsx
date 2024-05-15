@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./page.module.css";
+
 import { useContext } from "react";
 import { TokensContext } from "../providers/nft-tokens.provider";
 
@@ -23,44 +25,14 @@ export default function Portal() {
 
   return tokens ? (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["portal-page-container"]}>
+        <p className={styles["portal-page-section"].concat(nunito.className)}>
           <b>Personal Tokens</b>
         </p>
       </div>
       <NFTCardList nfts={tokens.slice(0, 8)} />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["portal-page-container"]}>
+        <p className={styles["portal-page-section"].concat(nunito.className)}>
           <b>Listed Tokens</b>
         </p>
       </div>
@@ -73,23 +45,8 @@ export default function Portal() {
           )
           .slice(0, 8)}
       />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["portal-page-container"]}>
+        <p className={styles["portal-page-section"].concat(nunito.className)}>
           <b>Recently Sold</b>
         </p>
       </div>
@@ -102,23 +59,8 @@ export default function Portal() {
           )
           .slice(0, 8)}
       />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: 36,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-          }}
-          className={nunito.className}
-        >
+      <div className={styles["portal-page-container"]}>
+        <p className={styles["portal-page-section"].concat(nunito.className)}>
           <b>Custom Tokens</b>
         </p>
       </div>

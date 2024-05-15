@@ -1,0 +1,13 @@
+.portal-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.portal-page-section {
+  font-size: 36px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
