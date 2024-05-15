@@ -1,0 +1,7 @@
+.minting-container {
+  display: flex;
+  justifycontent: flex-end;
+  width: 100%;
+  padding: 50px;
+  boxsizing: border-box;
+}
