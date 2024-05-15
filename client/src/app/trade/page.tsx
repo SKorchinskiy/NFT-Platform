@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./page.module.css";
+
 import { useContext, useState } from "react";
 import TokensWindow from "./_components/tokens-window/tokens-window.component";
 import TradeSettings, {
@@ -21,7 +23,7 @@ export default function TradePage() {
 
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
-  const { tradeTokens, tradeNFTs } = useContext(TradeTokensContext);
+  const { tradeNFTs } = useContext(TradeTokensContext);
 
   const onTradePublish = async (trade_options: TRADE_OPTIONS) => {
     if (englishAuctionContract && address) {
@@ -40,13 +42,7 @@ export default function TradePage() {
 
   return (
     <div>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-around",
-        }}
-      >
+      <div className={styles["trade-selector-container"]}>
         <TokensWindow
           nftForTrade={nftForTrade}
           selectedNftHandler={selectedNftHandler}
