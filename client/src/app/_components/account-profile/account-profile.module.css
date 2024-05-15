@@ -13,6 +13,15 @@
   right: 0;
 }
 
+.networks-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 70%;
+  width: 100%;
+  overflow: scroll;
+}
+
 .address-switch-container {
   position: absolute;
   bottom: 0;

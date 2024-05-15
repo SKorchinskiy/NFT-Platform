@@ -1,9 +1,11 @@
-import { Fragment, useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import ProfileDetails from "../profile-details/profile-details.component";
-import { AddressContext } from "@/app/providers/address.provider";
 import styles from "./account-profile.module.css";
-import { BINANCE, ETHEREUM, HARDHAT, POLYGON } from "@/configs/networks";
+
+import { Fragment, useContext, useEffect, useState } from "react";
+
+import ProfileDetails from "../profile-details/profile-details.component";
+
+import { AddressContext } from "@/app/providers/address.provider";
 import { NetworkContext } from "@/app/providers/network.provider";
 
 export default function AccountProfile() {
@@ -15,7 +17,7 @@ export default function AccountProfile() {
 
   const toggleDetailsOpen = () => setDetailsOpen((prevState) => !prevState);
 
-  const { network, switchNetwork } = useContext(NetworkContext);
+  const { switchNetwork } = useContext(NetworkContext);
 
   useEffect(() => {
     const head = address.slice(0, 5);
@@ -33,16 +35,7 @@ export default function AccountProfile() {
       <ProfileDetails address={formatedAddress} balance={formatedBalance} />
       {detailsOpen ? (
         <Fragment>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              height: "70%",
-              width: "100%",
-              overflow: "scroll",
-            }}
-          >
+          <div className={styles["networks-container"]}>
             {["Ethereum", "Binance", "Polygon", "Hardhat"].map(
               (network, index) => (
                 <div
