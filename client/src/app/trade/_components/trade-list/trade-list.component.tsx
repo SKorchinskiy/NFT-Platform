@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./trade-list.module.css";
+
 import { TradeTokens } from "@/app/types/trade-tokens.type";
 import TradeCard from "../trade-card/trade-card.component";
 
@@ -17,15 +19,7 @@ type TradeListProps = {
 
 export default function TradeList({ nfts }: TradeListProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        columnGap: 50,
-        rowGap: 50,
-        width: "100%",
-      }}
-    >
+    <div className={styles["trade-list-container"]}>
       {nfts.map((token) => (
         <TradeCard key={Number(token.token_id)} token={token} />
       ))}
