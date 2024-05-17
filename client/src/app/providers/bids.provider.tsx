@@ -11,6 +11,7 @@ import { Bid } from "../types/bid.type";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import useEnglishAuctionContract from "../hooks/useEnglishAuctionContract.hook";
 import { AddressContext } from "./address.provider";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export const BidsContext = createContext({
   bids: [] as Bid[],
@@ -25,14 +26,10 @@ export default function BidsProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const getAuctionBids = async () => {
-      if (address && englishAuctionContract) {
+      if (englishAuctionContract) {
         const auctions_counter = (await englishAuctionContract.methods
           .auctions_counter()
-          .call({
-            from: address,
-          })) as BigInt;
-
-        console.log({ auctions_counter });
+          .call({ from: address || DEFAULT_READ_WALLET })) as BigInt;
 
         const all_bids = (await Promise.all(
           Array.from(Array.from(Array(Number(auctions_counter)))).map(
@@ -40,7 +37,7 @@ export default function BidsProvider({ children }: PropsWithChildren) {
               new Promise((resolve) => {
                 englishAuctionContract.methods
                   .get_all_auction_bids(index + 1)
-                  .call({ from: address })
+                  .call({ from: address || DEFAULT_READ_WALLET })
                   .then(resolve);
               })
           )

@@ -13,6 +13,7 @@ import { AddressContext } from "./address.provider";
 import { Contract } from "web3-eth-contract";
 import NFTCollectionABI from "../../configs/nft-collection.abi.json";
 import { NFT, NFTs } from "../types/nft.type";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export const TokensContext = createContext({
   tokens: [] as NFTs,
@@ -48,10 +49,10 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const getPurchasedTokens = async () => {
       try {
-        if (address && resellContract && nftCollectionContract) {
+        if (resellContract && nftCollectionContract) {
           const purchasedTokensData = (await resellContract.methods
             .get_purchased_tokens()
-            .call({ from: address })) as Array<{
+            .call({ from: address || DEFAULT_READ_WALLET })) as Array<{
             status: BigInt;
             token_holder: string;
             token_id: BigInt;
@@ -63,7 +64,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
           for (const token of purchasedTokensData) {
             const tokenURI = (await nftCollectionContract.methods
               .tokenURI(token.token_id)
-              .call({ from: address })) as string;
+              .call({ from: address || DEFAULT_READ_WALLET })) as string;
             const ipfsURI = tokenURI.replace(
               "ipfs://",
               `https://ipfs.io/ipfs/`
@@ -141,15 +142,15 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
 
     if (address && nftCollectionContract)
       getPersonalTokens(address, nftCollectionContract);
-  }, [address, nftCollectionContract, marketTokens]); // TODO: eliminate extra rerendering due to cyclic dependency with tokens <-> marketTokens
+  }, [address, nftCollectionContract]);
 
   useEffect(() => {
     const getMarketNftTokens = async () => {
-      if (address && resellContract && nftCollectionContract) {
+      if (resellContract && nftCollectionContract) {
         const tokens = (
           (await resellContract.methods
             .get_listed_nft()
-            .call({ from: address })) as Array<{
+            .call({ from: address || DEFAULT_READ_WALLET })) as Array<{
             status: BigInt;
             token_holder: string;
             token_id: BigInt;
@@ -163,7 +164,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
         for (const token of tokens) {
           const tokenURI = (await nftCollectionContract.methods
             .tokenURI(token.token_id)
-            .call({ from: address })) as string;
+            .call({ from: address || DEFAULT_READ_WALLET })) as string;
           const ipfsURI = tokenURI.replace("ipfs://", `https://ipfs.io/ipfs/`);
 
           const data = (await (await fetch(ipfsURI)).json()) as {
@@ -183,7 +184,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
     };
 
     getMarketNftTokens();
-  }, [address, nftCollectionContract, resellContract, tokens]); // TODO: eliminate extra rerendering due to cyclic dependency with tokens <-> marketTokens
+  }, [address, nftCollectionContract, resellContract]);
 
   return (
     <TokensContext.Provider

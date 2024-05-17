@@ -17,6 +17,7 @@ import { NetworkContext } from "./network.provider";
 import useNFTCollectionContract from "../hooks/useNftCollectionContract.hook";
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export const TradeTokensContext = createContext({
   tradeTokens: [] as Array<TradeTokens>,
@@ -56,10 +57,12 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const getTradeTokens = async (provider: MetaMaskInpageProvider) => {
-      if (address && englishAuctionContract) {
+      if (englishAuctionContract) {
         const tradeTokens = (await englishAuctionContract.methods
           .get_all_auctions()
-          .call({ from: address })) as Array<TradeTokens>;
+          .call({
+            from: address || DEFAULT_READ_WALLET,
+          })) as Array<TradeTokens>;
 
         setTradeTokens(tradeTokens);
         console.log({ tradeTokens });
@@ -95,14 +98,12 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
                     : nftCreateContract
                   ).methods
                     .tokenURI(token.token_id)
-                    .call({ from: address })
+                    .call({ from: address || DEFAULT_READ_WALLET })
                     .then(resolve);
                 })
             )
           )) as Array<string>
         ).map((uri) => uri.replace("ipfs://", "https://ipfs.io/ipfs/"));
-
-        console.log({ tokens_uri });
 
         const tokens_details = (await Promise.all(
           tokens_uri.map(

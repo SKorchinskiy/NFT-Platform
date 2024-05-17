@@ -16,6 +16,7 @@ import { AddressContext } from "./address.provider";
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
 import { NetworkContext } from "./network.provider";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export const CustomTokensContext = createContext({
   marketCustomTokens: [] as NFTs,
@@ -101,11 +102,11 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const retrieveCustomMarketTokens = async () => {
-      if (address && nftCreateContract) {
+      if (nftCreateContract) {
         if (marketCreateContract) {
           const listed_custom_tokens = (
             (await marketCreateContract.methods.get_all_available_nfts().call({
-              from: address,
+              from: address || DEFAULT_READ_WALLET,
             })) || []
           ).map(
             (token: {
@@ -128,7 +129,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
             const token_id = Number(listed_custom_tokens[iter].token_id);
             const token_ipfs_uri = (await nftCreateContract.methods
               .tokenURI(token_id)
-              .call({ from: address })) as string;
+              .call({ from: address || DEFAULT_READ_WALLET })) as string;
             const response = await fetch(
               token_ipfs_uri.replace("ipfs://", "https://ipfs.io/ipfs/")
             );
