@@ -13,7 +13,7 @@
   right: 200px;
   top: 70px;
   height: 450px;
-  z-index: 2;
+  z-index: 3;
   border-radius: 10px;
   display: grid;
   grid-template-columns: repeat(2, auto);
