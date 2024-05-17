@@ -24,40 +24,46 @@ export default function MarketplacePage() {
   return (
     <div>
       <Carousel nfts={marketTokens} />
-      <div className={styles["section-heading"]}>
-        <p className={styles["section-heading-title"].concat(nunito.className)}>
-          <b>For sale</b>
-        </p>
+      <div className={styles["nft-section"]}>
+        <div className={styles["section-heading"]}>
+          <p className={styles["section-heading-title"]}>
+            <b>For sale</b>
+          </p>
+        </div>
+        <NFTCardList
+          nfts={marketTokens
+            .filter(
+              (token) => token.status.toString() == Status["ACTIVE"].toString()
+            )
+            .slice(0, 8)}
+        />
       </div>
-      <NFTCardList
-        nfts={marketTokens
-          .filter(
-            (token) => token.status.toString() == Status["ACTIVE"].toString()
-          )
-          .slice(0, 8)}
-      />
-      <div className={styles["section-heading"]}>
-        <p className={styles["section-heading-title"].concat(nunito.className)}>
-          <b>Minted for Sale</b>
-        </p>
+      <div className={styles["nft-section"]}>
+        <div className={styles["section-heading"]}>
+          <p className={styles["section-heading-title"]}>
+            <b>Minted for Sale</b>
+          </p>
+        </div>
+        <NFTCardList
+          nfts={customTokens.filter((token) => {
+            return Number(token.token_price) / 1e18 >= 1;
+          })}
+        />
       </div>
-      <NFTCardList
-        nfts={customTokens.filter((token) => {
-          return Number(token.token_price) / 1e18 >= 1;
-        })}
-      />
-      <div className={styles["section-heading"]}>
-        <p className={styles["section-heading-title"].concat(nunito.className)}>
-          <b>Recently Purchased</b>
-        </p>
+      <div className={styles["nft-section"]}>
+        <div className={styles["section-heading"]}>
+          <p className={styles["section-heading-title"]}>
+            <b>Recently Purchased</b>
+          </p>
+        </div>
+        <NFTCardList
+          nfts={purchasedTokens
+            .filter(
+              (token) => token.status.toString() == Status["SOLD"].toString()
+            )
+            .slice(0, 8)}
+        />
       </div>
-      <NFTCardList
-        nfts={purchasedTokens
-          .filter(
-            (token) => token.status.toString() == Status["SOLD"].toString()
-          )
-          .slice(0, 8)}
-      />
     </div>
   );
 }

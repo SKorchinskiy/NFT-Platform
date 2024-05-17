@@ -1,13 +1,24 @@
+.nft-section {
+  padding: 5px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 10px;
+  color: white;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
 .section-heading {
   display: flex;
-  justify-content: center;
+  margin-left: 50px;
+  margin-right: 50px;
   align-items: center;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  justify-content: center;
+  margin-top: 50px;
 }
 
 .section-heading-title {
   font-size: 36px;
+  margin-left: 50px;
   text-transform: uppercase;
   letter-spacing: 4px;
 }
