@@ -5,8 +5,8 @@
   height: 100%;
   min-height: 700px;
   margin: auto;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  /* background: rgba(0, 0, 0, 0.2); */
+  border-radius: 15px;
 }
 
 .list-cards {
@@ -24,4 +24,61 @@
   left: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1;
+}
+
+.card-skeleton {
+  width: 250px;
+  height: 404px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  margin: auto;
+
+  animation-name: sparkle;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.card-skeleton-image {
+  height: 250px;
+  width: 250px;
+  background: red;
+  border-radius: 10px 10px 0px 0px;
+
+  animation-name: sparkle;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.card-skeleton-description {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: calc(100% - 250px);
+}
+
+.card-skeleton-detail {
+  height: 20px;
+  width: 230px;
+  background: red;
+  border-radius: 5px;
+
+  animation-name: sparkle;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes sparkle {
+  0% {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    background: rgba(0, 0, 0, 0.4);
+  }
+  100% {
+    background: rgba(0, 0, 0, 0.3);
+  }
 }

@@ -56,14 +56,28 @@ export default function NFTCardList({ nfts }: CardListProps) {
   return (
     <div className={styles["card-list-container"]}>
       <div className={styles["list-cards"]}>
-        {nfts.map((nft, index) => (
-          <NFTCard
-            key={index}
-            nft={nft}
-            toggleIsCardModalOpen={toggleIsCardModalOpen}
-            initTokenHandler={initTokenHandler}
-          />
-        ))}
+        {nfts.length
+          ? nfts.map((nft, index) => (
+              <NFTCard
+                key={index}
+                nft={nft}
+                toggleIsCardModalOpen={toggleIsCardModalOpen}
+                initTokenHandler={initTokenHandler}
+              />
+            ))
+          : Array.from(Array(8)).map((_, index) => (
+              <div key={index} className={styles["card-skeleton"]}>
+                <div className={styles["card-skeleton-image"]} />
+                <div className={styles["card-skeleton-description"]}>
+                  {Array.from(Array(4)).map((_, index) => (
+                    <div
+                      key={index}
+                      className={styles["card-skeleton-detail"]}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
       </div>
       {isCardModalOpen ? (
         <Fragment>
