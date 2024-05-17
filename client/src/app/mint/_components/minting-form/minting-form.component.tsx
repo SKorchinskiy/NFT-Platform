@@ -1,5 +1,6 @@
 "use client";
 
+import ConnectWallet from "@/app/_components/connect-wallet/connect-wallet.component";
 import styles from "./minting-form.module.css";
 
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
@@ -181,20 +182,35 @@ export default function MintingForm() {
         className={styles["minting-form-field"]}
         onChange={onInputChange}
       />
-      <div className={styles["form-buttons-container"]}>
-        <button
-          className={styles["minting-form-button"]}
-          onClick={() => mintNftToken()}
+      {address ? (
+        <div className={styles["form-buttons-container"]}>
+          <button
+            className={styles["minting-form-button"]}
+            onClick={() => mintNftToken()}
+          >
+            Mint Token
+          </button>
+          <button
+            className={styles["minting-form-button"]}
+            onClick={() => mintAndListToken()}
+          >
+            Mint & List Token
+          </button>
+        </div>
+      ) : (
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100px",
+            width: "250px",
+          }}
         >
-          Mint Token
-        </button>
-        <button
-          className={styles["minting-form-button"]}
-          onClick={() => mintAndListToken()}
-        >
-          Mint & List Token
-        </button>
-      </div>
+          <ConnectWallet />
+        </div>
+      )}
     </div>
   );
 }

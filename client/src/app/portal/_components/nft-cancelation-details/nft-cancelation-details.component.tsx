@@ -10,6 +10,7 @@ import { PopupContext } from "@/app/providers/popup.provider";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import { NetworkContext } from "@/app/providers/network.provider";
+import ConnectWallet from "@/app/_components/connect-wallet/connect-wallet.component";
 
 export default function NFTCancelationDetails({
   nft,
@@ -88,9 +89,24 @@ export default function NFTCancelationDetails({
         </p>
       </div>
       <div className={styles["nft-interactive-container"]}>
-        <div className={styles["cancel-button"]} onClick={cancelTokenListing}>
-          Cancel listing
-        </div>
+        {address ? (
+          <div className={styles["cancel-button"]} onClick={cancelTokenListing}>
+            Cancel listing
+          </div>
+        ) : (
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100px",
+              width: "250px",
+            }}
+          >
+            <ConnectWallet />
+          </div>
+        )}
       </div>
     </div>
   );

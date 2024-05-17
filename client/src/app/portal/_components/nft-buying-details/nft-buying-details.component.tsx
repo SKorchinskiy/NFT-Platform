@@ -10,6 +10,7 @@ import { PopupContext } from "@/app/providers/popup.provider";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import { NetworkContext } from "@/app/providers/network.provider";
+import ConnectWallet from "@/app/_components/connect-wallet/connect-wallet.component";
 
 export default function NFTBuyingDetails({
   nft,
@@ -80,9 +81,24 @@ export default function NFTBuyingDetails({
         </p>
       </div>
       <div className={styles["nft-interactive-container"]}>
-        <div className={styles["purchase-button"]} onClick={buyListedToken}>
-          Buy token
-        </div>
+        {address ? (
+          <div className={styles["purchase-button"]} onClick={buyListedToken}>
+            Buy token
+          </div>
+        ) : (
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100px",
+              width: "250px",
+            }}
+          >
+            <ConnectWallet />
+          </div>
+        )}
       </div>
     </div>
   );
