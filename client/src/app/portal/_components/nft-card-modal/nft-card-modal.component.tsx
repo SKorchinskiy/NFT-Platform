@@ -9,6 +9,7 @@ import NFTCancelationDetails from "../nft-cancelation-details/nft-cancelation-de
 import NFTBuyingDetails from "../nft-buying-details/nft-buying-details.component";
 import NFTPurchaseDetails from "../nft-purchase-details/nft-purchase-details.component";
 import { NetworkContext } from "@/app/providers/network.provider";
+import StatusPlate from "../status-plate/status-plate.component";
 
 type NFTModalProps = {
   nft: NFT;
@@ -57,6 +58,7 @@ export default function NFTCardModal({
             height={400}
             style={{ borderRadius: "10px" }}
           />
+          <StatusPlate nft={nft} />
         </div>
         {(() => {
           if (
