@@ -12,35 +12,43 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
   const toggleIsCardModalOpen = () =>
     setIsCardModalOpen((prevState) => !prevState);
 
-  useEffect(() => {
-    const newTokens = tokens.slice(3).concat(tokens[0], tokens[1], tokens[2]);
-
-    setTimeout(() => {
-      setTokens(newTokens);
-    }, 6000);
-  }, [tokens]);
+  useEffect(() => setTokens(nfts), [nfts]);
 
   return (
     <>
       <div className={styles["carousel-container"]}>
-        {tokens.slice(0, 6).map((nft, index) => (
-          <div
-            key={index}
-            className={styles["carousel-item"]}
-            onClick={() => {
-              toggleIsCardModalOpen();
-              setSelectedNFT(nft);
-            }}
-          >
-            <Image
-              src={nft.image}
-              alt="nft"
-              width={300}
-              height={300}
-              className={styles["carousel-item-image"]}
-            />
-          </div>
-        ))}
+        {tokens.length
+          ? tokens.slice(0, 6).map((nft, index) => (
+              <div
+                key={Number(nft.token_id)}
+                className={styles["carousel-item"]}
+                onClick={() => {
+                  toggleIsCardModalOpen();
+                  setSelectedNFT(nft);
+                }}
+              >
+                <Image
+                  src={nft.image}
+                  alt="nft"
+                  width={300}
+                  height={300}
+                  className={styles["carousel-item-image"]}
+                />
+              </div>
+            ))
+          : Array.from(Array(6)).map((_, index) => (
+              <div key={index} className={styles["carousel-item"]}>
+                <div
+                  style={{
+                    width: 250,
+                    height: 250,
+                    background: "rgba(0, 0, 0, 0.3)",
+                    borderRadius: 10,
+                    boxShadow: "10px 10px 15px rgba(0, 0, 0, 0.5)",
+                  }}
+                />
+              </div>
+            ))}
       </div>
       {isCardModalOpen && selectedNFT ? (
         <>
