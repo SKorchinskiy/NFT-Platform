@@ -1,5 +1,89 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft_contract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_token_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancel_nft_listing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft_contract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_token_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_price",
+        "type": "uint256"
+      }
+    ],
+    "name": "create_nft_asset",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "seq_id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "token_id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_seller",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_holder",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "token_price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "nft_contract",
+            "type": "address"
+          },
+          {
+            "internalType": "enum MarketCreateContract.Status",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct MarketCreateContract.NFT",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -204,34 +288,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_token_id",
+        "name": "seq_id",
         "type": "uint256"
       }
     ],
-    "name": "cancel_nft_listing",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_nft_contract",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_token_id",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_price",
-        "type": "uint256"
-      }
-    ],
-    "name": "create_nft_asset",
+    "name": "purchase_nft",
     "outputs": [
       {
         "components": [
@@ -281,7 +342,64 @@
   },
   {
     "inputs": [],
+    "name": "withdraw_profit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "get_all_available_nfts",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "seq_id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "token_id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_seller",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "token_holder",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "token_price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "nft_contract",
+            "type": "address"
+          },
+          {
+            "internalType": "enum MarketCreateContract.Status",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct MarketCreateContract.NFT[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "get_purchase_history",
     "outputs": [
       {
         "components": [
@@ -430,71 +548,16 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_nft_contract",
-        "type": "address"
-      },
+    "inputs": [],
+    "name": "purchase_counter",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "seq_id",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "name": "purchase_nft",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "seq_id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "token_id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address payable",
-            "name": "token_seller",
-            "type": "address"
-          },
-          {
-            "internalType": "address payable",
-            "name": "token_holder",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "token_price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "nft_contract",
-            "type": "address"
-          },
-          {
-            "internalType": "enum MarketCreateContract.Status",
-            "name": "status",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct MarketCreateContract.NFT",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "withdraw_profit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   }
 ]
