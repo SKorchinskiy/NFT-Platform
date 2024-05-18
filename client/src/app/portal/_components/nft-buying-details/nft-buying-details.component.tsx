@@ -11,6 +11,7 @@ import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import { NetworkContext } from "@/app/providers/network.provider";
 import ConnectWallet from "@/app/_components/connect-wallet/connect-wallet.component";
+import JSConfetti from "js-confetti";
 
 export default function NFTBuyingDetails({
   nft,
@@ -47,6 +48,10 @@ export default function NFTBuyingDetails({
           value: nft.token_price.toString(),
         });
       }
+      new JSConfetti().addConfetti({
+        emojis: ["🎊", "🎈"],
+        confettiNumber: 100,
+      });
       updateText(`Successfully bought NFT-token ${nft.token_id.toString()}`);
       removeFromMarket(nft.token_id);
       toggleIsCardModalOpen();
