@@ -13,7 +13,16 @@ const params = {
   SOLD: {
     background: "red",
   },
-} as { NONE: Object; CANCELED: Object; ACTIVE: Object; SOLD: object };
+  TRADE: {
+    background: "green",
+  },
+} as {
+  NONE: Object;
+  CANCELED: Object;
+  ACTIVE: Object;
+  SOLD: object;
+  TRADE: object;
+};
 
 export default function StatusPlate({ nft }: { nft: { status: BigInt } }) {
   return (
