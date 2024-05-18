@@ -10,6 +10,8 @@ import { Montserrat } from "next/font/google";
 import { Status } from "../portal/_components/nft-card/nft-card.component";
 import Carousel from "./_components/carousel/carousel.component";
 import { CustomTokensContext } from "../providers/custom-tokens.provider";
+import TradeList from "../trade/_components/trade-list/trade-list.component";
+import { TradeTokensContext } from "../providers/trade-tokens.provider";
 
 const nunito = Montserrat({
   subsets: ["latin"],
@@ -18,12 +20,16 @@ const nunito = Montserrat({
 });
 
 export default function MarketplacePage() {
-  const { marketCustomTokens: customTokens } = useContext(CustomTokensContext);
+  const {
+    marketCustomTokens: customTokens,
+    purchasedTokens: customPurchaseTokens,
+  } = useContext(CustomTokensContext);
   const { marketTokens, purchasedTokens } = useContext(TokensContext);
+  const { tradeNFTs } = useContext(TradeTokensContext);
 
   return (
     <div>
-      <Carousel nfts={marketTokens} />
+      <Carousel nfts={marketTokens.concat(customTokens)} />
       <div className={styles["nft-section"]}>
         <div className={styles["section-heading"]}>
           <p className={styles["section-heading-title"]}>
@@ -58,11 +64,20 @@ export default function MarketplacePage() {
         </div>
         <NFTCardList
           nfts={purchasedTokens
+            .concat(customPurchaseTokens)
             .filter(
               (token) => token.status.toString() == Status["SOLD"].toString()
             )
             .slice(0, 8)}
         />
+      </div>
+      <div className={styles["nft-section"]}>
+        <div className={styles["section-heading"]}>
+          <p className={styles["section-heading-title"]}>
+            <b>Auctions</b>
+          </p>
+        </div>
+        <TradeList nfts={tradeNFTs.slice(0, 8)} detailed={false} />
       </div>
     </div>
   );
