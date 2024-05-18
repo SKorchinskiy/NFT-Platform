@@ -1,0 +1,40 @@
+.trade-card-container {
+  display: flex;
+  justify-content: space-around;
+  background: whitesmoke;
+  padding: 50px;
+  margin: 50px;
+  overflow: scroll;
+  border: 1px solid black;
+  border-radius: 5px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+  transition-duration: 300ms;
+}
+
+.trade-card-container:hover {
+  cursor: pointer;
+  transform: scale(105%);
+  top: -10px;
+}
+
+.trade-card-representation {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.participation-button {
+  padding: 15px;
+  border-radius: 5px;
+  border: 0;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
+.trade-card-details {
+  display: grid;
+  grid-template-columns: repeat(2, 300px);
+  grid-auto-flow: row;
+}
