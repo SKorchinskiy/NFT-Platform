@@ -11,6 +11,7 @@ import CustomTokensProvider from "./providers/custom-tokens.provider";
 import NetworkProvider from "./providers/network.provider";
 import TradeTokensProvider from "./providers/trade-tokens.provider";
 import BidsProvider from "./providers/bids.provider";
+import Footer from "./_components/footer/footer.component";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +39,7 @@ export default function RootLayout({
                       <PopupProvider>
                         <Navbar />
                         {children}
+                        <Footer />
                         <ActionPopup />
                       </PopupProvider>
                     </BidsProvider>
