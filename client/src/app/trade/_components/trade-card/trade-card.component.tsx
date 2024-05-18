@@ -1,3 +1,4 @@
+import StatusPlate from "@/app/portal/_components/status-plate/status-plate.component";
 import styles from "./trade-card.module.css";
 
 import { NetworkContext } from "@/app/providers/network.provider";
@@ -22,7 +23,12 @@ export default function TradeCard({ token }: TradeCardProps) {
   const router = useRouter();
 
   return (
-    <div className={styles["trade-card-container"]}>
+    <div
+      className={styles["trade-card-container"]}
+      style={{
+        position: "relative",
+      }}
+    >
       <div className={styles["trade-card-representation"]}>
         <Image
           src={token.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
@@ -30,6 +36,7 @@ export default function TradeCard({ token }: TradeCardProps) {
           width={200}
           height={200}
         />
+        <StatusPlate nft={{ ...token, status: BigInt(4) }} />
         <button
           className={styles["participation-button"]}
           onClick={() =>
