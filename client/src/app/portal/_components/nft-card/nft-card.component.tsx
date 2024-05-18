@@ -11,6 +11,7 @@ export enum Status {
   CANCELED,
   ACTIVE,
   SOLD,
+  TRADE,
 }
 
 type CardProps = {
