@@ -11,6 +11,7 @@ contract MarketCreateContract {
     uint256 listing_fee = 0.0025 ether; 
 
     uint256 token_seq_id;
+    uint256 public purchase_counter;
 
     enum Status { NONE, CANCELED, ACTIVE, SOLD }
 
@@ -25,6 +26,7 @@ contract MarketCreateContract {
     }
 
     mapping(uint256 => NFT) nft_assets;
+    mapping(uint256 => NFT) purchase_history;
 
     event NFTAssetCreated(
         uint256 seq_id, 
@@ -147,6 +149,18 @@ contract MarketCreateContract {
             token_price: token.token_price,
             nft_contract: token.nft_contract
         });
+
+        NFT memory nft_repr = NFT({
+            seq_id: token.seq_id,
+            token_id: token.token_id,
+            token_seller: token.token_seller,
+            token_holder: token.token_holder,
+            token_price: token.token_price,
+            nft_contract: token.nft_contract,
+            status: token.status
+        });
+
+        purchase_history[purchase_counter++] = nft_repr;
         
         return token;
     }
@@ -250,6 +264,17 @@ contract MarketCreateContract {
         }
 
         return listed_user_tokens;
+    }
+
+    function get_purchase_history() external view returns(NFT[] memory) {
+        NFT[] memory tokens = new NFT[](purchase_counter);
+        
+        for (uint256 pid = 0; pid < purchase_counter; pid++) {
+            NFT memory token = purchase_history[pid];
+            tokens[pid] = token;
+        }
+
+        return tokens;
     }
 
     function withdraw_profit() external onlyOwner {
