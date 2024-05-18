@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import styles from "./carousel.module.css";
 import NFTCardModal from "@/app/portal/_components/nft-card-modal/nft-card-modal.component";
+import StatusPlate from "@/app/portal/_components/status-plate/status-plate.component";
 
 export default function Carousel({ nfts }: { nfts: NFTs }) {
   const [tokens, setTokens] = useState(nfts || []);
@@ -27,13 +28,20 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
                   setSelectedNFT(nft);
                 }}
               >
-                <Image
-                  src={nft.image}
-                  alt="nft"
-                  width={300}
-                  height={300}
-                  className={styles["carousel-item-image"]}
-                />
+                <div
+                  style={{
+                    position: "relative",
+                  }}
+                >
+                  <Image
+                    src={nft.image}
+                    alt="nft"
+                    width={300}
+                    height={300}
+                    className={styles["carousel-item-image"]}
+                  />
+                  <StatusPlate nft={nft} />
+                </div>
               </div>
             ))
           : Array.from(Array(6)).map((_, index) => (
