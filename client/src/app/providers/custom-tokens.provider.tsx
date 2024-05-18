@@ -19,11 +19,13 @@ import { NetworkContext } from "./network.provider";
 import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export const CustomTokensContext = createContext({
+  purchasedTokens: [] as NFTs,
   marketCustomTokens: [] as NFTs,
   addressCustomTokens: [] as NFTs,
 });
 
 export default function CustomTokensProvider({ children }: PropsWithChildren) {
+  const [purchasedTokens, setPurchasedTokens] = useState<NFTs>([]);
   const [marketCustomTokens, setMarketCustomTokens] = useState<NFTs>([]);
   const [addressCustomTokens, setAddressCustomTokens] = useState<NFTs>([]);
 
@@ -32,6 +34,52 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
 
   const nftCreateContract = useNftCreateContract();
   const marketCreateContract = useNftMarketContract();
+
+  useEffect(() => {
+    const getPurchasedTokens = async () => {
+      try {
+        if (nftCreateContract && marketCreateContract) {
+          const purchasedTokensData = (await marketCreateContract.methods
+            .get_purchase_history()
+            .call({ from: address || DEFAULT_READ_WALLET })) as Array<{
+            status: BigInt;
+            token_holder: string;
+            token_id: BigInt;
+            token_price: BigInt;
+            token_seller: string;
+          }>;
+
+          const tokens_data = [] as NFTs;
+          for (const token of purchasedTokensData) {
+            const tokenURI = (await nftCreateContract.methods
+              .tokenURI(token.token_id)
+              .call({ from: address || DEFAULT_READ_WALLET })) as string;
+            const ipfsURI = tokenURI.replace(
+              "ipfs://",
+              `https://ipfs.io/ipfs/`
+            );
+
+            const data = (await (await fetch(ipfsURI)).json()) as {
+              attributes: Array<Object>;
+              description: string;
+              external_url: string;
+              image: string;
+              name: string;
+            };
+            data.image = data.image.replace("ipfs://", `https://ipfs.io/ipfs/`);
+
+            tokens_data.push({ ...data, ...token });
+          }
+
+          setPurchasedTokens(tokens_data);
+        }
+      } catch (e) {
+        console.log({ e });
+      }
+    };
+
+    getPurchasedTokens();
+  }, [address, nftCreateContract, marketCreateContract]);
 
   useEffect(() => {
     const retrieveAddressCustomTokens = async () => {
@@ -161,7 +209,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
 
   return (
     <CustomTokensContext.Provider
-      value={{ marketCustomTokens, addressCustomTokens }}
+      value={{ purchasedTokens, marketCustomTokens, addressCustomTokens }}
     >
       {children}
     </CustomTokensContext.Provider>
