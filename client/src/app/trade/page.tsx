@@ -13,6 +13,7 @@ import { AddressContext } from "../providers/address.provider";
 import { NetworkContext } from "../providers/network.provider";
 import TradeList from "./_components/trade-list/trade-list.component";
 import { TradeTokensContext } from "../providers/trade-tokens.provider";
+import useNFTCollectionContract from "../hooks/useNftCollectionContract.hook";
 
 export default function TradePage() {
   const [nftForTrade, setNftForTrade] = useState<NFT>({} as NFT);
@@ -20,13 +21,17 @@ export default function TradePage() {
   const selectedNftHandler = (nft: NFT) => setNftForTrade(nft);
 
   const englishAuctionContract = useEnglishAuctionContract();
+  const nftCollectionContract = useNFTCollectionContract();
 
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
   const { tradeNFTs } = useContext(TradeTokensContext);
 
   const onTradePublish = async (trade_options: TRADE_OPTIONS) => {
-    if (englishAuctionContract && address) {
+    if (englishAuctionContract && nftCollectionContract && address) {
+      await nftCollectionContract.methods
+        .setApprovalForAll(network.contracts.englishAuctionContract, true)
+        .send({ from: address });
       const response = await englishAuctionContract.methods
         .create_auction(
           trade_options.trade_time,
@@ -49,7 +54,7 @@ export default function TradePage() {
         />
         <TradeSettings onTradePublish={onTradePublish} />
       </div>
-      <TradeList nfts={tradeNFTs} />
+      <TradeList nfts={tradeNFTs} detailed={true} />
     </div>
   );
 }
