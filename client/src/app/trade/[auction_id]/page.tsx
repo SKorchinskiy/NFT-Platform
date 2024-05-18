@@ -9,6 +9,7 @@ import { Fragment, useContext, useMemo } from "react";
 import TimeOut from "./_components/time-out/time-out.component";
 import BidsList from "./_components/bids-list/bids-list.component";
 import { BidsContext } from "@/app/providers/bids.provider";
+import StatusPlate from "@/app/portal/_components/status-plate/status-plate.component";
 
 type AuctionPageProps = { params: { auction_id: string } };
 
@@ -35,16 +36,23 @@ export default function AuctionPage({
         {target_token ? (
           <Fragment>
             <div className={styles["auction-details"]}>
-              <Image
-                src={target_token.image.replace(
-                  "ipfs://",
-                  "https://ipfs.io/ipfs/"
-                )}
-                alt="token"
-                width={400}
-                height={400}
-                className={styles["token-image"]}
-              />
+              <div
+                style={{
+                  position: "relative",
+                }}
+              >
+                <Image
+                  src={target_token.image.replace(
+                    "ipfs://",
+                    "https://ipfs.io/ipfs/"
+                  )}
+                  alt="token"
+                  width={400}
+                  height={400}
+                  className={styles["token-image"]}
+                />
+                <StatusPlate nft={{ ...target_token, status: BigInt(4) }} />
+              </div>
               <TimeOut
                 end_time={Number(target_token.auction_end_time) * 1000}
               />
