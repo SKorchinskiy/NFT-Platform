@@ -17,6 +17,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "replicate": "^0.29.4",
     "web3-eth-contract": "^4.4.0"
   },
   "devDependencies": {
