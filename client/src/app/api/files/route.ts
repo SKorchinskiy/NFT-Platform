@@ -3,10 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const config = { api: { bodaParser: false } };
 
+async function createFile(url: string) {
+  let response = await fetch(url);
+  let data = await response.blob();
+  console.log({ data });
+  let metadata = { type: "image/jpeg" };
+  return new File([data], "test.jpg", metadata);
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data = await request.formData();
-    const file: File | null = data.get("file") as unknown as File;
+    let file: File | null = data.get("file") as unknown as File;
+    if (typeof file === "string") {
+      file = await createFile(file);
+    }
     data.append("file", file);
     data.append("pinataMetadata", JSON.stringify({ name: data.get("name") }));
 
