@@ -1,0 +1,46 @@
+.minting-constructor-container {
+  width: 309px;
+  height: 500px;
+  border-radius: 10px;
+  background: whitesmoke;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.constructor-image {
+  width: 100%;
+  height: 309px;
+}
+
+.image-filler {
+  border-radius: 10px 10px 0px 0px;
+  width: 309px;
+  height: 309px;
+  background: rgba(0, 0, 0, 0.3);
+  animation-name: blink;
+  animation-duration: 3000ms;
+  animation-iteration-count: infinite;
+}
+
+.input-filler {
+  height: 20px;
+  width: 100px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.3);
+  animation-name: blink;
+  animation-duration: 3000ms;
+  animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+  0% {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  50% {
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  0% {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
