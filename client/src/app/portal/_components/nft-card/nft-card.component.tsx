@@ -12,6 +12,7 @@ export enum Status {
   ACTIVE,
   SOLD,
   TRADE,
+  ENDED,
 }
 
 type CardProps = {
