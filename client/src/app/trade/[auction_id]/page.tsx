@@ -144,16 +144,24 @@ export default function AuctionPage({
                         await blindAuctionContract.methods
                           .auctionEnd(target_auction.auction_id)
                           .send({ from: address });
-                        await blindAuctionContract.methods
-                          .withdraw()
-                          .send({ from: address });
+                        try {
+                          await blindAuctionContract.methods
+                            .withdraw()
+                            .send({ from: address });
+                        } catch (e) {
+                          console.log({ e });
+                        }
                       } else {
                         await englishAuctionContract.methods
                           .auctionEnd(target_auction.auction_id)
                           .send({ from: address });
-                        await englishAuctionContract.methods
-                          .withdraw()
-                          .send({ from: address });
+                        try {
+                          await englishAuctionContract.methods
+                            .withdraw()
+                            .send({ from: address });
+                        } catch (e) {
+                          console.log({ e });
+                        }
                       }
                   }
                 }}
@@ -167,6 +175,7 @@ export default function AuctionPage({
                   textTransform: "uppercase",
                   letterSpacing: 1,
                   visibility: hasEnded ? "visible" : "collapse",
+                  cursor: "pointer",
                 }}
               >
                 End Auction
