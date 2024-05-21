@@ -1,6 +1,6 @@
 .time-out-outer-container {
   width: 400px;
-  margin-top: 50px;
+  margin-top: 10px;
 }
 
 .time-container {
@@ -11,6 +11,8 @@
   width: 40px;
   background: black;
   color: white;
+  margin: 2px;
+  border-radius: 10px;
 }
 
 .time-outer-container {

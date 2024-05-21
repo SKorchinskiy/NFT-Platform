@@ -22,16 +22,16 @@ export default function TimeOut({ end_time }: { end_time: number }) {
         () => setTimeLeft((prevTime) => prevTime - 1000),
         1000
       );
-    } else if (timeLeft === 0) {
+    } else if (timeLeft < 0) {
       clearTimeout(tid.current);
     }
   }, [timeLeft, end_time]);
 
   const timeFormatter = (value: number) => {
     if (Math.floor(value) < 10) {
-      return `0${Math.floor(value)}`;
+      return `0${Math.floor(Math.max(value, 0))}`;
     }
-    return Math.floor(value).toString();
+    return Math.floor(Math.max(value, 0)).toString();
   };
 
   return (
