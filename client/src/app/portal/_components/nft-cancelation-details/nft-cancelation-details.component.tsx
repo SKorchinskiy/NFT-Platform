@@ -11,6 +11,7 @@ import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import { NetworkContext } from "@/app/providers/network.provider";
 import ConnectWallet from "@/app/_components/connect-wallet/connect-wallet.component";
+import { CustomTokensContext } from "@/app/providers/custom-tokens.provider";
 
 export default function NFTCancelationDetails({
   nft,
@@ -22,7 +23,9 @@ export default function NFTCancelationDetails({
   const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { updateText } = useContext(PopupContext);
-  const { removeFromMarket } = useContext(TokensContext);
+  const { refreshTokens } = useContext(TokensContext);
+  const { refreshTokens: refreshCustomTokens } =
+    useContext(CustomTokensContext);
 
   const resellContract = useResellContract();
   const nftCollectionContract = useNFTCollectionContract();
@@ -56,7 +59,8 @@ export default function NFTCancelationDetails({
       updateText(
         `Successfully canceled NFT-token listing ${nft.token_id.toString()}`
       );
-      removeFromMarket(nft.token_id);
+      refreshTokens();
+      refreshCustomTokens();
       toggleIsCardModalOpen();
     }
   };

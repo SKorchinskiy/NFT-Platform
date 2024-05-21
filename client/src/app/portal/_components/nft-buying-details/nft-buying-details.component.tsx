@@ -12,6 +12,7 @@ import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import { NetworkContext } from "@/app/providers/network.provider";
 import ConnectWallet from "@/app/_components/connect-wallet/connect-wallet.component";
 import JSConfetti from "js-confetti";
+import { CustomTokensContext } from "@/app/providers/custom-tokens.provider";
 
 export default function NFTBuyingDetails({
   nft,
@@ -23,7 +24,9 @@ export default function NFTBuyingDetails({
   const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { updateText } = useContext(PopupContext);
-  const { removeFromMarket } = useContext(TokensContext);
+  const { refreshTokens } = useContext(TokensContext);
+  const { refreshTokens: refreshCustomTokens } =
+    useContext(CustomTokensContext);
 
   const resellContract = useResellContract();
   const nftCollectionContract = useNFTCollectionContract();
@@ -53,7 +56,8 @@ export default function NFTBuyingDetails({
         confettiNumber: 100,
       });
       updateText(`Successfully bought NFT-token ${nft.token_id.toString()}`);
-      removeFromMarket(nft.token_id);
+      refreshTokens();
+      refreshCustomTokens();
       toggleIsCardModalOpen();
     }
   };

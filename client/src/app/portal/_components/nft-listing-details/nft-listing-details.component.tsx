@@ -11,6 +11,7 @@ import { PopupContext } from "@/app/providers/popup.provider";
 import useNftCreateContract from "@/app/hooks/useNftCreateContract.hook";
 import useNftMarketContract from "@/app/hooks/useNftMarketContract.hook";
 import { NetworkContext } from "@/app/providers/network.provider";
+import { CustomTokensContext } from "@/app/providers/custom-tokens.provider";
 
 export default function NFTListingDetails({
   nft,
@@ -24,7 +25,9 @@ export default function NFTListingDetails({
   const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
   const { updateText } = useContext(PopupContext);
-  const { removeFromPersonal } = useContext(TokensContext);
+  const { refreshTokens } = useContext(TokensContext);
+  const { refreshTokens: refreshCustomTokens } =
+    useContext(CustomTokensContext);
 
   const resellContract = useResellContract();
   const nftCollectionContract = useNFTCollectionContract();
@@ -70,7 +73,8 @@ export default function NFTListingDetails({
         });
       }
       updateText(`Successfully listed NFT-token ${nft.token_id.toString()}`);
-      removeFromPersonal(nft.token_id);
+      refreshTokens();
+      refreshCustomTokens();
       toggleIsCardModalOpen();
     }
   };
