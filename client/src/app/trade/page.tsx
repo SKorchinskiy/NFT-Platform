@@ -14,6 +14,7 @@ import { NetworkContext } from "../providers/network.provider";
 import TradeList from "./_components/trade-list/trade-list.component";
 import { TradeTokensContext } from "../providers/trade-tokens.provider";
 import useNFTCollectionContract from "../hooks/useNftCollectionContract.hook";
+import useBlindAuctionContract from "../hooks/useBlindAuctionContract.hook";
 
 export default function TradePage() {
   const [nftForTrade, setNftForTrade] = useState<NFT>({} as NFT);
@@ -22,6 +23,7 @@ export default function TradePage() {
 
   const englishAuctionContract = useEnglishAuctionContract();
   const nftCollectionContract = useNFTCollectionContract();
+  const blindAuctionContract = useBlindAuctionContract();
 
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
@@ -36,11 +38,27 @@ export default function TradePage() {
         .create_auction(
           trade_options.trade_time,
           nftForTrade.nft_contract || network.contracts.nftCollectionContract,
-          nftForTrade.token_id
+          nftForTrade.token_id,
+          trade_options.initial_price
         )
-        .send({
-          from: address,
-        });
+        .send({ from: address });
+      console.log({ response });
+    }
+  };
+
+  const onBlindAuctionPublish = async (trade_options: TRADE_OPTIONS) => {
+    if (blindAuctionContract && nftCollectionContract && address) {
+      await nftCollectionContract.methods
+        .setApprovalForAll(network.contracts.blindAuctionContract, true)
+        .send({ from: address });
+      const response = await blindAuctionContract.methods
+        .create_auction(
+          trade_options.trade_time,
+          nftForTrade.nft_contract || network.contracts.nftCollectionContract,
+          nftForTrade.token_id,
+          trade_options.initial_price
+        )
+        .send({ from: address });
       console.log({ response });
     }
   };
@@ -52,7 +70,10 @@ export default function TradePage() {
           nftForTrade={nftForTrade}
           selectedNftHandler={selectedNftHandler}
         />
-        <TradeSettings onTradePublish={onTradePublish} />
+        <TradeSettings
+          onTradePublish={onTradePublish}
+          onBlindAuctionPublish={onBlindAuctionPublish}
+        />
       </div>
       <TradeList nfts={tradeNFTs} detailed={true} />
     </div>
