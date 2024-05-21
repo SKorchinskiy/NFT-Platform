@@ -16,6 +16,7 @@ contract MarketBlindAuctionContract {
         uint256 auction_end_time;
         address highest_bidder;
         uint256 highest_bid;
+        bool is_blind;
     }
 
     struct Bid {
@@ -37,7 +38,7 @@ contract MarketBlindAuctionContract {
         encoding_secret = _secret;
     }
 
-    function create_auction (uint256 bidding_time, address _nft_contract, uint256 _token_id) external returns(Auction memory) {
+    function create_auction (uint256 bidding_time, address _nft_contract, uint256 _token_id, uint256 initial_price) external returns(Auction memory) {
         require(msg.sender == IERC721(_nft_contract).ownerOf(_token_id), "You are not an owner!");
         
         auctions_counter++;
@@ -48,7 +49,8 @@ contract MarketBlindAuctionContract {
             token_id: _token_id,
             auction_end_time: block.timestamp + bidding_time,
             highest_bidder: address(0),
-            highest_bid: 0
+            highest_bid: initial_price,
+            is_blind: true
         });
 
         IERC721(auction.nft_contract).transferFrom(auction.beneficiary, address(this), auction.token_id);
@@ -133,6 +135,18 @@ contract MarketBlindAuctionContract {
         auctions_list[auction_id] = current_auction;
 
         return true;
+    }
+
+    function get_all_auction_bids(uint256 auction_id) external view returns(Bid[] memory) {
+        uint256 bid_count = auctions_bids[auction_id].length;
+        Bid[] memory bids = new Bid[](bid_count);
+
+        for (uint256 bid_id = 0; bid_id < bid_count; bid_id++) {
+            Bid memory current_bid = auctions_bids[auction_id][bid_id];
+            bids[bid_id] = current_bid;
+        }
+
+        return bids;
     }
 
     function auctionEnd(uint256 auction_id) external payable {
