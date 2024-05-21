@@ -32,7 +32,7 @@ contract MarketEnglishAuctionContract {
         contract_deployer = payable(msg.sender);
     }
 
-    function create_auction (uint256 bidding_time, address _nft_contract, uint256 _token_id) external returns(Auction memory) {
+    function create_auction (uint256 bidding_time, address _nft_contract, uint256 _token_id, uint256 initial_price) external returns(Auction memory) {
         require(msg.sender == IERC721(_nft_contract).ownerOf(_token_id), "You are not an owner!");
         
         auctions_counter++;
@@ -43,7 +43,7 @@ contract MarketEnglishAuctionContract {
             token_id: _token_id,
             auction_end_time: block.timestamp + bidding_time,
             highest_bidder: address(0),
-            highest_bid: 0
+            highest_bid: initial_price
         });
 
         IERC721(auction.nft_contract).transferFrom(auction.beneficiary, address(this), auction.token_id);
