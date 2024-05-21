@@ -47,6 +47,11 @@
         "internalType": "uint256",
         "name": "_token_id",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initial_price",
+        "type": "uint256"
       }
     ],
     "name": "create_auction",
