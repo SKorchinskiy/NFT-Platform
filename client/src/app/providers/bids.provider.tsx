@@ -23,12 +23,16 @@ export const BidsContext = createContext({
   bids: [] as Bid[],
   getSpecificAuctionBids: async (auction: BlindAuction | EnglishAuction) =>
     [] as Array<Bid>,
+  refreshBids: () => {},
 });
 
 export default function BidsProvider({ children }: PropsWithChildren) {
   const [bids, setBids] = useState<Array<Bid>>([]);
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   const { address } = useContext(AddressContext);
+
+  const refreshBids = () => setRefreshCounter((prev) => prev + 1);
 
   const englishAuctionContract = useEnglishAuctionContract();
   const blindAuctionContract = useBlindAuctionContract();
@@ -81,10 +85,10 @@ export default function BidsProvider({ children }: PropsWithChildren) {
     };
 
     getAuctionBids();
-  }, [address, englishAuctionContract]);
+  }, [address, englishAuctionContract, refreshCounter]);
 
   return (
-    <BidsContext.Provider value={{ bids, getSpecificAuctionBids }}>
+    <BidsContext.Provider value={{ bids, getSpecificAuctionBids, refreshBids }}>
       {children}
     </BidsContext.Provider>
   );
