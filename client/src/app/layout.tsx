@@ -12,6 +12,7 @@ import NetworkProvider from "./providers/network.provider";
 import TradeTokensProvider from "./providers/trade-tokens.provider";
 import BidsProvider from "./providers/bids.provider";
 import Footer from "./_components/footer/footer.component";
+import AuctionsProvider from "./providers/auctions.provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,20 +33,22 @@ export default function RootLayout({
         <MetamaskProvider>
           <NetworkProvider>
             <AddressProvider>
-              <NftTokensProvider>
-                <CustomTokensProvider>
-                  <TradeTokensProvider>
-                    <BidsProvider>
-                      <PopupProvider>
-                        <Navbar />
-                        {children}
-                        <Footer />
-                        <ActionPopup />
-                      </PopupProvider>
-                    </BidsProvider>
-                  </TradeTokensProvider>
-                </CustomTokensProvider>
-              </NftTokensProvider>
+              <AuctionsProvider>
+                <NftTokensProvider>
+                  <CustomTokensProvider>
+                    <TradeTokensProvider>
+                      <BidsProvider>
+                        <PopupProvider>
+                          <Navbar />
+                          {children}
+                          <Footer />
+                          <ActionPopup />
+                        </PopupProvider>
+                      </BidsProvider>
+                    </TradeTokensProvider>
+                  </CustomTokensProvider>
+                </NftTokensProvider>
+              </AuctionsProvider>
             </AddressProvider>
           </NetworkProvider>
         </MetamaskProvider>
