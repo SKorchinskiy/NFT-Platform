@@ -32,7 +32,7 @@ export default function NFTCard({
     <div
       className={styles["card-container"]}
       onClick={(e) => {
-        initTokenHandler(nft.token_id);
+        initTokenHandler(nft);
         toggleIsCardModalOpen();
       }}
     >

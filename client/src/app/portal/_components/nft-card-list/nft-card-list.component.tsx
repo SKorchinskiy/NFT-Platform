@@ -15,7 +15,8 @@ export default function NFTCardList({ nfts }: CardListProps) {
       nfts.reduce(
         (accumulated, currentValue, index) => ({
           ...accumulated,
-          [currentValue.token_id.toString()]: index,
+          [currentValue.token_id.toString() +
+          (currentValue.nft_contract ? "x0" : "x1")]: index,
         }),
         {}
       ),
@@ -24,24 +25,27 @@ export default function NFTCardList({ nfts }: CardListProps) {
     [key: string]: number;
   };
 
+  console.log({ nfts, compressedTokenIds });
+
   const toggleIsCardModalOpen = () =>
     setIsCardModalOpen((prevState) => !prevState);
 
-  const initTokenHandler = (token_id: number) =>
-    setActiveToken(
-      nfts.find((nft) => Number(nft.token_id) == token_id) || nfts[0]
-    );
+  const initTokenHandler = (nft: NFT) => setActiveToken(nft);
 
   const activeTokenHandler = (action: -1 | 1) => {
     setActiveToken((prevValue: NFT) => {
       const MOD = nfts.length;
       const targetCompressedId: number =
-        (compressedTokenIds[prevValue.token_id.toString()] + action + MOD) %
+        (compressedTokenIds[
+          prevValue.token_id.toString() + (prevValue.nft_contract ? "x0" : "x1")
+        ] +
+          action +
+          MOD) %
         MOD;
       return (
         nfts.find(
           (token) =>
-            token.token_id.toString() ==
+            token.token_id.toString() + (token.nft_contract ? "x0" : "x1") ==
             Object.entries(compressedTokenIds).reduce((acc, [key, value]) => {
               if (targetCompressedId == value) {
                 acc = key;
