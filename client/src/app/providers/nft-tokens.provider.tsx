@@ -22,12 +22,17 @@ export const TokensContext = createContext({
   resetTokens: (newTokens: NFTs) => {},
   removeFromMarket: (token_id: BigInt) => {},
   removeFromPersonal: (token_id: BigInt) => {},
+  refreshTokens: () => {},
 });
 
 export default function NftTokensProvider({ children }: PropsWithChildren) {
   const [marketTokens, setMarketTokens] = useState<NFTs>([]);
   const [purchasedTokens, setPurchasedTokens] = useState<NFTs>([]);
   const [tokens, setTokens] = useState<NFTs>([]);
+
+  const [refreshCounter, setRefreshCounter] = useState(0);
+
+  const refreshTokens = () => setRefreshCounter((prev) => prev + 1);
 
   const resetTokens = (newTokens: NFTs) => setTokens(newTokens);
 
@@ -90,7 +95,13 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
     };
 
     getPurchasedTokens();
-  }, [resellContract, nftCollectionContract, address, marketTokens]);
+  }, [
+    resellContract,
+    nftCollectionContract,
+    address,
+    marketTokens,
+    refreshCounter,
+  ]);
 
   useEffect(() => {
     const getPersonalTokens = async (
@@ -142,7 +153,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
 
     if (address && nftCollectionContract)
       getPersonalTokens(address, nftCollectionContract);
-  }, [address, nftCollectionContract]);
+  }, [address, nftCollectionContract, refreshCounter]);
 
   useEffect(() => {
     const getMarketNftTokens = async () => {
@@ -184,7 +195,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
     };
 
     getMarketNftTokens();
-  }, [address, nftCollectionContract, resellContract]);
+  }, [address, nftCollectionContract, resellContract, refreshCounter]);
 
   return (
     <TokensContext.Provider
@@ -193,6 +204,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
         marketTokens,
         purchasedTokens,
         resetTokens,
+        refreshTokens,
         removeFromMarket,
         removeFromPersonal,
       }}
