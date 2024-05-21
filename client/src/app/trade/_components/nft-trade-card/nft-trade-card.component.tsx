@@ -22,7 +22,9 @@ export default function NftTradeCard({
         className={styles["nft-card-image"]}
         style={{
           border:
-            nftForTrade && nftForTrade.token_id === nft.token_id
+            nftForTrade &&
+            nftForTrade.token_id === nft.token_id &&
+            nftForTrade.nft_contract === nft.nft_contract
               ? "2px solid blue"
               : "",
         }}
