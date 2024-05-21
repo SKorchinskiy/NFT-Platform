@@ -28,6 +28,7 @@ export type EnglishAuction = Exclude<BlindAuction, "is_blind">;
 export const AuctionsContext = createContext({
   englishAuctions: [] as Array<EnglishAuction>,
   blindAuctions: [] as Array<BlindAuction>,
+  refreshAuctions: () => {},
 });
 
 export default function AuctionsProvider({ children }: PropsWithChildren) {
@@ -35,12 +36,15 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
     []
   );
   const [blindAuctions, setBlindAuctions] = useState<Array<BlindAuction>>([]);
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
 
   const englishAuctionContract = useEnglishAuctionContract();
   const blindAuctionContract = useBlindAuctionContract();
+
+  const refreshAuctions = () => setRefreshCounter((prev) => prev + 1);
 
   useEffect(() => {
     const retrieveEnglishAuctions = async () => {
@@ -58,7 +62,7 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
     };
 
     retrieveEnglishAuctions();
-  }, [address, network, englishAuctionContract]);
+  }, [address, network, englishAuctionContract, refreshCounter]);
 
   useEffect(() => {
     const retrieveBlindAuctions = async () => {
@@ -76,10 +80,12 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
     };
 
     retrieveBlindAuctions();
-  }, [address, network, blindAuctionContract]);
+  }, [address, network, blindAuctionContract, refreshCounter]);
 
   return (
-    <AuctionsContext.Provider value={{ englishAuctions, blindAuctions }}>
+    <AuctionsContext.Provider
+      value={{ englishAuctions, blindAuctions, refreshAuctions }}
+    >
       {children}
     </AuctionsContext.Provider>
   );
