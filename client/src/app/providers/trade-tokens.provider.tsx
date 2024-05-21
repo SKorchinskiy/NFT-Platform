@@ -5,6 +5,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { TradeTokens } from "../types/trade-tokens.type";
@@ -18,6 +19,7 @@ import useNFTCollectionContract from "../hooks/useNftCollectionContract.hook";
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
 import { DEFAULT_READ_WALLET } from "@/configs/constants";
+import { AuctionsContext } from "./auctions.provider";
 
 export const TradeTokensContext = createContext({
   tradeTokens: [] as Array<TradeTokens>,
@@ -28,12 +30,16 @@ export const TradeTokensContext = createContext({
       external_url: string;
       description: string;
       attributes: Array<Object>;
-    }
+    } & { mappedAuctionId: number }
   >,
+  auctionsMapper: { blind: {}, english: {} } as {
+    [key: string]: {
+      [key2: number]: number;
+    };
+  },
 });
 
 export default function TradeTokensProvider({ children }: PropsWithChildren) {
-  const [tradeTokens, setTradeTokens] = useState<Array<TradeTokens>>([]);
   const [tradeNFTs, setTradeNFTs] = useState<
     Array<
       TradeTokens & {
@@ -42,51 +48,42 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
         external_url: string;
         description: string;
         attributes: Array<Object>;
-      }
+      } & { mappedAuctionId: number }
     >
   >([]);
 
-  const englishAuctionContract = useEnglishAuctionContract();
-
-  const { provider } = useContext(MetamaskContext);
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
 
   const nftCollectionContract = useNFTCollectionContract();
   const nftCreateContract = useNftCreateContract();
 
-  useEffect(() => {
-    const getTradeTokens = async (provider: MetaMaskInpageProvider) => {
-      if (englishAuctionContract) {
-        const tradeTokens = (await englishAuctionContract.methods
-          .get_all_auctions()
-          .call({
-            from: address || DEFAULT_READ_WALLET,
-          })) as Array<TradeTokens>;
+  const { blindAuctions, englishAuctions } = useContext(AuctionsContext);
+  const tradeTokens = useMemo(
+    () => [...blindAuctions, ...englishAuctions] as Array<TradeTokens>,
+    [blindAuctions, englishAuctions]
+  );
 
-        setTradeTokens(tradeTokens);
-        console.log({ tradeTokens });
-      }
+  const auctionsMapper = useMemo(() => {
+    const res = { english: {}, blind: {} } as {
+      [key: string]: {
+        [key2: number]: number;
+      };
     };
-
-    if (provider) {
-      getTradeTokens(provider);
-    }
-  }, [englishAuctionContract, address, provider]);
+    let id = 1;
+    tradeTokens.forEach((token) => {
+      if (token.is_blind) {
+        res.blind[Number(token.auction_id)] = id++;
+      } else {
+        res.english[Number(token.auction_id)] = id++;
+      }
+    });
+    return { ...res };
+  }, [tradeTokens]);
 
   useEffect(() => {
     const retrieveTradeNfts = async (tokens: Array<TradeTokens>) => {
       if (nftCollectionContract && nftCreateContract) {
-        const result = [] as Array<
-          TradeTokens & {
-            name: string;
-            image: string;
-            external_url: string;
-            description: string;
-            attributes: Array<Object>;
-          }
-        >;
-
         const tokens_uri = (
           (await Promise.all(
             tokens.map(
@@ -123,18 +120,34 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
         }>;
 
         setTradeNFTs(
-          tokens.map((token, index) => ({ ...token, ...tokens_details[index] }))
+          tokens.map((token, index) => ({
+            ...token,
+            ...tokens_details[index],
+            mappedAuctionId:
+              auctionsMapper[token.is_blind ? "blind" : "english"][
+                Number(token.auction_id)
+              ],
+          }))
         );
       }
     };
 
-    if (tradeTokens) {
+    if (tradeTokens && auctionsMapper) {
       retrieveTradeNfts(tradeTokens);
     }
-  }, [tradeTokens, address, network, nftCollectionContract, nftCreateContract]);
+  }, [
+    tradeTokens,
+    address,
+    network,
+    nftCollectionContract,
+    nftCreateContract,
+    auctionsMapper,
+  ]);
 
   return (
-    <TradeTokensContext.Provider value={{ tradeTokens, tradeNFTs }}>
+    <TradeTokensContext.Provider
+      value={{ tradeTokens, tradeNFTs, auctionsMapper }}
+    >
       {children}
     </TradeTokensContext.Provider>
   );
