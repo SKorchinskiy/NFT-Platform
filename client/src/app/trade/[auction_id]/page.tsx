@@ -5,11 +5,20 @@ import styles from "./page.module.css";
 import { NetworkContext } from "@/app/providers/network.provider";
 import { TradeTokensContext } from "@/app/providers/trade-tokens.provider";
 import Image from "next/image";
-import { Fragment, useContext, useMemo } from "react";
+import { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import TimeOut from "./_components/time-out/time-out.component";
 import BidsList from "./_components/bids-list/bids-list.component";
 import { BidsContext } from "@/app/providers/bids.provider";
 import StatusPlate from "@/app/portal/_components/status-plate/status-plate.component";
+import useEnglishAuctionContract from "@/app/hooks/useEnglishAuctionContract.hook";
+import useBlindAuctionContract from "@/app/hooks/useBlindAuctionContract.hook";
+import { AddressContext } from "@/app/providers/address.provider";
+import {
+  AuctionsContext,
+  BlindAuction,
+  EnglishAuction,
+} from "@/app/providers/auctions.provider";
+import { Bid } from "@/app/types/bid.type";
 
 type AuctionPageProps = { params: { auction_id: string } };
 
@@ -18,17 +27,79 @@ export default function AuctionPage({
 }: AuctionPageProps) {
   const { tradeNFTs } = useContext(TradeTokensContext);
 
-  const target_token = useMemo(
-    () =>
-      tradeNFTs.find(
-        (token) => Number(token.auction_id) === parseInt(auction_id)
-      ),
-    [tradeNFTs, auction_id]
-  )!;
+  const englishAuctionContract = useEnglishAuctionContract();
+  const blindAuctionContract = useBlindAuctionContract();
+
+  const { address } = useContext(AddressContext);
 
   const { network } = useContext(NetworkContext);
 
-  const { bids } = useContext(BidsContext);
+  const { getSpecificAuctionBids } = useContext(BidsContext);
+
+  const [bids, setBids] = useState<Bid[]>([]);
+
+  const { englishAuctions, blindAuctions } = useContext(AuctionsContext);
+
+  const { auctionsMapper } = useContext(TradeTokensContext);
+
+  const target_auction = useMemo(() => {
+    const tp = Object.values(auctionsMapper.english).reduce(
+      (acc: string, value: number) => {
+        if (value === +auction_id) {
+          acc = "english";
+        }
+        return acc;
+      },
+      "blind"
+    );
+    console.log({ auction_id, tp, auctionsMapper, englishAuctions });
+    if (tp === "english") {
+      console.log({ entr: Object.entries(auctionsMapper.english) });
+      return englishAuctions.find(
+        (auction) =>
+          Number(auction.auction_id) ===
+          +(Object.entries(auctionsMapper.english).find(
+            ([key, value]) => +value === +auction_id
+          ) || [0, 1])[0]
+      );
+    }
+    console.log({ entr: Object.entries(auctionsMapper.blind) });
+    return blindAuctions.find(
+      (auction) =>
+        Number(auction.auction_id) ===
+        +(Object.entries(auctionsMapper.blind).find(
+          ([key, value]) => +value === +auction_id
+        ) || [0, 1])[0]
+    ) as BlindAuction | EnglishAuction;
+  }, [englishAuctions, blindAuctions, auction_id, auctionsMapper]);
+  const target_token = useMemo(() => {
+    if (tradeNFTs && target_auction) {
+      return tradeNFTs.find(
+        (token) =>
+          Number(token.auction_id) === Number(target_auction.auction_id) &&
+          token.is_blind === target_auction.is_blind
+      );
+    }
+  }, [tradeNFTs, target_auction]);
+  const hasEnded: Boolean = useMemo(
+    () =>
+      (target_token &&
+        Date.now() / 1e3 - Number(target_token.auction_end_time) > 0) ||
+      false,
+    [target_token]
+  );
+
+  useEffect(() => {
+    const retrieveAuctionBids = async () => {
+      if (target_auction) {
+        const auctionBids = await getSpecificAuctionBids(target_auction);
+        setBids(auctionBids);
+      }
+    };
+    retrieveAuctionBids();
+  }, [target_auction, getSpecificAuctionBids]);
+
+  console.log({ target_auction, target_token });
 
   return (
     <Fragment>
@@ -51,16 +122,62 @@ export default function AuctionPage({
                   height={400}
                   className={styles["token-image"]}
                 />
-                <StatusPlate nft={{ ...target_token, status: BigInt(4) }} />
+                <StatusPlate
+                  nft={{
+                    ...target_token,
+                    status: hasEnded ? BigInt(5) : BigInt(4),
+                  }}
+                />
               </div>
               <TimeOut
                 end_time={Number(target_token.auction_end_time) * 1000}
               />
+              <button
+                onClick={async () => {
+                  if (englishAuctionContract && blindAuctionContract) {
+                    console.log({ target_auction });
+                    if (target_auction)
+                      if (target_auction.is_blind) {
+                        await blindAuctionContract.methods
+                          .reveal(target_auction.auction_id)
+                          .send({ from: address });
+                        await blindAuctionContract.methods
+                          .auctionEnd(target_auction.auction_id)
+                          .send({ from: address });
+                        await blindAuctionContract.methods
+                          .withdraw()
+                          .send({ from: address });
+                      } else {
+                        await englishAuctionContract.methods
+                          .auctionEnd(target_auction.auction_id)
+                          .send({ from: address });
+                        await englishAuctionContract.methods
+                          .withdraw()
+                          .send({ from: address });
+                      }
+                  }
+                }}
+                style={{
+                  marginTop: 10,
+                  width: 400,
+                  padding: 10,
+                  borderRadius: 10,
+                  border: 0,
+                  boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  visibility: hasEnded ? "visible" : "collapse",
+                }}
+              >
+                End Auction
+              </button>
             </div>
             <div className={styles["auction-description-container"]}>
               <div className={styles["auction-description"]}>
                 <p>Auction ID: </p>
                 <p>{Number(target_token.auction_id)}</p>
+                <p>Mapped ID: </p>
+                <p>{Number(target_token.mappedAuctionId)}</p>
                 <p>Beneficiary: </p>
                 <p>
                   {(() => {
@@ -110,7 +227,9 @@ export default function AuctionPage({
           </Fragment>
         ) : null}
       </div>
-      <BidsList bids={bids} />
+      {target_auction ? (
+        <BidsList bids={bids} target_auction={target_auction} />
+      ) : null}
     </Fragment>
   );
 }
