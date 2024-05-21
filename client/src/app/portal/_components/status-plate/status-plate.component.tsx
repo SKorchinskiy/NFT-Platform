@@ -16,12 +16,16 @@ const params = {
   TRADE: {
     background: "green",
   },
+  ENDED: {
+    background: "red",
+  },
 } as {
   NONE: Object;
   CANCELED: Object;
   ACTIVE: Object;
   SOLD: object;
   TRADE: object;
+  ENDED: object;
 };
 
 export default function StatusPlate({ nft }: { nft: { status: BigInt } }) {
@@ -37,6 +41,8 @@ export default function StatusPlate({ nft }: { nft: { status: BigInt } }) {
               | "CANCELED"
               | "ACTIVE"
               | "SOLD"
+              | "TRADE"
+              | "ENDED"
           ] as {
             background: string;
           }
