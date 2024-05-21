@@ -13,6 +13,7 @@ import {
   BlindAuction,
   EnglishAuction,
 } from "@/app/providers/auctions.provider";
+import { BidsContext } from "@/app/providers/bids.provider";
 
 type BidsListProps = {
   bids: Array<BidType>;
@@ -26,6 +27,8 @@ export default function BidsList({ bids, target_auction }: BidsListProps) {
 
   const englishAuctionContract = useEnglishAuctionContract();
   const blindAuctionContract = useBlindAuctionContract();
+
+  const { refreshBids } = useContext(BidsContext);
 
   return (
     <div className={styles["bid-list-container"]}>
@@ -91,6 +94,7 @@ export default function BidsList({ bids, target_auction }: BidsListProps) {
                       value: bidAmount,
                     });
                 }
+                refreshBids();
               }
             }}
             style={{
