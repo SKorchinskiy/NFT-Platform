@@ -22,12 +22,16 @@ export const CustomTokensContext = createContext({
   purchasedTokens: [] as NFTs,
   marketCustomTokens: [] as NFTs,
   addressCustomTokens: [] as NFTs,
+  refreshTokens: () => {},
 });
 
 export default function CustomTokensProvider({ children }: PropsWithChildren) {
   const [purchasedTokens, setPurchasedTokens] = useState<NFTs>([]);
   const [marketCustomTokens, setMarketCustomTokens] = useState<NFTs>([]);
   const [addressCustomTokens, setAddressCustomTokens] = useState<NFTs>([]);
+  const [refreshCounter, setRefreshCounter] = useState(0);
+
+  const refreshTokens = () => setRefreshCounter((prev) => prev + 1);
 
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
@@ -79,7 +83,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
     };
 
     getPurchasedTokens();
-  }, [address, nftCreateContract, marketCreateContract]);
+  }, [address, nftCreateContract, marketCreateContract, refreshCounter]);
 
   useEffect(() => {
     const retrieveAddressCustomTokens = async () => {
@@ -146,7 +150,7 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
     };
 
     retrieveAddressCustomTokens();
-  }, [address, nftCreateContract, network]);
+  }, [address, nftCreateContract, network, refreshCounter]);
 
   useEffect(() => {
     const retrieveCustomMarketTokens = async () => {
@@ -205,11 +209,16 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
     };
 
     retrieveCustomMarketTokens();
-  }, [address, nftCreateContract, marketCreateContract]);
+  }, [address, nftCreateContract, marketCreateContract, refreshCounter]);
 
   return (
     <CustomTokensContext.Provider
-      value={{ purchasedTokens, marketCustomTokens, addressCustomTokens }}
+      value={{
+        purchasedTokens,
+        marketCustomTokens,
+        addressCustomTokens,
+        refreshTokens,
+      }}
     >
       {children}
     </CustomTokensContext.Provider>
