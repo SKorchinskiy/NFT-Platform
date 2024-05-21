@@ -114,6 +114,11 @@
         "internalType": "uint256",
         "name": "highest_bid",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "is_blind",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -176,6 +181,11 @@
         "internalType": "uint256",
         "name": "_token_id",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initial_price",
+        "type": "uint256"
       }
     ],
     "name": "create_auction",
@@ -216,6 +226,11 @@
             "internalType": "uint256",
             "name": "highest_bid",
             "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "is_blind",
+            "type": "bool"
           }
         ],
         "internalType": "struct MarketBlindAuctionContract.Auction",
@@ -224,6 +239,42 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "auction_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "get_all_auction_bids",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "blindedBid",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "deposit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "bidder",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct MarketBlindAuctionContract.Bid[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -266,6 +317,11 @@
             "internalType": "uint256",
             "name": "highest_bid",
             "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "is_blind",
+            "type": "bool"
           }
         ],
         "internalType": "struct MarketBlindAuctionContract.Auction[]",
