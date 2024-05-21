@@ -10,6 +10,8 @@ import useNftCreateContract from "../hooks/useNftCreateContract.hook";
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 
 import { PINATA_KEY } from "@/configs/constants";
+import { TokensContext } from "../providers/nft-tokens.provider";
+import { CustomTokensContext } from "../providers/custom-tokens.provider";
 
 const DEFAULT_FORM_INPUT = {
   name: "",
@@ -26,6 +28,10 @@ export default function MintPage() {
 
   const nftCreateContract = useNftCreateContract();
   const nftMarketContract = useNftMarketContract();
+
+  const { refreshTokens } = useContext(TokensContext);
+  const { refreshTokens: refreshCustomTokens } =
+    useContext(CustomTokensContext);
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -101,6 +107,8 @@ export default function MintPage() {
       const resp = await nftCreateContract?.methods
         .mint_token(ipfsURI)
         .send({ from: address, value: "7500000000000000" });
+      refreshTokens();
+      refreshCustomTokens();
     }
   };
 
@@ -163,6 +171,8 @@ export default function MintPage() {
           )
           .send({ from: address, value: "2500000000000000" });
       }
+      refreshTokens();
+      refreshCustomTokens();
     }
   };
 
