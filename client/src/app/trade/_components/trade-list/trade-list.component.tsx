@@ -14,7 +14,7 @@ type TradeListProps = {
       external_url: string;
       description: string;
       attributes: Array<Object>;
-    }
+    } & { mappedAuctionId: number }
   >;
   detailed: Boolean;
 };
