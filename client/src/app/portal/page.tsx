@@ -20,8 +20,11 @@ const nunito = Montserrat({
 
 export default function Portal() {
   const { address } = useContext(AddressContext);
-  const { addressCustomTokens: customTokens } = useContext(CustomTokensContext);
+  const { addressCustomTokens: customTokens, marketCustomTokens } =
+    useContext(CustomTokensContext);
   const { tokens, marketTokens, purchasedTokens } = useContext(TokensContext);
+
+  console.log({ customTokens });
 
   return tokens ? (
     <div>
@@ -30,20 +33,18 @@ export default function Portal() {
           <b>Personal Tokens</b>
         </p>
       </div>
-      <NFTCardList nfts={tokens.slice(0, 8)} />
+      <NFTCardList nfts={tokens} />
       <div className={styles["portal-page-container"]}>
         <p className={styles["portal-page-section"].concat(nunito.className)}>
           <b>Listed Tokens</b>
         </p>
       </div>
       <NFTCardList
-        nfts={marketTokens
-          .filter(
-            (token) =>
-              token.token_seller == address &&
-              token.status.toString() == Status["ACTIVE"].toString()
-          )
-          .slice(0, 8)}
+        nfts={[...marketTokens, ...marketCustomTokens].filter(
+          (token) =>
+            token.token_seller == address &&
+            token.status.toString() == Status["ACTIVE"].toString()
+        )}
       />
       <div className={styles["portal-page-container"]}>
         <p className={styles["portal-page-section"].concat(nunito.className)}>
@@ -51,20 +52,18 @@ export default function Portal() {
         </p>
       </div>
       <NFTCardList
-        nfts={purchasedTokens
-          .filter(
-            (token) =>
-              token.token_seller == address &&
-              token.status.toString() == Status["SOLD"].toString()
-          )
-          .slice(0, 8)}
+        nfts={purchasedTokens.filter(
+          (token) =>
+            token.token_seller == address &&
+            token.status.toString() == Status["SOLD"].toString()
+        )}
       />
       <div className={styles["portal-page-container"]}>
         <p className={styles["portal-page-section"].concat(nunito.className)}>
           <b>Custom Tokens</b>
         </p>
       </div>
-      <NFTCardList nfts={customTokens.slice(0, 8)} />
+      <NFTCardList nfts={customTokens} />
     </div>
   ) : null;
 }

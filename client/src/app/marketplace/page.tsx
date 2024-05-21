@@ -37,11 +37,9 @@ export default function MarketplacePage() {
           </p>
         </div>
         <NFTCardList
-          nfts={marketTokens
-            .filter(
-              (token) => token.status.toString() == Status["ACTIVE"].toString()
-            )
-            .slice(0, 8)}
+          nfts={marketTokens.filter(
+            (token) => token.status.toString() == Status["ACTIVE"].toString()
+          )}
         />
       </div>
       <div className={styles["nft-section"]}>
@@ -67,8 +65,7 @@ export default function MarketplacePage() {
             .concat(customPurchaseTokens)
             .filter(
               (token) => token.status.toString() == Status["SOLD"].toString()
-            )
-            .slice(0, 8)}
+            )}
         />
       </div>
       <div className={styles["nft-section"]}>
@@ -77,7 +74,7 @@ export default function MarketplacePage() {
             <b>Auctions</b>
           </p>
         </div>
-        <TradeList nfts={tradeNFTs.slice(0, 8)} detailed={false} />
+        <TradeList nfts={tradeNFTs} detailed={false} />
       </div>
     </div>
   );
