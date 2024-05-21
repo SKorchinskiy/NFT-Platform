@@ -6,4 +6,5 @@ export type TradeTokens = {
   highest_bidder: string;
   nft_contract: string;
   token_id: BigInt;
+  is_blind?: Boolean;
 };
