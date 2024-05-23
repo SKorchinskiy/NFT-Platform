@@ -1,6 +1,7 @@
 .auction-details-container {
   display: flex;
   height: 600px;
+  width: 90%;
 }
 
 .auction-details {
@@ -26,7 +27,7 @@
   display: grid;
   grid-template-columns: repeat(2, 300px);
   grid-auto-flow: row;
-  background: #fff7fc;
+  background: #6f77a1;
   padding: 50px;
   box-sizing: border-box;
   border-radius: 5px;
