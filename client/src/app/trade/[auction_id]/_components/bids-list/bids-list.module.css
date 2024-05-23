@@ -2,11 +2,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #eef7ff;
+  background: #6f77a1;
   padding: 10px;
   border-radius: 5px;
   overflow: scroll;
-  height: 500px;
+  min-height: 150px;
+  max-height: 500px;
+  width: 90%;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
 }
 
