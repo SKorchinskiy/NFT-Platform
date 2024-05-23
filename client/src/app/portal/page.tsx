@@ -2,7 +2,7 @@
 
 import styles from "./page.module.css";
 
-import { useContext } from "react";
+import { Fragment, useContext, useMemo } from "react";
 import { TokensContext } from "../providers/nft-tokens.provider";
 
 import NFTCardList from "./_components/nft-card-list/nft-card-list.component";
@@ -11,6 +11,7 @@ import { Montserrat } from "next/font/google";
 import { Status } from "./_components/nft-card/nft-card.component";
 import { AddressContext } from "../providers/address.provider";
 import { CustomTokensContext } from "../providers/custom-tokens.provider";
+import ConnectWallet from "../_components/connect-wallet/connect-wallet.component";
 
 const nunito = Montserrat({
   subsets: ["latin"],
@@ -20,50 +21,137 @@ const nunito = Montserrat({
 
 export default function Portal() {
   const { address } = useContext(AddressContext);
-  const { addressCustomTokens: customTokens, marketCustomTokens } =
-    useContext(CustomTokensContext);
-  const { tokens, marketTokens, purchasedTokens } = useContext(TokensContext);
+  const {
+    isLoading: isCustomTokensDataLoading,
+    addressCustomTokens: customTokens,
+    marketCustomTokens,
+  } = useContext(CustomTokensContext);
+  const {
+    isLoading: isTokensDataLoading,
+    tokens,
+    marketTokens,
+    addressSoldTokens,
+  } = useContext(TokensContext);
 
-  console.log({ customTokens });
+  const addressListedTokens = useMemo(
+    () =>
+      [...marketTokens, ...marketCustomTokens].filter(
+        (token) =>
+          token.token_seller == address &&
+          token.status.toString() == Status["ACTIVE"].toString()
+      ),
+    [address, marketCustomTokens, marketTokens]
+  );
 
-  return tokens ? (
+  if (!(window as any).ethereum) {
+    return <h1>Install Metamask - https://metamask.io/download/</h1>;
+  } else if (!address) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "white",
+            fontWeight: "bold",
+            letterSpacing: 1,
+            textTransform: "uppercase",
+          }}
+        >
+          <p>Please, connect via Metamask to proceed</p>
+          <ConnectWallet />
+        </div>
+      </div>
+    );
+  }
+
+  return address ? (
     <div>
-      <div className={styles["portal-page-container"]}>
-        <p className={styles["portal-page-section"].concat(nunito.className)}>
-          <b>Personal Tokens</b>
-        </p>
-      </div>
-      <NFTCardList nfts={tokens} />
-      <div className={styles["portal-page-container"]}>
-        <p className={styles["portal-page-section"].concat(nunito.className)}>
-          <b>Listed Tokens</b>
-        </p>
-      </div>
-      <NFTCardList
-        nfts={[...marketTokens, ...marketCustomTokens].filter(
-          (token) =>
-            token.token_seller == address &&
-            token.status.toString() == Status["ACTIVE"].toString()
-        )}
-      />
-      <div className={styles["portal-page-container"]}>
-        <p className={styles["portal-page-section"].concat(nunito.className)}>
-          <b>Recently Sold</b>
-        </p>
-      </div>
-      <NFTCardList
-        nfts={purchasedTokens.filter(
-          (token) =>
-            token.token_seller == address &&
-            token.status.toString() == Status["SOLD"].toString()
-        )}
-      />
-      <div className={styles["portal-page-container"]}>
-        <p className={styles["portal-page-section"].concat(nunito.className)}>
-          <b>Custom Tokens</b>
-        </p>
-      </div>
-      <NFTCardList nfts={customTokens} />
+      {isTokensDataLoading || tokens.length ? (
+        <Fragment>
+          <div className={styles["portal-page-container"]}>
+            <p
+              className={styles["portal-page-section"].concat(nunito.className)}
+            >
+              <b>Personal Tokens</b>
+            </p>
+          </div>
+          <NFTCardList nfts={tokens} />
+        </Fragment>
+      ) : null}
+      {isCustomTokensDataLoading ||
+      isTokensDataLoading ||
+      addressListedTokens.length ? (
+        <Fragment>
+          <div className={styles["portal-page-container"]}>
+            <p
+              className={styles["portal-page-section"].concat(nunito.className)}
+            >
+              <b>Listed Tokens</b>
+            </p>
+          </div>
+          <NFTCardList nfts={addressListedTokens} />{" "}
+        </Fragment>
+      ) : null}
+      {isTokensDataLoading || addressSoldTokens.length ? (
+        <Fragment>
+          <div className={styles["portal-page-container"]}>
+            <p
+              className={styles["portal-page-section"].concat(nunito.className)}
+            >
+              <b>Recently Sold</b>
+            </p>
+          </div>
+          <NFTCardList nfts={addressSoldTokens} />
+        </Fragment>
+      ) : null}
+      {isCustomTokensDataLoading || customTokens.length ? (
+        <Fragment>
+          <div className={styles["portal-page-container"]}>
+            <p
+              className={styles["portal-page-section"].concat(nunito.className)}
+            >
+              <b>Custom Tokens</b>
+            </p>
+          </div>
+          <NFTCardList nfts={customTokens} />
+        </Fragment>
+      ) : null}
     </div>
-  ) : null;
+  ) : (
+    <div
+      style={{
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "white",
+          fontWeight: "bold",
+          letterSpacing: 1,
+          textTransform: "uppercase",
+        }}
+      >
+        <p>You have no tokens associated with your address!</p>
+      </div>
+    </div>
+  );
 }
