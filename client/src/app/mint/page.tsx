@@ -3,7 +3,7 @@
 import styles from "./page.module.css";
 import MintingForm from "./_components/minting-form/minting-form.component";
 import MintingConstructor from "./_components/minting-constructor/minting-constructor.component";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, Fragment, useContext, useState } from "react";
 import { AddressContext } from "../providers/address.provider";
 import { NetworkContext } from "../providers/network.provider";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
@@ -20,6 +20,8 @@ const DEFAULT_FORM_INPUT = {
 };
 
 export default function MintPage() {
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [aiTokenGen, setAiTokenGen] = useState(false);
   const [nftImage, setNftImage] = useState<File | string>("");
   const [formInput, setFormInput] = useState(DEFAULT_FORM_INPUT);
 
@@ -49,14 +51,20 @@ export default function MintPage() {
   };
 
   const onImageGenerate = async () => {
-    let data = new FormData();
-    data.append("prompt", formInput.name);
-    const res = await fetch("/api/images", {
-      method: "POST",
-      body: data,
-    });
-    const { image_url } = await res.json();
-    setNftImage(image_url);
+    try {
+      let data = new FormData();
+      data.append("prompt", formInput.name);
+      console.log("generating image...");
+      setAiTokenGen(true);
+      const res = await fetch("/api/images", {
+        method: "POST",
+        body: data,
+      });
+      const { image_url } = await res.json();
+      setNftImage(image_url);
+    } catch (r) {
+      console.log({ r });
+    }
   };
 
   const mintNftToken = async () => {
@@ -109,10 +117,14 @@ export default function MintPage() {
         .send({ from: address, value: "7500000000000000" });
       refreshTokens();
       refreshCustomTokens();
+      setNftImage("");
+      setFormInput(DEFAULT_FORM_INPUT);
+      setShowOverlay(true);
     }
   };
 
   const mintAndListToken = async () => {
+    console.log("outer");
     if (
       nftImage &&
       formInput.description &&
@@ -120,6 +132,7 @@ export default function MintPage() {
       formInput.price &&
       nftCreateContract
     ) {
+      console.log("inner");
       const data = new FormData();
       data.append("file", nftImage);
       data.append("name", formInput.name);
@@ -171,21 +184,125 @@ export default function MintPage() {
           )
           .send({ from: address, value: "2500000000000000" });
       }
+      console.log("refreshing...");
       refreshTokens();
       refreshCustomTokens();
+      setNftImage("");
+      setFormInput(DEFAULT_FORM_INPUT);
+      setShowOverlay(true);
     }
   };
 
   return (
-    <div className={styles["minting-container"]}>
-      <MintingConstructor nftImage={nftImage} formInput={formInput} />
-      <MintingForm
-        onInputChange={onInputChange}
-        onFileUpload={onFileUpload}
-        mintNftToken={mintNftToken}
-        mintAndListToken={mintAndListToken}
-        onImageGenerate={onImageGenerate}
-      />
-    </div>
+    <Fragment>
+      <div className={styles["minting-container"]}>
+        <MintingConstructor nftImage={nftImage} formInput={formInput} />
+        <MintingForm
+          formInput={formInput}
+          onInputChange={onInputChange}
+          onFileUpload={onFileUpload}
+          mintNftToken={mintNftToken}
+          mintAndListToken={mintAndListToken}
+          onImageGenerate={onImageGenerate}
+        />
+      </div>
+      {showOverlay ? (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 5,
+            background: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              height: 200,
+              width: 600,
+              background: "whitesmoke",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div>
+              <p>Your token was successfully minted!</p>
+              <p>It can take several minutes for token to be available.</p>
+            </div>
+            <div
+              style={{
+                width: 200,
+                height: 50,
+                background: "pink",
+                borderRadius: 5,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
+              }}
+              onClick={() => setShowOverlay(false)}
+            >
+              <span>OK</span>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {aiTokenGen ? (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 5,
+            background: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              height: 200,
+              width: 600,
+              background: "whitesmoke",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div>
+              <p>Generating token image with AI can take a while...</p>
+            </div>
+            <div
+              style={{
+                width: 200,
+                height: 50,
+                background: "pink",
+                borderRadius: 5,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
+              }}
+              onClick={() => setAiTokenGen(false)}
+            >
+              <span>OK</span>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </Fragment>
   );
 }
