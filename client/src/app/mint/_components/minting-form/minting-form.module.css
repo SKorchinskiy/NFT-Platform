@@ -5,12 +5,16 @@
   align-items: center;
   width: 350px;
   height: 500px;
-  background: #eef7ff;
+  background: #7077a1;
   border-radius: 10px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
   padding: 10px;
+}
+
+.minting-form-container h3 {
+  color: white;
 }
 
 .minting-form-field {
@@ -44,6 +48,8 @@
   padding: 10px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  background: #2d3250;
+  color: white;
 }
 
 .minting-form-button:hover {

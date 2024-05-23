@@ -12,6 +12,11 @@ type MintingFormProps = {
   mintNftToken: () => void;
   mintAndListToken: () => void;
   onImageGenerate: () => void;
+  formInput: {
+    name: string;
+    description: string;
+    price: number;
+  };
 };
 
 export default function MintingForm({
@@ -20,6 +25,7 @@ export default function MintingForm({
   mintNftToken,
   mintAndListToken,
   onImageGenerate,
+  formInput,
 }: MintingFormProps) {
   const { address } = useContext(AddressContext);
 
@@ -29,6 +35,7 @@ export default function MintingForm({
       <input
         name="name"
         placeholder="Enter token name"
+        value={formInput.name}
         type="text"
         className={styles["minting-form-field"]}
         onChange={onInputChange}
@@ -36,6 +43,7 @@ export default function MintingForm({
       <input
         name="description"
         placeholder="Enter token description"
+        value={formInput.description}
         type="text"
         className={styles["minting-form-field"]}
         onChange={onInputChange}
@@ -58,6 +66,7 @@ export default function MintingForm({
       <input
         name="price"
         placeholder="Enter token price"
+        value={formInput.price}
         type="number"
         className={styles["minting-form-field"]}
         onChange={onInputChange}
