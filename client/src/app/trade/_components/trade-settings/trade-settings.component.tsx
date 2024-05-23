@@ -86,6 +86,8 @@ export default function TradeSettings({
             border: 0,
             boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
             cursor: "pointer",
+            background: "#2D3250",
+            color: "white",
           }}
           onClick={() => onTradePublish(tradeOptions)}
         >
@@ -99,6 +101,8 @@ export default function TradeSettings({
             border: 0,
             boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
             cursor: "pointer",
+            background: "#2D3250",
+            color: "white",
           }}
           onClick={() => onBlindAuctionPublish(tradeOptions)}
         >
