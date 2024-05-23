@@ -36,8 +36,8 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
                   <Image
                     src={nft.image}
                     alt="nft"
-                    width={300}
-                    height={300}
+                    width={270}
+                    height={270}
                     className={styles["carousel-item-image"]}
                   />
                   <StatusPlate nft={nft} />
