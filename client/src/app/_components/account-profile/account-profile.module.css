@@ -8,9 +8,7 @@
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 5px 3px 10px rgba(119, 59, 14);
-  position: absolute;
   z-index: 1;
-  right: 0;
 }
 
 .networks-container {
