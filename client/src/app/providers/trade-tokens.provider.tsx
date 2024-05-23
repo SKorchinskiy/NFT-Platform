@@ -22,6 +22,7 @@ import { DEFAULT_READ_WALLET } from "@/configs/constants";
 import { AuctionsContext } from "./auctions.provider";
 
 export const TradeTokensContext = createContext({
+  isLoading: false,
   tradeTokens: [] as Array<TradeTokens>,
   tradeNFTs: [] as Array<
     TradeTokens & {
@@ -40,6 +41,7 @@ export const TradeTokensContext = createContext({
 });
 
 export default function TradeTokensProvider({ children }: PropsWithChildren) {
+  const [isLoading, setIsLoading] = useState(false);
   const [tradeNFTs, setTradeNFTs] = useState<
     Array<
       TradeTokens & {
@@ -64,6 +66,8 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
     [blindAuctions, englishAuctions]
   );
 
+  console.log({ tradeTokens });
+
   const auctionsMapper = useMemo(() => {
     const res = { english: {}, blind: {} } as {
       [key: string]: {
@@ -83,56 +87,69 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const retrieveTradeNfts = async (tokens: Array<TradeTokens>) => {
-      if (nftCollectionContract && nftCreateContract) {
-        const tokens_uri = (
-          (await Promise.all(
-            tokens.map(
-              (token, index) =>
+      try {
+        setIsLoading(true);
+        if (nftCollectionContract && nftCreateContract) {
+          console.log("brrrrrrrr");
+          const tokens_uri = (
+            (await Promise.all(
+              tokens.map(
+                (token, index) =>
+                  new Promise((resolve) => {
+                    (token.nft_contract ===
+                    network.contracts.nftCollectionContract
+                      ? nftCollectionContract
+                      : nftCreateContract
+                    ).methods
+                      .tokenURI(token.token_id)
+                      .call({ from: address || DEFAULT_READ_WALLET })
+                      .then(resolve)
+                      .catch(console.log);
+                  })
+              )
+            )) as Array<string>
+          ).map((uri) => uri.replace("ipfs://", "https://ipfs.io/ipfs/"));
+          console.log("arrrrrrrr");
+
+          console.log({ tokens_uri });
+
+          const tokens_details = (await Promise.all(
+            tokens_uri.map(
+              (uri: string, index) =>
                 new Promise((resolve) => {
-                  (token.nft_contract ===
-                  network.contracts.nftCollectionContract
-                    ? nftCollectionContract
-                    : nftCreateContract
-                  ).methods
-                    .tokenURI(token.token_id)
-                    .call({ from: address || DEFAULT_READ_WALLET })
+                  fetch(uri)
+                    .then((resp) => resp.json())
                     .then(resolve);
                 })
             )
-          )) as Array<string>
-        ).map((uri) => uri.replace("ipfs://", "https://ipfs.io/ipfs/"));
+          )) as Array<{
+            name: string;
+            image: string;
+            external_url: string;
+            description: string;
+            attributes: Array<Object>;
+          }>;
 
-        const tokens_details = (await Promise.all(
-          tokens_uri.map(
-            (uri: string, index) =>
-              new Promise((resolve) => {
-                fetch(uri)
-                  .then((resp) => resp.json())
-                  .then(resolve);
-              })
-          )
-        )) as Array<{
-          name: string;
-          image: string;
-          external_url: string;
-          description: string;
-          attributes: Array<Object>;
-        }>;
-
-        setTradeNFTs(
-          tokens.map((token, index) => ({
-            ...token,
-            ...tokens_details[index],
-            mappedAuctionId:
-              auctionsMapper[token.is_blind ? "blind" : "english"][
-                Number(token.auction_id)
-              ],
-          }))
-        );
+          setTradeNFTs(
+            tokens.map((token, index) => ({
+              ...token,
+              ...tokens_details[index],
+              mappedAuctionId:
+                auctionsMapper[token.is_blind ? "blind" : "english"][
+                  Number(token.auction_id)
+                ],
+            }))
+          );
+        }
+      } catch (e) {
+        console.log({ e });
+      } finally {
+        setIsLoading(false);
       }
     };
-
+    console.log("outer retr...");
     if (tradeTokens && auctionsMapper) {
+      console.log("inner retr...", { tradeTokens });
       retrieveTradeNfts(tradeTokens);
     }
   }, [
@@ -146,7 +163,7 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
 
   return (
     <TradeTokensContext.Provider
-      value={{ tradeTokens, tradeNFTs, auctionsMapper }}
+      value={{ isLoading, tradeTokens, tradeNFTs, auctionsMapper }}
     >
       {children}
     </TradeTokensContext.Provider>
