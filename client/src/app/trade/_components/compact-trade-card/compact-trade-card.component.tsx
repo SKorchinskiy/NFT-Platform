@@ -38,7 +38,7 @@ export default function CompactTradeCard({ token }: CompactTradeCardProps) {
           justifyContent: "space-between",
         }}
       >
-        <div style={{}}>
+        <div>
           <Image
             src={token.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
             alt="nft"
