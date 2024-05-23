@@ -25,8 +25,6 @@ export default function NFTCardList({ nfts }: CardListProps) {
     [key: string]: number;
   };
 
-  console.log({ nfts, compressedTokenIds });
-
   const toggleIsCardModalOpen = () =>
     setIsCardModalOpen((prevState) => !prevState);
 
