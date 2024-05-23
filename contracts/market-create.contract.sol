@@ -175,7 +175,7 @@ contract MarketCreateContract {
         token.token_holder = payable(msg.sender);
         token.status = Status.CANCELED;
         
-        IERC721(_nft_contract).transferFrom(address(this), msg.sender, _token_id);
+        IERC721(_nft_contract).transferFrom(address(this), msg.sender, token.token_id);
 
         emit NFTListingCanceled({
             seq_id: token.seq_id,
