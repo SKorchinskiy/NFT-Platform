@@ -6,9 +6,11 @@ export default function Footer() {
       style={{
         display: "flex",
         justifyContent: "space-around",
-        height: 200,
+        height: 150,
         width: "100%",
-        background: "rgba(250, 250, 250, 0.8)",
+        background: "rgba(31, 37, 68, 0.5)",
+        color: "white",
+        bottom: 0,
       }}
     >
       <div
@@ -22,14 +24,14 @@ export default function Footer() {
         <Image
           src={"/ethereum-sign.png"}
           alt="eth logo"
-          width={65}
-          height={100}
+          width={33}
+          height={50}
         />
         <Image
           src={"/binance-sign.png"}
           alt="eth logo"
-          width={100}
-          height={100}
+          width={50}
+          height={50}
         />
         <div
           style={{
@@ -40,7 +42,6 @@ export default function Footer() {
           }}
         >
           <h3>Know how to improve the platform ?</h3>
-          <p>Get in touch with us</p>
           <div
             style={{
               display: "flex",
@@ -52,8 +53,8 @@ export default function Footer() {
               <Image
                 src={"/telegram-sign.webp"}
                 alt="tg logo"
-                width={50}
-                height={50}
+                width={40}
+                height={40}
                 style={{ cursor: "pointer" }}
               />
             </a>
@@ -64,8 +65,8 @@ export default function Footer() {
               <Image
                 src={"/github-sign.png"}
                 alt="gh logo"
-                width={50}
-                height={50}
+                width={40}
+                height={40}
                 style={{ cursor: "pointer" }}
               />
             </a>
@@ -73,8 +74,8 @@ export default function Footer() {
               <Image
                 src={"/gmail-sign.png"}
                 alt="gm logo"
-                width={50}
-                height={40}
+                width={40}
+                height={30}
                 style={{ cursor: "pointer" }}
               />
             </a>
@@ -83,14 +84,14 @@ export default function Footer() {
         <Image
           src={"/polygon-sign.png"}
           alt="eth logo"
-          width={100}
-          height={100}
+          width={50}
+          height={50}
         />
         <Image
           src={"/hardhat-sign.png"}
           alt="eth logo"
-          width={125}
-          height={100}
+          width={63}
+          height={50}
         />
       </div>
     </div>
