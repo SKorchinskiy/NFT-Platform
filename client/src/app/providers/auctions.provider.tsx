@@ -11,6 +11,7 @@ import { AddressContext } from "./address.provider";
 import { NetworkContext } from "./network.provider";
 import useEnglishAuctionContract from "../hooks/useEnglishAuctionContract.hook";
 import useBlindAuctionContract from "../hooks/useBlindAuctionContract.hook";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export type BlindAuction = {
   auction_id: BigInt;
@@ -48,11 +49,11 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const retrieveEnglishAuctions = async () => {
-      if (address && network && englishAuctionContract) {
+      if (network && englishAuctionContract) {
         const auctions = (await englishAuctionContract.methods
           .get_all_auctions()
           .call({
-            from: address,
+            from: address || DEFAULT_READ_WALLET,
           })) as Array<EnglishAuction>;
 
         console.log({ engAuc: auctions });
@@ -66,14 +67,14 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const retrieveBlindAuctions = async () => {
-      if (address && network && blindAuctionContract) {
+      if (network && blindAuctionContract) {
         const auctions = (await blindAuctionContract.methods
           .get_all_auctions()
           .call({
-            from: address,
+            from: address || DEFAULT_READ_WALLET,
           })) as Array<BlindAuction>;
 
-        console.log({ engAuc: auctions });
+        console.log({ blindAuc: auctions });
 
         setBlindAuctions(auctions);
       }
