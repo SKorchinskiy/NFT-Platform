@@ -8,18 +8,14 @@ import {
   useState,
 } from "react";
 import { Bid } from "../types/bid.type";
-import { MetaMaskInpageProvider } from "@metamask/providers";
 import useEnglishAuctionContract from "../hooks/useEnglishAuctionContract.hook";
 import { AddressContext } from "./address.provider";
 import { DEFAULT_READ_WALLET } from "@/configs/constants";
-import {
-  AuctionsContext,
-  BlindAuction,
-  EnglishAuction,
-} from "./auctions.provider";
+import { BlindAuction, EnglishAuction } from "./auctions.provider";
 import useBlindAuctionContract from "../hooks/useBlindAuctionContract.hook";
 
 export const BidsContext = createContext({
+  isLoading: false,
   bids: [] as Bid[],
   getSpecificAuctionBids: async (auction: BlindAuction | EnglishAuction) =>
     [] as Array<Bid>,
@@ -27,6 +23,7 @@ export const BidsContext = createContext({
 });
 
 export default function BidsProvider({ children }: PropsWithChildren) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [bids, setBids] = useState<Array<Bid>>([]);
   const [refreshCounter, setRefreshCounter] = useState(0);
 
@@ -40,7 +37,7 @@ export default function BidsProvider({ children }: PropsWithChildren) {
   const getSpecificAuctionBids = async (
     auction: BlindAuction | EnglishAuction
   ) => {
-    console.log({ auction });
+    setIsLoading(true);
     let bids = [] as Array<Bid>;
     if (auction.is_blind && blindAuctionContract) {
       bids = (await blindAuctionContract.methods
@@ -53,6 +50,7 @@ export default function BidsProvider({ children }: PropsWithChildren) {
         .get_all_auction_bids(auction.auction_id)
         .call({ from: address })) as Array<Bid>;
     }
+    setIsLoading(false);
     return bids;
   };
 
@@ -84,11 +82,15 @@ export default function BidsProvider({ children }: PropsWithChildren) {
       }
     };
 
+    setIsLoading(true);
     getAuctionBids();
+    setIsLoading(false);
   }, [address, englishAuctionContract, refreshCounter]);
 
   return (
-    <BidsContext.Provider value={{ bids, getSpecificAuctionBids, refreshBids }}>
+    <BidsContext.Provider
+      value={{ isLoading, bids, getSpecificAuctionBids, refreshBids }}
+    >
       {children}
     </BidsContext.Provider>
   );
