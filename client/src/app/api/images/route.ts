@@ -13,16 +13,12 @@ export async function POST(request: NextRequest) {
     const data = await request.formData();
     const prompt: string = data.get("prompt") as string;
 
-    console.log({ prompt });
-
     const links = (await replicate.run(
       "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
       {
         input: { prompt },
       }
     )) as Array<string>;
-
-    console.log({ links });
 
     return NextResponse.json({ image_url: links[0] }, { status: 200 });
   } catch (error) {
