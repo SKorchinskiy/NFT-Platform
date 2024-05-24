@@ -27,24 +27,11 @@ export default function TradeSettings({
       <div>
         <h3>Auction Details</h3>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-          height: 150,
-        }}
-      >
+      <div className={styles["trade-settings"]}>
         <input
           placeholder="auction time in seconds..."
           type="number"
-          style={{
-            width: 200,
-            padding: 15,
-            borderRadius: 5,
-            border: 0,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-          }}
+          className={styles["settings-field"]}
           onChange={(e) =>
             setTradeOptions((prev) => ({
               ...prev,
@@ -55,13 +42,7 @@ export default function TradeSettings({
         <input
           placeholder="asset initial price..."
           type="number"
-          style={{
-            width: 200,
-            padding: 15,
-            borderRadius: 5,
-            border: 0,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-          }}
+          className={styles["settings-field"]}
           onChange={(e) =>
             setTradeOptions((prev) => ({
               ...prev,
@@ -70,40 +51,15 @@ export default function TradeSettings({
           }
         />
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-          height: 150,
-        }}
-      >
+      <div className={styles["bid-buttons-container"]}>
         <button
-          style={{
-            width: 200,
-            padding: 15,
-            borderRadius: 5,
-            border: 0,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-            cursor: "pointer",
-            background: "#2D3250",
-            color: "white",
-          }}
+          className={styles["bid-button"]}
           onClick={() => onTradePublish(tradeOptions)}
         >
           List for English Auction
         </button>
         <button
-          style={{
-            width: 200,
-            padding: 15,
-            borderRadius: 5,
-            border: 0,
-            boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-            cursor: "pointer",
-            background: "#2D3250",
-            color: "white",
-          }}
+          className={styles["bid-button"]}
           onClick={() => onBlindAuctionPublish(tradeOptions)}
         >
           List for Blind Auction

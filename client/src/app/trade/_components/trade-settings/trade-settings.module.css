@@ -3,10 +3,43 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  width: 500px;
+  width: 430px;
   height: 500px;
   background: #7077a1;
   border-radius: 10px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid black;
+}
+
+.trade-settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 150px;
+}
+
+.settings-field {
+  width: 200px;
+  padding: 15px;
+  border-radius: 5px;
+  border: 0;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.bid-buttons-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 150px;
+}
+
+.bid-button {
+  width: 200px;
+  padding: 15px;
+  border-radius: 5px;
+  border: 0;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background: #2d3250;
+  color: white;
 }
