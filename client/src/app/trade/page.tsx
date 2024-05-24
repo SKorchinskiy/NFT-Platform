@@ -18,11 +18,15 @@ import useBlindAuctionContract from "../hooks/useBlindAuctionContract.hook";
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
 import { AuctionsContext } from "../providers/auctions.provider";
+import { TokensContext } from "../providers/nft-tokens.provider";
+import { CustomTokensContext } from "../providers/custom-tokens.provider";
 
 export default function TradePage() {
   const [nftForTrade, setNftForTrade] = useState<NFT>({} as NFT);
 
   const selectedNftHandler = (nft: NFT) => setNftForTrade(nft);
+
+  const { network } = useContext(NetworkContext);
 
   const englishAuctionContract = useEnglishAuctionContract();
   const nftCollectionContract = useNFTCollectionContract();
@@ -30,9 +34,11 @@ export default function TradePage() {
   const nftCreateContract = useNftCreateContract();
 
   const { address } = useContext(AddressContext);
-  const { network } = useContext(NetworkContext);
   const { tradeNFTs } = useContext(TradeTokensContext);
   const { refreshAuctions } = useContext(AuctionsContext);
+  const { refreshTokens } = useContext(TokensContext);
+  const { refreshTokens: refreshCustomTokens } =
+    useContext(CustomTokensContext);
 
   const onTradePublish = async (trade_options: TRADE_OPTIONS) => {
     if (
@@ -41,24 +47,30 @@ export default function TradePage() {
       nftCreateContract &&
       address
     ) {
-      if (nftForTrade.nft_contract) {
-        await nftCreateContract.methods
-          .setApprovalForAll(network.contracts.englishAuctionContract, true)
+      try {
+        if (nftForTrade.nft_contract) {
+          await nftCreateContract.methods
+            .setApprovalForAll(network.contracts.englishAuctionContract, true)
+            .send({ from: address });
+        } else {
+          await nftCollectionContract.methods
+            .setApprovalForAll(network.contracts.englishAuctionContract, true)
+            .send({ from: address });
+        }
+        await englishAuctionContract.methods
+          .create_auction(
+            trade_options.trade_time,
+            nftForTrade.nft_contract || network.contracts.nftCollectionContract,
+            nftForTrade.token_id,
+            trade_options.initial_price
+          )
           .send({ from: address });
-      } else {
-        await nftCollectionContract.methods
-          .setApprovalForAll(network.contracts.englishAuctionContract, true)
-          .send({ from: address });
+        refreshAuctions();
+        refreshTokens();
+        refreshCustomTokens();
+      } catch (e) {
+        console.log({ e });
       }
-      await englishAuctionContract.methods
-        .create_auction(
-          trade_options.trade_time,
-          nftForTrade.nft_contract || network.contracts.nftCollectionContract,
-          nftForTrade.token_id,
-          trade_options.initial_price
-        )
-        .send({ from: address });
-      refreshAuctions();
     }
   };
 
@@ -69,24 +81,30 @@ export default function TradePage() {
       nftCreateContract &&
       address
     ) {
-      if (nftForTrade.nft_contract) {
-        await nftCreateContract.methods
-          .setApprovalForAll(network.contracts.blindAuctionContract, true)
+      try {
+        if (nftForTrade.nft_contract) {
+          await nftCreateContract.methods
+            .setApprovalForAll(network.contracts.blindAuctionContract, true)
+            .send({ from: address });
+        } else {
+          await nftCollectionContract.methods
+            .setApprovalForAll(network.contracts.blindAuctionContract, true)
+            .send({ from: address });
+        }
+        await blindAuctionContract.methods
+          .create_auction(
+            trade_options.trade_time,
+            nftForTrade.nft_contract || network.contracts.nftCollectionContract,
+            nftForTrade.token_id,
+            trade_options.initial_price
+          )
           .send({ from: address });
-      } else {
-        await nftCollectionContract.methods
-          .setApprovalForAll(network.contracts.blindAuctionContract, true)
-          .send({ from: address });
+        refreshAuctions();
+        refreshTokens();
+        refreshCustomTokens();
+      } catch (e) {
+        console.log({ e });
       }
-      await blindAuctionContract.methods
-        .create_auction(
-          trade_options.trade_time,
-          nftForTrade.nft_contract || network.contracts.nftCollectionContract,
-          nftForTrade.token_id,
-          trade_options.initial_price
-        )
-        .send({ from: address });
-      refreshAuctions();
     }
   };
 
