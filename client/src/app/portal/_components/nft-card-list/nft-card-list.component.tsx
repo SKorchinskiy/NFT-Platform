@@ -7,52 +7,22 @@ import { NFT, NFTs } from "@/app/types/nft.type";
 type CardListProps = { nfts: NFTs };
 
 export default function NFTCardList({ nfts }: CardListProps) {
+  const [activeIdx, setActiveIdx] = useState(0);
   const [activeToken, setActiveToken] = useState<NFT>(nfts[0]);
   const [isCardModalOpen, setIsCardModalOpen] = useState<boolean>(false);
-
-  const compressedTokenIds = useMemo(
-    () =>
-      nfts.reduce(
-        (accumulated, currentValue, index) => ({
-          ...accumulated,
-          [currentValue.token_id.toString() +
-          (currentValue.nft_contract ? "x0" : "x1")]: index,
-        }),
-        {}
-      ),
-    [nfts]
-  ) as {
-    [key: string]: number;
-  };
 
   const toggleIsCardModalOpen = () =>
     setIsCardModalOpen((prevState) => !prevState);
 
-  const initTokenHandler = (nft: NFT) => setActiveToken(nft);
+  const initTokenHandler = (activeIdx: number) => {
+    setActiveToken(nfts[activeIdx]);
+    setActiveIdx(activeIdx);
+  };
 
   const activeTokenHandler = (action: -1 | 1) => {
-    setActiveToken((prevValue: NFT) => {
-      const MOD = nfts.length;
-      const targetCompressedId: number =
-        (compressedTokenIds[
-          prevValue.token_id.toString() + (prevValue.nft_contract ? "x0" : "x1")
-        ] +
-          action +
-          MOD) %
-        MOD;
-      return (
-        nfts.find(
-          (token) =>
-            token.token_id.toString() + (token.nft_contract ? "x0" : "x1") ==
-            Object.entries(compressedTokenIds).reduce((acc, [key, value]) => {
-              if (targetCompressedId == value) {
-                acc = key;
-              }
-              return acc;
-            }, "")
-        ) || nfts[0]
-      );
-    });
+    const MOD = nfts.length;
+    setActiveToken(nfts[(activeIdx + action + MOD) % MOD]);
+    setActiveIdx((activeIdx + action + MOD) % MOD);
   };
 
   return (
@@ -63,6 +33,7 @@ export default function NFTCardList({ nfts }: CardListProps) {
               <NFTCard
                 key={index}
                 nft={nft}
+                tokenIndex={index}
                 toggleIsCardModalOpen={toggleIsCardModalOpen}
                 initTokenHandler={initTokenHandler}
               />

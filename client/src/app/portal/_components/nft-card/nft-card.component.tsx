@@ -17,12 +17,14 @@ export enum Status {
 
 type CardProps = {
   nft: NFT;
+  tokenIndex: number;
   toggleIsCardModalOpen: Function;
   initTokenHandler: Function;
 };
 
 export default function NFTCard({
   nft,
+  tokenIndex,
   toggleIsCardModalOpen,
   initTokenHandler,
 }: CardProps) {
@@ -32,7 +34,7 @@ export default function NFTCard({
     <div
       className={styles["card-container"]}
       onClick={(e) => {
-        initTokenHandler(nft);
+        initTokenHandler(tokenIndex);
         toggleIsCardModalOpen();
       }}
     >
