@@ -23,7 +23,6 @@ export default function NFTBuyingDetails({
 }) {
   const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
-  const { updateText } = useContext(PopupContext);
   const { refreshTokens } = useContext(TokensContext);
   const { refreshTokens: refreshCustomTokens } =
     useContext(CustomTokensContext);
@@ -41,24 +40,27 @@ export default function NFTBuyingDetails({
       nftCreateContract &&
       marketCreateContract
     ) {
-      if (nft.nft_contract && nft.seq_id) {
-        await marketCreateContract.methods
-          .purchase_nft(network.contracts.nftCreateContract, nft.seq_id)
-          .send({ from: address, value: nft.token_price.toString() });
-      } else {
-        await resellContract.methods.purchase_listed_nft(nft.token_id).send({
-          from: address,
-          value: nft.token_price.toString(),
+      try {
+        if (nft.nft_contract && nft.seq_id) {
+          await marketCreateContract.methods
+            .purchase_nft(network.contracts.nftCreateContract, nft.seq_id)
+            .send({ from: address, value: nft.token_price.toString() });
+        } else {
+          await resellContract.methods.purchase_listed_nft(nft.token_id).send({
+            from: address,
+            value: nft.token_price.toString(),
+          });
+        }
+        new JSConfetti().addConfetti({
+          emojis: ["🎊", "🎈"],
+          confettiNumber: 100,
         });
+        refreshTokens();
+        refreshCustomTokens();
+        toggleIsCardModalOpen();
+      } catch (e) {
+        console.log({ e });
       }
-      new JSConfetti().addConfetti({
-        emojis: ["🎊", "🎈"],
-        confettiNumber: 100,
-      });
-      updateText(`Successfully bought NFT-token ${nft.token_id.toString()}`);
-      refreshTokens();
-      refreshCustomTokens();
-      toggleIsCardModalOpen();
     }
   };
 
@@ -95,16 +97,7 @@ export default function NFTBuyingDetails({
             Buy token
           </div>
         ) : (
-          <div
-            style={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100px",
-              width: "250px",
-            }}
-          >
+          <div className={styles["connection-container"]}>
             <ConnectWallet />
           </div>
         )}
