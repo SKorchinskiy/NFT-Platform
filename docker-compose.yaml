@@ -1,0 +1,8 @@
+services:
+  frontend:
+    container_name: frontend-nft
+    ports:
+      - 3000:3000
+    build: ./client/
+    command: npm run start
+    restart: always
