@@ -16,6 +16,8 @@ import NFTCollectionABI from "../../configs/nft-collection.abi.json";
 import { NFT, NFTs } from "../types/nft.type";
 import { DEFAULT_READ_WALLET } from "@/configs/constants";
 import { Status } from "../portal/_components/nft-card/nft-card.component";
+import { CustomTokensContext } from "./custom-tokens.provider";
+import { NetworkContext } from "./network.provider";
 
 export const TokensContext = createContext({
   isLoading: false,
@@ -35,24 +37,32 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
 
   const [refreshCounter, setRefreshCounter] = useState(0);
 
+  const { network } = useContext(NetworkContext);
+
   const refreshTokens = () => setRefreshCounter((prev) => prev + 1);
 
   const resetTokens = (newTokens: NFTs) => setTokens(newTokens);
 
   const { address } = useContext(AddressContext);
+  const { purchasedTokens: customPurchaseTokens } =
+    useContext(CustomTokensContext);
 
   const resellContract = useResellContract();
   const nftCollectionContract = useNFTCollectionContract();
 
   const addressSoldTokens = useMemo(
     () =>
-      purchasedTokens.filter(
-        (token) =>
-          token.token_seller == address &&
-          token.status.toString() == Status["SOLD"].toString()
-      ),
-    [purchasedTokens, address]
+      purchasedTokens
+        .concat(customPurchaseTokens)
+        .filter(
+          (token) =>
+            token.token_seller == address &&
+            token.status.toString() == Status["SOLD"].toString()
+        ),
+    [purchasedTokens, address, customPurchaseTokens]
   );
+
+  useEffect(() => refreshTokens(), [network]);
 
   useEffect(() => {
     const getPurchasedTokens = async () => {
@@ -173,6 +183,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
       setIsLoading(true);
       try {
         if (resellContract && nftCollectionContract) {
+          console.log("getting, market nft");
           const tokens = (
             (await resellContract.methods
               .get_listed_nft()
