@@ -22,7 +22,6 @@ export default function NFTCancelationDetails({
 }) {
   const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
-  const { updateText } = useContext(PopupContext);
   const { refreshTokens } = useContext(TokensContext);
   const { refreshTokens: refreshCustomTokens } =
     useContext(CustomTokensContext);
@@ -40,28 +39,29 @@ export default function NFTCancelationDetails({
       nftCreateContract &&
       marketCreateContract
     ) {
-      if (nft.nft_contract && nft.seq_id) {
-        await nftCreateContract.methods
-          .setApprovalForAll(network.contracts.marketCreateContract, true)
-          .send({ from: address });
-        await marketCreateContract.methods
-          .cancel_nft_listing(network.contracts.nftCreateContract, nft.seq_id)
-          .send({ from: address });
-      } else {
-        await nftCollectionContract.methods
-          .setApprovalForAll(network.contracts.marketResellContract, true)
-          .send({ from: address });
-        await resellContract.methods.cancel_token_listing(nft.token_id).send({
-          from: address,
-        });
-      }
+      try {
+        if (nft.nft_contract && nft.seq_id) {
+          await nftCreateContract.methods
+            .setApprovalForAll(network.contracts.marketCreateContract, true)
+            .send({ from: address });
+          await marketCreateContract.methods
+            .cancel_nft_listing(network.contracts.nftCreateContract, nft.seq_id)
+            .send({ from: address });
+        } else {
+          await nftCollectionContract.methods
+            .setApprovalForAll(network.contracts.marketResellContract, true)
+            .send({ from: address });
+          await resellContract.methods.cancel_token_listing(nft.token_id).send({
+            from: address,
+          });
+        }
 
-      updateText(
-        `Successfully canceled NFT-token listing ${nft.token_id.toString()}`
-      );
-      refreshTokens();
-      refreshCustomTokens();
-      toggleIsCardModalOpen();
+        refreshTokens();
+        refreshCustomTokens();
+        toggleIsCardModalOpen();
+      } catch (e) {
+        console.log({ e });
+      }
     }
   };
 
@@ -98,16 +98,7 @@ export default function NFTCancelationDetails({
             Cancel listing
           </div>
         ) : (
-          <div
-            style={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100px",
-              width: "250px",
-            }}
-          >
+          <div className={styles["connection-container"]}>
             <ConnectWallet />
           </div>
         )}

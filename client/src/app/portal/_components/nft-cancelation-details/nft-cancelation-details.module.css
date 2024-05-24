@@ -59,3 +59,12 @@
   transform: scale(103%);
   background: rgba(106, 125, 148);
 }
+
+.connection-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 250px;
+}
