@@ -23,11 +23,9 @@ export default function TradeList({ nfts, detailed = true }: TradeListProps) {
   return (
     <div className={styles["trade-list-container"]}>
       {detailed
-        ? nfts.map((token) => (
-            <TradeCard key={Number(token.token_id)} token={token} />
-          ))
-        : nfts.map((token) => (
-            <CompactTradeCard key={Number(token.token_id)} token={token} />
+        ? nfts.map((token, index) => <TradeCard key={index} token={token} />)
+        : nfts.map((token, index) => (
+            <CompactTradeCard key={index} token={token} />
           ))}
     </div>
   );
