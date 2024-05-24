@@ -10,6 +10,7 @@
   max-height: 500px;
   width: 90%;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+  margin: 15px;
 }
 
 .bid-list {
@@ -17,4 +18,36 @@
   grid-template-columns: 1fr 1fr;
   column-gap: 10px;
   row-gap: 10px;
+}
+
+.bid-list-header {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.bid-list-content {
+  display: flex;
+  height: 50px;
+  width: 400px;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.blind-auction-options {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  bottom: 10px;
+}
+
+.bid-button {
+  padding: 5px;
+  width: 100px;
+  border-radius: 5px;
+  border: 0px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background: #2d3250;
+  color: white;
 }

@@ -30,21 +30,37 @@ export default function BidsList({ bids, target_auction }: BidsListProps) {
 
   const { refreshBids } = useContext(BidsContext);
 
+  const submitBidHandler = async () => {
+    if (englishAuctionContract && blindAuctionContract) {
+      try {
+        if (target_auction.is_blind) {
+          await blindAuctionContract.methods
+            .bid(target_auction.auction_id, isFakeBid)
+            .send({
+              from: address,
+              value: bidAmount,
+            });
+        } else {
+          await englishAuctionContract.methods
+            .bid(target_auction.auction_id)
+            .send({
+              from: address,
+              value: bidAmount,
+            });
+        }
+        refreshBids();
+      } catch (e) {
+        console.log({ e });
+      }
+    }
+  };
+
   return (
     <div className={styles["bid-list-container"]}>
-      <div>
+      <div className={styles["bid-list-header"]}>
         <span>Bid History</span>
       </div>
-      <div
-        style={{
-          display: "flex",
-          height: 50,
-          width: "400px",
-          justifyContent: "space-around",
-          alignItems: "center",
-          marginTop: 20,
-        }}
-      >
+      <div className={styles["bid-list-content"]}>
         <div>
           <span>Bid amount: </span>
         </div>
@@ -59,14 +75,7 @@ export default function BidsList({ bids, target_auction }: BidsListProps) {
           />
         </div>
         {target_auction.is_blind ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
-              bottom: 10,
-            }}
-          >
+          <div className={styles["blind-auction-options"]}>
             <span>is fake ?</span>
             <input
               type="checkbox"
@@ -76,32 +85,8 @@ export default function BidsList({ bids, target_auction }: BidsListProps) {
         ) : null}
         <div>
           <button
-            onClick={async () => {
-              if (englishAuctionContract && blindAuctionContract) {
-                if (target_auction.is_blind) {
-                  console.log({ target_auction, isFakeBid, bidAmount });
-                  await blindAuctionContract.methods
-                    .bid(target_auction.auction_id, isFakeBid)
-                    .send({
-                      from: address,
-                      value: bidAmount,
-                    });
-                } else {
-                  await englishAuctionContract.methods
-                    .bid(target_auction.auction_id)
-                    .send({
-                      from: address,
-                      value: bidAmount,
-                    });
-                }
-                refreshBids();
-              }
-            }}
-            style={{
-              cursor: "pointer",
-              padding: 5,
-              width: 100,
-            }}
+            onClick={() => submitBidHandler()}
+            className={styles["bid-button"]}
           >
             Place Bid
           </button>
