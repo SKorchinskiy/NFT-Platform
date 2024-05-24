@@ -24,7 +24,6 @@ export default function NFTListingDetails({
 
   const { network } = useContext(NetworkContext);
   const { address } = useContext(AddressContext);
-  const { updateText } = useContext(PopupContext);
   const { refreshTokens } = useContext(TokensContext);
   const { refreshTokens: refreshCustomTokens } =
     useContext(CustomTokensContext);
@@ -42,40 +41,47 @@ export default function NFTListingDetails({
       nftCreateContract &&
       marketCreateContract
     ) {
-      if (nft.nft_contract) {
-        await nftCreateContract.methods
-          .setApprovalForAll(network.contracts.marketCreateContract, true)
-          .send({ from: address });
+      try {
+        if (nft.nft_contract) {
+          await nftCreateContract.methods
+            .setApprovalForAll(network.contracts.marketCreateContract, true)
+            .send({ from: address });
 
-        const listing_fee = "2500000000000000";
+          const listing_fee = "25000000000000";
 
-        await marketCreateContract.methods
-          .create_nft_asset(
-            network.contracts.nftCreateContract,
-            nft.token_id,
-            tokenPrice
-          )
-          .send({ from: address, value: listing_fee });
-      } else {
-        await nftCollectionContract.methods
-          .setApprovalForAll(network.contracts.marketResellContract, true)
-          .send({ from: address });
+          await marketCreateContract.methods
+            .create_nft_asset(
+              network.contracts.nftCreateContract,
+              nft.token_id,
+              tokenPrice
+            )
+            .send({ from: address, value: listing_fee });
+        } else {
+          await nftCollectionContract.methods
+            .setApprovalForAll(network.contracts.marketResellContract, true)
+            .send({
+              from: address,
+            });
 
-        const listing_fee = (
-          (await resellContract.methods
-            .get_listing_fee()
-            .call({ from: address })) as number
-        ).toString();
+          const listing_fee = (
+            (await resellContract.methods.get_listing_fee().call({
+              from: address,
+            })) as number
+          ).toString();
 
-        await resellContract.methods.list_token(nft.token_id, tokenPrice).send({
-          from: address,
-          value: listing_fee,
-        });
+          await resellContract.methods
+            .list_token(nft.token_id, tokenPrice)
+            .send({
+              from: address,
+              value: listing_fee,
+            });
+        }
+        refreshTokens();
+        refreshCustomTokens();
+        toggleIsCardModalOpen();
+      } catch (e) {
+        console.log({ e });
       }
-      updateText(`Successfully listed NFT-token ${nft.token_id.toString()}`);
-      refreshTokens();
-      refreshCustomTokens();
-      toggleIsCardModalOpen();
     }
   };
 
