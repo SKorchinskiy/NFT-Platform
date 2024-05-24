@@ -28,12 +28,7 @@ export default function TradeCard({ token }: TradeCardProps) {
   );
 
   return (
-    <div
-      className={styles["trade-card-container"]}
-      style={{
-        position: "relative",
-      }}
-    >
+    <div className={styles["trade-card-container"]}>
       <div className={styles["trade-card-representation"]}>
         <Image
           src={token.image.replace("ipfs://", "https://ipfs.io/ipfs/")}

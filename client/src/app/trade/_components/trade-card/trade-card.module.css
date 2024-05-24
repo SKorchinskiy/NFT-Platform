@@ -3,6 +3,7 @@
   width: 100%;
   justify-content: space-around;
   background: #7077a1;
+  position: relative;
   padding: 50px;
   margin: 50px;
   overflow: scroll;
