@@ -48,13 +48,7 @@ export default function MintingForm({
         className={styles["minting-form-field"]}
         onChange={onInputChange}
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <div className={styles["file-upload-container"]}>
         <input
           type="file"
           className={styles["file-upload-input"]}
@@ -87,16 +81,7 @@ export default function MintingForm({
           </button>
         </div>
       ) : (
-        <div
-          style={{
-            position: "relative",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100px",
-            width: "250px",
-          }}
-        >
+        <div className={styles["connection-container"]}>
           <ConnectWallet />
         </div>
       )}

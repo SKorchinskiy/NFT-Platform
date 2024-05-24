@@ -13,16 +13,18 @@
   padding: 10px;
 }
 
-.minting-form-container h3 {
-  color: white;
-}
-
 .minting-form-field {
   width: 70%;
   border-radius: 5px;
   border: 0px;
   padding: 20px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .file-upload-input {
@@ -54,4 +56,13 @@
 
 .minting-form-button:hover {
   background: rgba(0, 0, 0, 0.3);
+}
+
+.connection-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 250px;
 }
