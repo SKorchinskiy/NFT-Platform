@@ -47,26 +47,8 @@ export default function Portal() {
     return <h1>Install Metamask - https://metamask.io/download/</h1>;
   } else if (!address) {
     return (
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "white",
-            fontWeight: "bold",
-            letterSpacing: 1,
-            textTransform: "uppercase",
-          }}
-        >
+      <div className={styles["connection-container"]}>
+        <div className={styles["connection-container-content"]}>
           <p>Please, connect via Metamask to proceed</p>
           <ConnectWallet />
         </div>
@@ -128,28 +110,8 @@ export default function Portal() {
       ) : null}
     </div>
   ) : (
-    <div
-      style={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "white",
-          fontWeight: "bold",
-          letterSpacing: 1,
-          textTransform: "uppercase",
-        }}
-      >
+    <div className={styles["message-container"]}>
+      <div className={styles["empty-container"]}>
         <p>You have no tokens associated with your address!</p>
       </div>
     </div>
