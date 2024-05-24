@@ -41,8 +41,11 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
   const nftCreateContract = useNftCreateContract();
   const marketCreateContract = useNftMarketContract();
 
+  useEffect(() => refreshTokens(), [network]);
+
   useEffect(() => {
     const getPurchasedTokens = async () => {
+      console.log("neeetetqewweqweqweqwqeqweq", { network });
       try {
         setIsLoading(true);
         if (nftCreateContract && marketCreateContract) {
@@ -217,9 +220,8 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
                   "https://ipfs.io/ipfs/"
                 ),
               });
+              setMarketCustomTokens(tokens_data);
             }
-
-            setMarketCustomTokens(tokens_data);
           }
         }
       } catch (e) {
