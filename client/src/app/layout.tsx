@@ -35,16 +35,9 @@ export default function RootLayout({
 }) {
   const [init, setInit] = useState(false);
 
-  // this should be run only once per application lifetime
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
-      // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-      // starting from v2 you can add only the features you need reducing the bundle size
-      //await loadAll(engine);
-      //await loadFull(engine);
       await loadSlim(engine);
-      //await loadBasic(engine);
     }).then(() => {
       setInit(true);
     });
@@ -60,10 +53,6 @@ export default function RootLayout({
               fpsLimit: 120,
               interactivity: {
                 events: {
-                  // onClick: {
-                  //   enable: true,
-                  //   mode: "push",
-                  // },
                   onHover: {
                     enable: true,
                     mode: "repulse",
@@ -141,9 +130,9 @@ export default function RootLayout({
                           >
                             <Navbar />
                             {children}
+                            <ActionPopup />
                             <Footer />
                           </div>
-                          <ActionPopup />
                         </PopupProvider>
                       </BidsProvider>
                     </TradeTokensProvider>
