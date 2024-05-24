@@ -54,7 +54,6 @@ export default function MintPage() {
     try {
       let data = new FormData();
       data.append("prompt", formInput.name);
-      console.log("generating image...");
       setAiTokenGen(true);
       const res = await fetch("/api/images", {
         method: "POST",
@@ -62,8 +61,8 @@ export default function MintPage() {
       });
       const { image_url } = await res.json();
       setNftImage(image_url);
-    } catch (r) {
-      console.log({ r });
+    } catch (e) {
+      console.log({ e });
     }
   };
 
@@ -74,57 +73,60 @@ export default function MintPage() {
       formInput.name &&
       nftCreateContract
     ) {
-      const data = new FormData();
-      data.append("file", nftImage);
-      data.append("name", formInput.name);
+      try {
+        const data = new FormData();
+        data.append("file", nftImage);
+        data.append("name", formInput.name);
 
-      const res = await fetch("/api/files", {
-        method: "POST",
-        body: data,
-      });
-
-      const { IpfsHash } = await res.json();
-
-      const token_id =
-        Number(
-          (await nftCreateContract.methods.counter().call({
-            from: address,
-          })) as BigInt
-        ) + 1;
-
-      const res2 = await fetch(
-        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-        {
+        const res = await fetch("/api/files", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${PINATA_KEY}`,
-          },
-          body: JSON.stringify({
-            token_id,
-            name: formInput.name,
-            description: formInput.description,
-            image: `ipfs://${IpfsHash}`,
-          }),
-        }
-      );
-      const { IpfsHash: IpfsCID } = await res2.json();
+          body: data,
+        });
 
-      const ipfsURI = "ipfs://" + IpfsCID;
+        const { IpfsHash } = await res.json();
 
-      const resp = await nftCreateContract?.methods
-        .mint_token(ipfsURI)
-        .send({ from: address, value: "7500000000000000" });
-      refreshTokens();
-      refreshCustomTokens();
-      setNftImage("");
-      setFormInput(DEFAULT_FORM_INPUT);
-      setShowOverlay(true);
+        const token_id =
+          Number(
+            (await nftCreateContract.methods.counter().call({
+              from: address,
+            })) as BigInt
+          ) + 1;
+
+        const res2 = await fetch(
+          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${PINATA_KEY}`,
+            },
+            body: JSON.stringify({
+              token_id,
+              name: formInput.name,
+              description: formInput.description,
+              image: `ipfs://${IpfsHash}`,
+            }),
+          }
+        );
+        const { IpfsHash: IpfsCID } = await res2.json();
+
+        const ipfsURI = "ipfs://" + IpfsCID;
+
+        const resp = await nftCreateContract?.methods
+          .mint_token(ipfsURI)
+          .send({ from: address, value: "75000000000000" });
+        refreshTokens();
+        refreshCustomTokens();
+        setNftImage("");
+        setFormInput(DEFAULT_FORM_INPUT);
+        setShowOverlay(true);
+      } catch (e) {
+        console.log({ e });
+      }
     }
   };
 
   const mintAndListToken = async () => {
-    console.log("outer");
     if (
       nftImage &&
       formInput.description &&
@@ -132,64 +134,65 @@ export default function MintPage() {
       formInput.price &&
       nftCreateContract
     ) {
-      console.log("inner");
-      const data = new FormData();
-      data.append("file", nftImage);
-      data.append("name", formInput.name);
+      try {
+        const data = new FormData();
+        data.append("file", nftImage);
+        data.append("name", formInput.name);
 
-      const res = await fetch("/api/files", { method: "POST", body: data });
-      const { IpfsHash } = await res.json();
+        const res = await fetch("/api/files", { method: "POST", body: data });
+        const { IpfsHash } = await res.json();
 
-      const token_id =
-        Number(
-          (await nftCreateContract.methods.counter().call({
-            from: address,
-          })) as BigInt
-        ) + 1;
+        const token_id =
+          Number(
+            (await nftCreateContract.methods.counter().call({
+              from: address,
+            })) as BigInt
+          ) + 1;
 
-      const res2 = await fetch(
-        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${PINATA_KEY}`,
-          },
-          body: JSON.stringify({
-            token_id,
-            name: formInput.name,
-            description: formInput.description,
-            image: `ipfs://${IpfsHash}`,
-            token_price: Number(formInput.price * 1e18).toString(),
-          }),
-        }
-      );
-      const { IpfsHash: IpfsCID } = await res2.json();
-
-      const ipfsURI = "ipfs://" + IpfsCID;
-
-      const resp = await nftCreateContract.methods
-        .create_token_wrapper(ipfsURI)
-        .send({ from: address });
-
-      if (resp && resp.events) {
-        const token_id = Number(
-          resp.events.TokenWrapperCreated.returnValues.token_id
+        const res2 = await fetch(
+          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${PINATA_KEY}`,
+            },
+            body: JSON.stringify({
+              token_id,
+              name: formInput.name,
+              description: formInput.description,
+              image: `ipfs://${IpfsHash}`,
+              token_price: Number(formInput.price * 1e18).toString(),
+            }),
+          }
         );
-        await nftMarketContract?.methods
-          .create_nft_asset(
-            network.contracts.nftCreateContract,
-            token_id,
-            formInput.price * 1e18
-          )
-          .send({ from: address, value: "2500000000000000" });
+        const { IpfsHash: IpfsCID } = await res2.json();
+
+        const ipfsURI = "ipfs://" + IpfsCID;
+        const resp = await nftCreateContract.methods
+          .create_token_wrapper(ipfsURI)
+          .send({ from: address });
+
+        if (resp && resp.events) {
+          const token_id = Number(
+            resp.events.TokenWrapperCreated.returnValues.token_id
+          );
+          const resp2 = await nftMarketContract?.methods
+            .create_nft_asset(
+              network.contracts.nftCreateContract,
+              token_id,
+              formInput.price * 1e18
+            )
+            .send({ from: address, value: "25000000000000" });
+        }
+        refreshTokens();
+        refreshCustomTokens();
+        setNftImage("");
+        setFormInput(DEFAULT_FORM_INPUT);
+        setShowOverlay(true);
+      } catch (e) {
+        console.log({ e });
       }
-      console.log("refreshing...");
-      refreshTokens();
-      refreshCustomTokens();
-      setNftImage("");
-      setFormInput(DEFAULT_FORM_INPUT);
-      setShowOverlay(true);
     }
   };
 
@@ -207,47 +210,14 @@ export default function MintPage() {
         />
       </div>
       {showOverlay ? (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 5,
-            background: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              height: 200,
-              width: 600,
-              background: "whitesmoke",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        <div className={styles["overlay-container"]}>
+          <div className={styles["overlay-content-container"]}>
             <div>
               <p>Your token was successfully minted!</p>
               <p>It can take several minutes for token to be available.</p>
             </div>
             <div
-              style={{
-                width: 200,
-                height: 50,
-                background: "pink",
-                borderRadius: 5,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-              }}
+              className={styles["overlay-close-button"]}
               onClick={() => setShowOverlay(false)}
             >
               <span>OK</span>
@@ -256,46 +226,13 @@ export default function MintPage() {
         </div>
       ) : null}
       {aiTokenGen ? (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 5,
-            background: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              height: 200,
-              width: 600,
-              background: "whitesmoke",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        <div className={styles["overlay-container"]}>
+          <div className={styles["overlay-content-container"]}>
             <div>
               <p>Generating token image with AI can take a while...</p>
             </div>
             <div
-              style={{
-                width: 200,
-                height: 50,
-                background: "pink",
-                borderRadius: 5,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
-              }}
+              className={styles["overlay-close-button"]}
               onClick={() => setAiTokenGen(false)}
             >
               <span>OK</span>
