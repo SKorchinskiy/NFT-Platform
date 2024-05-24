@@ -43,16 +43,8 @@ export default function MintingConstructor({
           <div className={styles["image-filler"]}></div>
         )}
       </div>
-      <div
-        style={{
-          height: "calc(100% - 309px)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
-          marginLeft: 10,
-        }}
-      >
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+      <div className={styles["constructor-content"]}>
+        <div className={styles["constructor-content-item"]}>
           <span>
             <b>Owned by: </b>
           </span>
@@ -66,7 +58,7 @@ export default function MintingConstructor({
             <div className={styles["input-filler"]}></div>
           )}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+        <div className={styles["constructor-content-item"]}>
           <span>
             <b>Name: </b>
           </span>
@@ -76,7 +68,7 @@ export default function MintingConstructor({
             <div className={styles["input-filler"]}></div>
           )}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+        <div className={styles["constructor-content-item"]}>
           <span>
             <b>Description: </b>
           </span>
@@ -86,7 +78,7 @@ export default function MintingConstructor({
             <div className={styles["input-filler"]}></div>
           )}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+        <div className={styles["constructor-content-item"]}>
           <span>
             <b>Price: </b>
           </span>

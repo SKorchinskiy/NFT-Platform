@@ -11,6 +11,19 @@
   height: 309px;
 }
 
+.constructor-content {
+  height: calc(100% - 309px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 10px;
+}
+
+.constructor-content-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
 .image-filler {
   border-radius: 10px 10px 0px 0px;
   width: 309px;
