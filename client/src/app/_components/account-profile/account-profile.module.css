@@ -1,4 +1,5 @@
 .account-profile-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,10 +30,11 @@
 .account-exit {
   position: absolute;
   bottom: 0;
-  right: 5px;
+  right: 1px;
 }
 
-.chain-option {
+.chain-option,
+.chain-option-selected {
   width: 100%;
   padding: 10px;
   background: rgb(90, 34, 139);
@@ -40,6 +42,13 @@
   cursor: pointer;
   margin-bottom: 2px;
   font-weight: bold;
+  text-transform: lowercase;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.chain-option-selected {
+  background: rgb(159, 90, 253);
 }
 
 .chain-option:last-child {

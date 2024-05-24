@@ -11,6 +11,7 @@ import { NetworkContext } from "@/app/providers/network.provider";
 export default function AccountProfile() {
   const { address, balance, updateSelectedAddress } =
     useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
   const [formatedAddress, setFormatedAddress] = useState<string>("");
   const [formatedBalance, setFormatedBalance] = useState<number>(0);
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
@@ -37,13 +38,22 @@ export default function AccountProfile() {
         <Fragment>
           <div className={styles["networks-container"]}>
             {["Ethereum", "Binance", "Polygon", "Hardhat"].map(
-              (network, index) => (
+              (item, index) => (
                 <div
-                  className={styles["chain-option"]}
+                  className={
+                    styles[
+                      item === network.name
+                        ? "chain-option-selected"
+                        : "chain-option"
+                    ]
+                  }
                   key={index}
-                  onClick={() => switchNetwork(network)}
+                  onClick={() => {
+                    console.log("CALLLEDDEDEL<DELEDL<D<LE<D<EL<DE", { item });
+                    switchNetwork(item);
+                  }}
                 >
-                  <span>{network}</span>
+                  <span>{item}</span>
                 </div>
               )
             )}
