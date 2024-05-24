@@ -7,6 +7,7 @@ import { AddressContext } from "../providers/address.provider";
 import { NetworkContext } from "../providers/network.provider";
 import { MetamaskContext } from "../providers/metamask.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export default function useBlindAuctionContract() {
   const [contract, setContract] = useState<Contract<typeof BlindAuctionABI>>();
@@ -23,12 +24,12 @@ export default function useBlindAuctionContract() {
       const blind_auction_contract = new web3.eth.Contract(
         BlindAuctionABI,
         network.contracts.blindAuctionContract,
-        { from: address }
+        { from: address || DEFAULT_READ_WALLET }
       );
       setContract(blind_auction_contract);
     };
 
-    if (provider) {
+    if (provider && network) {
       retrieveBlindAuctionContract(provider);
     }
   }, [address, network, provider]);

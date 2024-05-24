@@ -10,6 +10,7 @@ import { AddressContext } from "../providers/address.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Contract } from "web3-eth-contract";
 import { NetworkContext } from "../providers/network.provider";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export default function useNFTCollectionContract() {
   const [nftCollectionContract, setNftCollectionContract] =
@@ -28,13 +29,13 @@ export default function useNFTCollectionContract() {
         NFTCollectionABI,
         network.contracts.nftCollectionContract,
         {
-          from: address,
+          from: address || DEFAULT_READ_WALLET,
         }
       );
       setNftCollectionContract(contract);
     };
 
-    if (provider) {
+    if (provider && network) {
       retrieveNftCollectionContract(provider);
     }
   }, [provider, address, network]);

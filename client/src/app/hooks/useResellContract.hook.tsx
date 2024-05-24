@@ -10,6 +10,7 @@ import { AddressContext } from "../providers/address.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Contract } from "web3-eth-contract";
 import { NetworkContext } from "../providers/network.provider";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export default function useResellContract() {
   const [resellContract, setResellContract] =
@@ -26,14 +27,14 @@ export default function useResellContract() {
         MarketResellABI,
         network.contracts.marketResellContract,
         {
-          from: address,
+          from: address || DEFAULT_READ_WALLET,
           gasPrice: "20000000000",
         }
       );
       setResellContract(contract);
     };
 
-    if (provider) {
+    if (provider && network) {
       retrieveResellContract(provider);
     }
   }, [provider, address, network]);

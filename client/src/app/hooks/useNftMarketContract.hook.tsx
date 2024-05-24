@@ -9,6 +9,7 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 
 import MarketCreateContractABI from "../../configs/market-create.abi.json";
 import { NetworkContext } from "../providers/network.provider";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export default function useNftMarketContract() {
   const [marketContract, setMarketContract] =
@@ -26,12 +27,15 @@ export default function useNftMarketContract() {
       const contract = new web3.eth.Contract(
         MarketCreateContractABI,
         network.contracts.marketCreateContract,
-        { from: address }
+        { from: address || DEFAULT_READ_WALLET }
       );
-
+      console.log(
+        "updated market create contract to ",
+        network.contracts.marketCreateContract
+      );
       setMarketContract(contract);
     };
-    if (provider) {
+    if (provider && network) {
       retrieveNftMarketContract(provider);
     }
   }, [address, provider, network]);

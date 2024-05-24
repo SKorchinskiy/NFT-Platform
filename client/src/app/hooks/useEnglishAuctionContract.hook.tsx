@@ -7,6 +7,7 @@ import { MetamaskContext } from "../providers/metamask.provider";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { NetworkContext } from "../providers/network.provider";
 import { AddressContext } from "../providers/address.provider";
+import { DEFAULT_READ_WALLET } from "@/configs/constants";
 
 export default function useEnglishAuctionContract() {
   const [contract, setContract] =
@@ -24,12 +25,12 @@ export default function useEnglishAuctionContract() {
       const english_auction_contract = new web3.eth.Contract(
         EnglishAuctionABI,
         network.contracts.englishAuctionContract,
-        { from: address }
+        { from: address || DEFAULT_READ_WALLET }
       );
       setContract(english_auction_contract);
     };
 
-    if (provider) {
+    if (provider && network) {
       retrieveEnglishAuctionContract(provider);
     }
   }, [provider, address, network]);
