@@ -150,13 +150,12 @@ contract MarketBlindAuctionContract {
     }
 
     function auctionEnd(uint256 auction_id) external payable {
-        require(is_revealed, "You end auction only after the revealing has been performed!");
-
         Auction memory auction = auctions_list[auction_id];
-
-        require(block.timestamp > auction.auction_end_time, "Auctions has not ended yet!");
         
-        if (auction.highest_bid > 0) {
+        require(block.timestamp > auction.auction_end_time, "Auctions has not ended yet!");
+        require(is_revealed, "You can end auction only after the revealing has been performed!");
+        
+        if (auction.highest_bid > 0 && auction.highest_bidder != address(0)) {
             uint256 pure_profit = auction.highest_bid - (auction.highest_bid / 100);
             IERC721(auction.nft_contract).transferFrom(address(this), auction.highest_bidder, auction.token_id);
             payable(auction.beneficiary).transfer(pure_profit);
