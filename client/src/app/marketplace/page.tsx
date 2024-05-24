@@ -12,6 +12,7 @@ import Carousel from "./_components/carousel/carousel.component";
 import { CustomTokensContext } from "../providers/custom-tokens.provider";
 import TradeList from "../trade/_components/trade-list/trade-list.component";
 import { TradeTokensContext } from "../providers/trade-tokens.provider";
+import NftSection from "./_components/nft-section/nft-section.component";
 
 const nunito = Montserrat({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function MarketplacePage() {
     marketTokens,
     purchasedTokens,
   } = useContext(TokensContext);
+
   const { isLoading: isTradeTokensDataLoading, tradeNFTs } =
     useContext(TradeTokensContext);
 
@@ -46,13 +48,11 @@ export default function MarketplacePage() {
     [marketTokens]
   );
 
-  const activeMintedTokens = useMemo(
-    () =>
-      customTokens.filter((token) => {
-        return Number(token.token_price) / 1e18 >= 1;
-      }),
-    []
-  );
+  const activeMintedTokens = useMemo(() => {
+    return customTokens.filter(
+      (token) => Number(token.token_price) / 1e18 >= 1
+    );
+  }, [customTokens]);
 
   const recentlyPurchased = useMemo(
     () =>
@@ -65,64 +65,35 @@ export default function MarketplacePage() {
   );
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <div className={styles["marketplace-container"]}>
       {isTokensDataLoading ||
       isCustomTokensDataLoading ||
       carouselTokens.length >= 3 ? (
         <Carousel nfts={carouselTokens} />
       ) : null}
       {isTokensDataLoading || activeTokens.length ? (
-        <Fragment>
-          <div className={styles["nft-section"]}>
-            <div className={styles["section-heading"]}>
-              <p className={styles["section-heading-title"]}>
-                <b>For sale</b>
-              </p>
-            </div>
-            <NFTCardList nfts={activeTokens} />
-          </div>
-        </Fragment>
+        <NftSection heading="For sale">
+          <NFTCardList nfts={activeTokens} />
+        </NftSection>
       ) : null}
       {isTokensDataLoading ||
       isCustomTokensDataLoading ||
       activeMintedTokens.length ? (
-        <div className={styles["nft-section"]}>
-          <div className={styles["section-heading"]}>
-            <p className={styles["section-heading-title"]}>
-              <b>Minted for Sale</b>
-            </p>
-          </div>
+        <NftSection heading="Minted for Sale">
           <NFTCardList nfts={activeMintedTokens} />
-        </div>
+        </NftSection>
       ) : null}
       {isTokensDataLoading ||
       isCustomTokensDataLoading ||
       recentlyPurchased.length ? (
-        <div className={styles["nft-section"]}>
-          <div className={styles["section-heading"]}>
-            <p className={styles["section-heading-title"]}>
-              <b>Recently Purchased</b>
-            </p>
-          </div>
+        <NftSection heading="Recently Purchased">
           <NFTCardList nfts={recentlyPurchased} />
-        </div>
+        </NftSection>
       ) : null}
       {isTradeTokensDataLoading || tradeNFTs.length ? (
-        <div className={styles["nft-section"]}>
-          <div className={styles["section-heading"]}>
-            <p className={styles["section-heading-title"]}>
-              <b>Auctions</b>
-            </p>
-          </div>
+        <NftSection heading={"Auctions"}>
           <TradeList nfts={tradeNFTs} detailed={false} />
-        </div>
+        </NftSection>
       ) : null}
     </div>
   );

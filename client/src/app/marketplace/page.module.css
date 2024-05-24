@@ -1,3 +1,10 @@
+.marketplace-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .nft-section {
   padding: 5px;
   border-radius: 10px;
