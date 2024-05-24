@@ -42,6 +42,7 @@ export const TradeTokensContext = createContext({
 
 export default function TradeTokensProvider({ children }: PropsWithChildren) {
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshCounter, setRefreshCounter] = useState(0);
   const [tradeNFTs, setTradeNFTs] = useState<
     Array<
       TradeTokens & {
@@ -53,6 +54,8 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
       } & { mappedAuctionId: number }
     >
   >([]);
+
+  const refreshTokens = () => setRefreshCounter((prev) => prev + 1);
 
   const { address } = useContext(AddressContext);
   const { network } = useContext(NetworkContext);
@@ -66,7 +69,7 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
     [blindAuctions, englishAuctions]
   );
 
-  console.log({ tradeTokens });
+  useEffect(() => refreshTokens(), [network]);
 
   const auctionsMapper = useMemo(() => {
     const res = { english: {}, blind: {} } as {
@@ -90,7 +93,6 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
       try {
         setIsLoading(true);
         if (nftCollectionContract && nftCreateContract) {
-          console.log("brrrrrrrr");
           const tokens_uri = (
             (await Promise.all(
               tokens.map(
@@ -109,9 +111,6 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
               )
             )) as Array<string>
           ).map((uri) => uri.replace("ipfs://", "https://ipfs.io/ipfs/"));
-          console.log("arrrrrrrr");
-
-          console.log({ tokens_uri });
 
           const tokens_details = (await Promise.all(
             tokens_uri.map(
@@ -147,9 +146,7 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
         setIsLoading(false);
       }
     };
-    console.log("outer retr...");
     if (tradeTokens && auctionsMapper) {
-      console.log("inner retr...", { tradeTokens });
       retrieveTradeNfts(tradeTokens);
     }
   }, [
@@ -159,6 +156,7 @@ export default function TradeTokensProvider({ children }: PropsWithChildren) {
     nftCollectionContract,
     nftCreateContract,
     auctionsMapper,
+    refreshCounter,
   ]);
 
   return (
