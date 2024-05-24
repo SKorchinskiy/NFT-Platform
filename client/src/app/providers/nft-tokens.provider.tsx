@@ -229,7 +229,7 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
     };
 
     getMarketNftTokens();
-  }, [address, nftCollectionContract, resellContract, refreshCounter]);
+  }, [address, nftCollectionContract, network, resellContract, refreshCounter]);
 
   return (
     <TokensContext.Provider
