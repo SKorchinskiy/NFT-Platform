@@ -38,11 +38,6 @@ export default function NFTPurchaseDetails({ nft }: { nft: NFT }) {
           <b>Price:</b> {Number(nft.token_price) / 1e18} ETH
         </p>
       </div>
-      {/* <div className={styles["nft-interactive-container"]}>
-        <div className={styles["purchase-button"]} onClick={buyListedToken}>
-          Buy token
-        </div>
-      </div> */}
     </div>
   );
 }
