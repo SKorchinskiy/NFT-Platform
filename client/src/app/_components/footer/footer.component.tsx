@@ -1,26 +1,10 @@
 import Image from "next/image";
+import styles from "./footer.module.css";
 
 export default function Footer() {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-around",
-        height: 150,
-        width: "100%",
-        background: "rgba(31, 37, 68, 0.5)",
-        color: "white",
-        bottom: 0,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
+    <div className={styles["footer-container"]}>
+      <div className={styles["footer-content"]}>
         <Image
           src={"/ethereum-sign.png"}
           alt="eth logo"
@@ -33,22 +17,9 @@ export default function Footer() {
           width={50}
           height={50}
         />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            textTransform: "uppercase",
-          }}
-        >
+        <div className={"footer-details"}>
           <h3>Know how to improve the platform ?</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
-            }}
-          >
+          <div className={styles["footer-reach-out"]}>
             <a href="https://t.me/skorchinskiy" target="_blank">
               <Image
                 src={"/telegram-sign.webp"}

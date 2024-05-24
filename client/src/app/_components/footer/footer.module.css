@@ -1,0 +1,29 @@
+.footer-container {
+  display: flex;
+  justify-content: space-around;
+  height: 150px;
+  width: 100%;
+  background: rgba(31, 37, 68, 0.5);
+  color: white;
+  bottom: 0;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.footer-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.footer-reach-out {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
