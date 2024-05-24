@@ -47,18 +47,22 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
 
   const refreshAuctions = () => setRefreshCounter((prev) => prev + 1);
 
+  useEffect(() => refreshAuctions(), [network]);
+
   useEffect(() => {
     const retrieveEnglishAuctions = async () => {
-      if (network && englishAuctionContract) {
-        const auctions = (await englishAuctionContract.methods
-          .get_all_auctions()
-          .call({
-            from: address || DEFAULT_READ_WALLET,
-          })) as Array<EnglishAuction>;
+      try {
+        if (network && englishAuctionContract) {
+          const auctions = (await englishAuctionContract.methods
+            .get_all_auctions()
+            .call({
+              from: address || DEFAULT_READ_WALLET,
+            })) as Array<EnglishAuction>;
 
-        console.log({ engAuc: auctions });
-
-        setEnglishAuctions(auctions);
+          setEnglishAuctions(auctions);
+        }
+      } catch (e) {
+        console.log({ e });
       }
     };
 
@@ -67,16 +71,18 @@ export default function AuctionsProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const retrieveBlindAuctions = async () => {
-      if (network && blindAuctionContract) {
-        const auctions = (await blindAuctionContract.methods
-          .get_all_auctions()
-          .call({
-            from: address || DEFAULT_READ_WALLET,
-          })) as Array<BlindAuction>;
+      try {
+        if (network && blindAuctionContract) {
+          const auctions = (await blindAuctionContract.methods
+            .get_all_auctions()
+            .call({
+              from: address || DEFAULT_READ_WALLET,
+            })) as Array<BlindAuction>;
 
-        console.log({ blindAuc: auctions });
-
-        setBlindAuctions(auctions);
+          setBlindAuctions(auctions);
+        }
+      } catch (e) {
+        console.log({ e });
       }
     };
 
