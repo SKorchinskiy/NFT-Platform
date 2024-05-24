@@ -3,20 +3,28 @@
 import { PropsWithChildren, createContext, useState } from "react";
 
 export const PopupContext = createContext({
-  text: "",
-  updateText: (newText: string) => {},
+  params: {
+    text: "",
+    color: "",
+  },
+  updatePopup: (newText: string, newColor: string) => {},
 });
 
 export default function PopupProvider({ children }: PropsWithChildren) {
-  const [text, setText] = useState("");
+  const [params, setParams] = useState({
+    text: "",
+    color: "",
+  });
 
-  const updateText = (newText: string) => setText(newText);
+  const updatePopup = (newText: string, newColor: string) => {
+    setParams({ text: newText, color: newColor });
+  };
 
   return (
     <PopupContext.Provider
       value={{
-        text,
-        updateText,
+        params,
+        updatePopup,
       }}
     >
       {children}

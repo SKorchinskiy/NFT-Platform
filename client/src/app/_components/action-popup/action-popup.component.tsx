@@ -8,21 +8,24 @@ import { PopupContext } from "@/app/providers/popup.provider";
 export default function ActionPopup() {
   const [isVisible, setIsVisible] = useState(false);
 
-  const { text } = useContext(PopupContext);
+  const { params } = useContext(PopupContext);
 
   useEffect(() => {
     setIsVisible(true);
     setTimeout(() => {
       setIsVisible(false);
     }, 3000);
-  }, [text]);
+  }, [params]);
 
   return (
     <div
       className={styles["popup-container"]}
-      style={{ display: isVisible ? "block" : "none" }}
+      style={{
+        display: isVisible ? "block" : "none",
+        color: params.color,
+      }}
     >
-      {text}
+      {params.text}
     </div>
   );
 }
