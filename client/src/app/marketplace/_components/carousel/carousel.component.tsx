@@ -28,11 +28,7 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
                   setSelectedNFT(nft);
                 }}
               >
-                <div
-                  style={{
-                    position: "relative",
-                  }}
-                >
+                <div style={{ position: "relative" }}>
                   <Image
                     src={nft.image}
                     alt="nft"
@@ -46,15 +42,7 @@ export default function Carousel({ nfts }: { nfts: NFTs }) {
             ))
           : Array.from(Array(6)).map((_, index) => (
               <div key={index} className={styles["carousel-item"]}>
-                <div
-                  style={{
-                    width: 250,
-                    height: 250,
-                    background: "rgba(0, 0, 0, 0.3)",
-                    borderRadius: 10,
-                    boxShadow: "10px 10px 15px rgba(0, 0, 0, 0.5)",
-                  }}
-                />
+                <div className={styles["carousel-skeleton"]} />
               </div>
             ))}
       </div>
