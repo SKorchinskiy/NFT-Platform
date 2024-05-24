@@ -60,10 +60,7 @@ contract MarketEnglishAuctionContract {
         Auction memory auction = auctions_list[auction_id];
 
         require(block.timestamp <= auction.auction_end_time, "Auction has already ended!");
-
-        if (amount <= auction.highest_bid) {
-            return false;
-        }
+        require(amount <= auction.highest_bid, "Proposed price is lower than the highest bid!");
 
         pending_returns[auction.highest_bidder] += auction.highest_bid;
 
@@ -126,7 +123,7 @@ contract MarketEnglishAuctionContract {
 
         require(block.timestamp > auction.auction_end_time, "Auctions has not ended yet!");
         
-        if (auction.highest_bid > 0) {
+        if (auction.highest_bid > 0 && auction.highest_bidder != address(0)) {
             uint256 pure_profit = auction.highest_bid - (auction.highest_bid / 100);
             IERC721(auction.nft_contract).transferFrom(address(this), auction.highest_bidder, auction.token_id);
             payable(auction.beneficiary).transfer(pure_profit);
