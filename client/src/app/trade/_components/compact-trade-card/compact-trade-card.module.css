@@ -3,6 +3,7 @@
   justify-content: space-around;
   background: whitesmoke;
   padding: 30px;
+  position: relative;
   margin: 50px;
   overflow: scroll;
   border: 1px solid black;
@@ -20,7 +21,7 @@
 .trade-card-representation {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .participation-button {

@@ -26,18 +26,8 @@ export default function CompactTradeCard({ token }: CompactTradeCardProps) {
   );
 
   return (
-    <div
-      className={styles["trade-card-container"]}
-      style={{ position: "relative" }}
-    >
-      <div
-        className={styles["trade-card-representation"]}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+    <div className={styles["trade-card-container"]}>
+      <div className={styles["trade-card-representation"]}>
         <div>
           <Image
             src={token.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
