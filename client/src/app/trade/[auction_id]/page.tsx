@@ -19,6 +19,8 @@ import {
   EnglishAuction,
 } from "@/app/providers/auctions.provider";
 import { Bid } from "@/app/types/bid.type";
+import { TokensContext } from "@/app/providers/nft-tokens.provider";
+import { CustomTokensContext } from "@/app/providers/custom-tokens.provider";
 
 type AuctionPageProps = { params: { auction_id: string } };
 
@@ -52,9 +54,7 @@ export default function AuctionPage({
       },
       "blind"
     );
-    console.log({ auction_id, tp, auctionsMapper, englishAuctions });
     if (tp === "english") {
-      console.log({ entr: Object.entries(auctionsMapper.english) });
       return englishAuctions.find(
         (auction) =>
           Number(auction.auction_id) ===
@@ -63,7 +63,6 @@ export default function AuctionPage({
           ) || [0, 1])[0]
       );
     }
-    console.log({ entr: Object.entries(auctionsMapper.blind) });
     return blindAuctions.find(
       (auction) =>
         Number(auction.auction_id) ===
@@ -99,7 +98,62 @@ export default function AuctionPage({
     retrieveAuctionBids();
   }, [target_auction, getSpecificAuctionBids]);
 
-  console.log({ target_auction, target_token });
+  const { refreshTokens } = useContext(TokensContext);
+  const { refreshTokens: refreshCustomTokens } =
+    useContext(CustomTokensContext);
+
+  const endAuctionHandler = async () => {
+    if (englishAuctionContract && blindAuctionContract) {
+      try {
+        if (target_auction)
+          if (target_auction.is_blind) {
+            await blindAuctionContract.methods
+              .reveal(target_auction.auction_id)
+              .send({ from: address });
+            await blindAuctionContract.methods
+              .auctionEnd(target_auction.auction_id)
+              .send({ from: address });
+          } else {
+            await englishAuctionContract.methods
+              .auctionEnd(target_auction.auction_id)
+              .send({ from: address });
+          }
+        refreshTokens();
+        refreshCustomTokens();
+      } catch (e) {
+        console.log({ e });
+      }
+    }
+  };
+
+  const withdrawFromAuction = async () => {
+    if (englishAuctionContract && blindAuctionContract) {
+      try {
+        if (target_auction)
+          if (target_auction.is_blind) {
+            try {
+              await blindAuctionContract.methods
+                .withdraw()
+                .send({ from: address });
+            } catch (e) {
+              console.log({ e });
+            }
+          } else {
+            try {
+              await englishAuctionContract.methods
+                .withdraw()
+                .send({ from: address });
+            } catch (e) {
+              console.log({ e });
+            }
+          }
+        refreshTokens();
+        refreshCustomTokens();
+      } catch (e) {
+        console.log({ e });
+      }
+    }
+  };
 
   return (
     <Fragment>
@@ -107,11 +161,7 @@ export default function AuctionPage({
         {target_token ? (
           <Fragment>
             <div className={styles["auction-details"]}>
-              <div
-                style={{
-                  position: "relative",
-                }}
-              >
+              <div style={{ position: "relative" }}>
                 <Image
                   src={target_token.image.replace(
                     "ipfs://",
@@ -133,52 +183,18 @@ export default function AuctionPage({
                 end_time={Number(target_token.auction_end_time) * 1000}
               />
               <button
-                onClick={async () => {
-                  if (englishAuctionContract && blindAuctionContract) {
-                    console.log({ target_auction });
-                    if (target_auction)
-                      if (target_auction.is_blind) {
-                        await blindAuctionContract.methods
-                          .reveal(target_auction.auction_id)
-                          .send({ from: address });
-                        await blindAuctionContract.methods
-                          .auctionEnd(target_auction.auction_id)
-                          .send({ from: address });
-                        try {
-                          await blindAuctionContract.methods
-                            .withdraw()
-                            .send({ from: address });
-                        } catch (e) {
-                          console.log({ e });
-                        }
-                      } else {
-                        await englishAuctionContract.methods
-                          .auctionEnd(target_auction.auction_id)
-                          .send({ from: address });
-                        try {
-                          await englishAuctionContract.methods
-                            .withdraw()
-                            .send({ from: address });
-                        } catch (e) {
-                          console.log({ e });
-                        }
-                      }
-                  }
-                }}
-                style={{
-                  marginTop: 10,
-                  width: 400,
-                  padding: 10,
-                  borderRadius: 10,
-                  border: 0,
-                  boxShadow: "10px 10px 10px rgba(0, 0, 0, 0.3)",
-                  textTransform: "uppercase",
-                  letterSpacing: 1,
-                  visibility: hasEnded ? "visible" : "collapse",
-                  cursor: "pointer",
-                }}
+                onClick={() => endAuctionHandler()}
+                className={styles["end-auction-button"]}
+                style={{ visibility: hasEnded ? "visible" : "collapse" }}
               >
                 End Auction
+              </button>
+              <button
+                onClick={() => withdrawFromAuction()}
+                className={styles["end-auction-button"]}
+                style={{ visibility: hasEnded ? "visible" : "collapse" }}
+              >
+                Withdraw
               </button>
             </div>
             <div className={styles["auction-description-container"]}>

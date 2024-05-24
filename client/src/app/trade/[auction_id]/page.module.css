@@ -1,6 +1,6 @@
 .auction-details-container {
   display: flex;
-  height: 600px;
+  padding: 10px;
   width: 90%;
 }
 
@@ -32,4 +32,19 @@
   box-sizing: border-box;
   border-radius: 5px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+  height: 100%;
+}
+
+.end-auction-button {
+  margin-top: 10px;
+  width: 400px;
+  padding: 15px;
+  border-radius: 5px;
+  border: 0px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  background: #2d3250;
+  color: white;
 }
