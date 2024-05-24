@@ -22,66 +22,81 @@ export const NetworkContext = createContext({
   switchNetwork: (_: string) => {},
 });
 
-const DEFAULT_NETWORK: NETWORK = HARDHAT;
+const DEFAULT_NETWORK: NETWORK = ETHEREUM;
 
 export default function NetworkProvider({ children }: PropsWithChildren) {
   const [network, setNetwork] = useState<NETWORK>(DEFAULT_NETWORK);
 
   const { provider } = useContext(MetamaskContext);
 
-  const switchNetwork = (network: string) => {
-    switch (network) {
-      case "Ethereum":
-        setNetwork(ETHEREUM);
-        break;
-      case "Binance":
-        setNetwork(BINANCE);
-        break;
-      case "Polygon":
-        setNetwork(POLYGON);
-        break;
-      default:
-        setNetwork(HARDHAT);
-    }
-  };
-
-  useEffect(() => {
-    const changeNetwork = async (
-      provider: MetaMaskInpageProvider,
-      network: NETWORK
-    ) => {
-      console.log({ network });
-      try {
+  const changeNetwork = async (
+    provider: MetaMaskInpageProvider,
+    network: NETWORK
+  ) => {
+    try {
+      console.log("switching to", { network });
+      await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: network.chainId }],
+      });
+    } catch (error: any) {
+      if (error.code === 4902) {
+        await provider.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: network.chainId,
+              chainName: network.name,
+              rpcUrls: network.rpc_servers,
+              nativeCurrency: {
+                decimals: 18,
+                name: network.symbol,
+                symbol: network.symbol,
+              },
+            },
+          ],
+        });
         await provider.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: network.chainId }],
         });
-      } catch (error: any) {
-        console.log({ error });
-        if (error.code === 4902) {
-          await provider.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: network.chainId,
-                chainName: network.name,
-                rpcUrls: network.rpc_servers,
-                nativeCurrency: {
-                  decimals: 18,
-                  name: network.symbol,
-                  symbol: network.symbol,
-                },
-              },
-            ],
-          });
-          await provider.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: network.chainId }],
-          });
-        }
       }
-    };
+    }
+  };
 
+  const switchNetwork = async (network: string) => {
+    switch (network) {
+      case "Ethereum":
+        console.log("SWITCHING TO ETHEREUM");
+        if (provider) {
+          await changeNetwork(provider, ETHEREUM);
+          setNetwork(ETHEREUM);
+        }
+        break;
+      case "Binance":
+        console.log("SWITCHING TO BINANCE");
+        if (provider) {
+          await changeNetwork(provider, BINANCE);
+          setNetwork(BINANCE);
+        }
+        break;
+      case "Polygon":
+        console.log("SWITCHING TO POLYGON");
+        if (provider) {
+          await changeNetwork(provider, POLYGON);
+          setNetwork(POLYGON);
+        }
+        break;
+      default:
+        console.log("SWITCHING TO HARDHAT");
+        if (provider) {
+          await changeNetwork(provider, HARDHAT);
+          setNetwork(HARDHAT);
+        }
+    }
+  };
+
+  useEffect(() => {
     if (provider && network) {
       changeNetwork(provider, network);
     }
