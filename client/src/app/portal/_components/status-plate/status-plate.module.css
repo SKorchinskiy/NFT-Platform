@@ -1,0 +1,13 @@
+.status-plate-container {
+  position: absolute;
+  transform: rotate(-30deg);
+  color: white;
+  padding: 5px;
+  width: 170px;
+  text-align: center;
+  z-index: 1;
+  top: 16px;
+  left: -20px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  clip-path: polygon(9.8% 0%, 70% 0%, 98.5% 100%, 0.2% 100%);
+}
