@@ -13,6 +13,7 @@ import { AddressContext } from "./address.provider";
 import { DEFAULT_READ_WALLET } from "@/configs/constants";
 import { BlindAuction, EnglishAuction } from "./auctions.provider";
 import useBlindAuctionContract from "../hooks/useBlindAuctionContract.hook";
+import { NetworkContext } from "./network.provider";
 
 export const BidsContext = createContext({
   isLoading: false,
@@ -28,8 +29,11 @@ export default function BidsProvider({ children }: PropsWithChildren) {
   const [refreshCounter, setRefreshCounter] = useState(0);
 
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   const refreshBids = () => setRefreshCounter((prev) => prev + 1);
+
+  useEffect(() => refreshBids(), [network]);
 
   const englishAuctionContract = useEnglishAuctionContract();
   const blindAuctionContract = useBlindAuctionContract();
@@ -37,48 +41,55 @@ export default function BidsProvider({ children }: PropsWithChildren) {
   const getSpecificAuctionBids = async (
     auction: BlindAuction | EnglishAuction
   ) => {
-    setIsLoading(true);
     let bids = [] as Array<Bid>;
-    if (auction.is_blind && blindAuctionContract) {
-      bids = (await blindAuctionContract.methods
-        .get_all_auction_bids(Number(auction.auction_id))
-        .call({ from: address })) as Array<Bid>;
-
-      console.log({ blind_bids: bids });
-    } else if (englishAuctionContract) {
-      bids = (await englishAuctionContract.methods
-        .get_all_auction_bids(auction.auction_id)
-        .call({ from: address })) as Array<Bid>;
+    try {
+      setIsLoading(true);
+      if (auction.is_blind && blindAuctionContract) {
+        bids = (await blindAuctionContract.methods
+          .get_all_auction_bids(Number(auction.auction_id))
+          .call({ from: address || DEFAULT_READ_WALLET })) as Array<Bid>;
+      } else if (englishAuctionContract) {
+        bids = (await englishAuctionContract.methods
+          .get_all_auction_bids(auction.auction_id)
+          .call({ from: address || DEFAULT_READ_WALLET })) as Array<Bid>;
+      }
+      setIsLoading(false);
+    } catch (e) {
+      console.log({ e });
+    } finally {
+      return bids;
     }
-    setIsLoading(false);
-    return bids;
   };
 
   useEffect(() => {
     const getAuctionBids = async () => {
       if (englishAuctionContract) {
-        const auctions_counter = (await englishAuctionContract.methods
-          .auctions_counter()
-          .call({ from: address || DEFAULT_READ_WALLET })) as BigInt;
+        try {
+          const auctions_counter = (await englishAuctionContract.methods
+            .auctions_counter()
+            .call({ from: address || DEFAULT_READ_WALLET })) as BigInt;
 
-        const all_bids = (await Promise.all(
-          Array.from(Array.from(Array(Number(auctions_counter)))).map(
-            (_, index) =>
-              new Promise((resolve) => {
-                englishAuctionContract.methods
-                  .get_all_auction_bids(index + 1)
-                  .call({ from: address || DEFAULT_READ_WALLET })
-                  .then(resolve);
-              })
-          )
-        )) as Array<Array<Bid>>;
+          const all_bids = (await Promise.all(
+            Array.from(Array.from(Array(Number(auctions_counter)))).map(
+              (_, index) =>
+                new Promise((resolve) => {
+                  englishAuctionContract.methods
+                    .get_all_auction_bids(index + 1)
+                    .call({ from: address || DEFAULT_READ_WALLET })
+                    .then(resolve);
+                })
+            )
+          )) as Array<Array<Bid>>;
 
-        setBids(
-          all_bids.reduce(
-            (accumulator, current_bids) => accumulator.concat(current_bids),
-            []
-          )
-        );
+          setBids(
+            all_bids.reduce(
+              (accumulator, current_bids) => accumulator.concat(current_bids),
+              []
+            )
+          );
+        } catch (e) {
+          console.log({ e });
+        }
       }
     };
 
