@@ -121,41 +121,61 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
                 )
               )
             ).filter((value) => value !== -1) || ([] as Array<number>);
+
           const tokens_data: NFTs = (await Promise.all(
             owned_tokens_ids.map(
               (token_id) =>
                 new Promise(async (resolve) => {
-                  const token_ipfs_uri = (await nftCreateContract.methods
-                    .tokenURI(token_id)
-                    .call({ from: address })) as string;
-                  const response = await fetch(
-                    token_ipfs_uri.replace("ipfs://", "https://ipfs.io/ipfs/")
-                  );
-                  const token_data = (await response.json()) as {
-                    name: string;
-                    description: string;
-                    image: string;
-                  };
-                  resolve({
-                    ...token_data,
-                    token_id: BigInt(token_id),
-                    attributes: [] as Array<Object>,
-                    external_url: "",
-                    status: BigInt(0),
-                    token_holder: address,
-                    token_seller: address,
-                    image: token_data.image.replace(
-                      "ipfs://",
-                      "https://ipfs.io/ipfs/"
-                    ),
-                    token_price: BigInt(0),
-                    nft_contract: network.contracts.nftCreateContract,
-                  } as NFT);
+                  try {
+                    const token_ipfs_uri = (await nftCreateContract.methods
+                      .tokenURI(token_id)
+                      .call({ from: address })) as string;
+                    const response = await fetch(
+                      token_ipfs_uri.replace("ipfs://", "https://ipfs.io/ipfs/")
+                    );
+                    const token_data = (await response.json()) as {
+                      name: string;
+                      description: string;
+                      image: string;
+                    };
+                    resolve({
+                      ...token_data,
+                      token_id: BigInt(token_id),
+                      attributes: [] as Array<Object>,
+                      external_url: "",
+                      status: BigInt(0),
+                      token_holder: address,
+                      token_seller: address,
+                      image: token_data.image.replace(
+                        "ipfs://",
+                        "https://ipfs.io/ipfs/"
+                      ),
+                      token_price: BigInt(0),
+                      nft_contract: network.contracts.nftCreateContract,
+                    } as NFT);
+                  } catch (e) {
+                    resolve({
+                      attributes: [],
+                      description: "failed to fetch",
+                      external_url: "",
+                      image: "",
+                      name: "failed to fetch",
+                      status: BigInt(0),
+                      token_holder: "",
+                      token_id: BigInt(0),
+                      token_price: BigInt(0),
+                      token_seller: "0x000000000000000",
+                      nft_contract: "",
+                      seq_id: BigInt(0),
+                    });
+                  }
                 })
             )
           )) as NFTs;
 
-          setAddressCustomTokens(tokens_data);
+          setAddressCustomTokens(
+            tokens_data.filter((token) => Boolean(token.image))
+          );
         }
       } catch (e) {
         console.log({ e });
@@ -194,34 +214,62 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
               })
             );
 
-            const tokens_data = [] as NFTs;
+            const tokens_data: NFTs = await Promise.all(
+              listed_custom_tokens.map(
+                (token, index) =>
+                  new Promise(async (resolve) => {
+                    try {
+                      const token_id = token.token_id;
+                      const token_ipfs_uri = (await nftCreateContract.methods
+                        .tokenURI(token_id)
+                        .call({
+                          from: address || DEFAULT_READ_WALLET,
+                        })) as string;
+                      const response = await fetch(
+                        token_ipfs_uri.replace(
+                          "ipfs://",
+                          "https://ipfs.io/ipfs/"
+                        )
+                      );
 
-            for (let iter = 0; iter < listed_custom_tokens.length; iter++) {
-              const token_id = Number(listed_custom_tokens[iter].token_id);
-              const token_ipfs_uri = (await nftCreateContract.methods
-                .tokenURI(token_id)
-                .call({ from: address || DEFAULT_READ_WALLET })) as string;
-              const response = await fetch(
-                token_ipfs_uri.replace("ipfs://", "https://ipfs.io/ipfs/")
-              );
+                      const token_data = (await response.json()) as {
+                        name: string;
+                        description: string;
+                        image: string;
+                        token_price: string;
+                      };
 
-              const token_data = (await response.json()) as {
-                name: string;
-                description: string;
-                image: string;
-                token_price: string;
-              };
+                      resolve({
+                        ...token_data,
+                        ...token,
+                        image: token_data.image.replace(
+                          "ipfs://",
+                          "https://ipfs.io/ipfs/"
+                        ),
+                      });
+                    } catch (e) {
+                      resolve({
+                        attributes: [],
+                        description: "failed to fetch",
+                        external_url: "",
+                        image: "",
+                        name: "failed to fetch",
+                        status: BigInt(0),
+                        token_holder: "",
+                        token_id: BigInt(0),
+                        token_price: BigInt(0),
+                        token_seller: "0x000000000000000",
+                        nft_contract: "",
+                        seq_id: BigInt(0),
+                      });
+                    }
+                  }) as Promise<NFT>
+              )
+            );
 
-              tokens_data.push({
-                ...token_data,
-                ...listed_custom_tokens[iter],
-                image: token_data.image.replace(
-                  "ipfs://",
-                  "https://ipfs.io/ipfs/"
-                ),
-              });
-              setMarketCustomTokens(tokens_data);
-            }
+            setMarketCustomTokens(
+              tokens_data.filter((token) => Boolean(token.image))
+            );
           }
         }
       } catch (e) {
