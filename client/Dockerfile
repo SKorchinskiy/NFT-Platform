@@ -1,11 +1,8 @@
 # use node v20.11.0 image as basic
 FROM node:20.11.0
 
-# create a directory
-RUN mkdir /nextjs-frontend
-
 # navigate to working directory
-WORKDIR /nextjs-frontend
+WORKDIR /usr/src/nextjs-frontend
 
 # copy package-*.json files as part of layer caching strategy
 COPY package.json package-lock.json ./
