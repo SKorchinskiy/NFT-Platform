@@ -49,7 +49,6 @@ export default function AccountProfile() {
                   }
                   key={index}
                   onClick={() => {
-                    console.log("CALLLEDDEDEL<DELEDL<D<LE<D<EL<DE", { item });
                     switchNetwork(item);
                   }}
                 >

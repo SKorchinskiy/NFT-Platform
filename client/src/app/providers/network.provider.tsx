@@ -34,7 +34,6 @@ export default function NetworkProvider({ children }: PropsWithChildren) {
     network: NETWORK
   ) => {
     try {
-      console.log("switching to", { network });
       await provider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: network.chainId }],
@@ -67,28 +66,24 @@ export default function NetworkProvider({ children }: PropsWithChildren) {
   const switchNetwork = async (network: string) => {
     switch (network) {
       case "Ethereum":
-        console.log("SWITCHING TO ETHEREUM");
         if (provider) {
           await changeNetwork(provider, ETHEREUM);
           setNetwork(ETHEREUM);
         }
         break;
       case "Binance":
-        console.log("SWITCHING TO BINANCE");
         if (provider) {
           await changeNetwork(provider, BINANCE);
           setNetwork(BINANCE);
         }
         break;
       case "Polygon":
-        console.log("SWITCHING TO POLYGON");
         if (provider) {
           await changeNetwork(provider, POLYGON);
           setNetwork(POLYGON);
         }
         break;
       default:
-        console.log("SWITCHING TO HARDHAT");
         if (provider) {
           await changeNetwork(provider, HARDHAT);
           setNetwork(HARDHAT);
