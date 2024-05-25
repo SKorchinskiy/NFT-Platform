@@ -1,8 +1,6 @@
 import { PINATA_KEY } from "@/configs/constants";
 import { NextRequest, NextResponse } from "next/server";
 
-export const config = { api: { bodaParser: false } };
-
 async function createFile(url: string) {
   let response = await fetch(url);
   let data = await response.blob();

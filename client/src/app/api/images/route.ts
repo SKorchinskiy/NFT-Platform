@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import { REPLICATE_API_TOKEN } from "@/configs/constants";
 
-export const config = { api: { bodaParser: false } };
-
 const replicate = new Replicate({
   auth: REPLICATE_API_TOKEN,
 });
