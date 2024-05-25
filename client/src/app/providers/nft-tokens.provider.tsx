@@ -183,7 +183,6 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
       setIsLoading(true);
       try {
         if (resellContract && nftCollectionContract) {
-          console.log("getting, market nft");
           const tokens = (
             (await resellContract.methods
               .get_listed_nft()
@@ -196,30 +195,55 @@ export default function NftTokensProvider({ children }: PropsWithChildren) {
             }>
           ).filter((token) => Number(token.token_price).toString() != "0");
 
-          const tokens_data: NFTs = [];
+          const tokens_data: NFTs = await Promise.all(
+            tokens.map(
+              (token) =>
+                new Promise(async (resolve) => {
+                  try {
+                    const tokenURI = (await nftCollectionContract.methods
+                      .tokenURI(token.token_id)
+                      .call({
+                        from: address || DEFAULT_READ_WALLET,
+                      })) as string;
+                    const ipfsURI = tokenURI.replace(
+                      "ipfs://",
+                      `https://ipfs.io/ipfs/`
+                    );
 
-          for (const token of tokens) {
-            const tokenURI = (await nftCollectionContract.methods
-              .tokenURI(token.token_id)
-              .call({ from: address || DEFAULT_READ_WALLET })) as string;
-            const ipfsURI = tokenURI.replace(
-              "ipfs://",
-              `https://ipfs.io/ipfs/`
-            );
+                    const data = (await (await fetch(ipfsURI)).json()) as {
+                      attributes: Array<Object>;
+                      description: string;
+                      external_url: string;
+                      image: string;
+                      name: string;
+                    };
+                    data.image = data.image.replace(
+                      "ipfs://",
+                      `https://ipfs.io/ipfs/`
+                    );
 
-            const data = (await (await fetch(ipfsURI)).json()) as {
-              attributes: Array<Object>;
-              description: string;
-              external_url: string;
-              image: string;
-              name: string;
-            };
-            data.image = data.image.replace("ipfs://", `https://ipfs.io/ipfs/`);
+                    resolve({ ...data, ...token });
+                  } catch (e) {
+                    resolve({
+                      attributes: [],
+                      description: "failed to fetch",
+                      external_url: "",
+                      image: "",
+                      name: "failed to fetch",
+                      status: BigInt(0),
+                      token_holder: "",
+                      token_id: BigInt(0),
+                      token_price: BigInt(0),
+                      token_seller: "0x000000000000000",
+                      nft_contract: "",
+                      seq_id: BigInt(0),
+                    });
+                  }
+                }) as Promise<NFT>
+            )
+          );
 
-            tokens_data.push({ ...data, ...token });
-          }
-
-          setMarketTokens(tokens_data);
+          setMarketTokens(tokens_data.filter((token) => Boolean(token.image)));
         }
       } catch (e) {
         console.log({ e });
