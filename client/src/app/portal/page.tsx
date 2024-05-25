@@ -43,7 +43,7 @@ export default function Portal() {
     [address, marketCustomTokens, marketTokens]
   );
 
-  if (!window || !(window as any).ethereum) {
+  if (typeof window === "undefined" || !(window as any).ethereum) {
     return <h1>Install Metamask - https://metamask.io/download/</h1>;
   } else if (!address) {
     return (
