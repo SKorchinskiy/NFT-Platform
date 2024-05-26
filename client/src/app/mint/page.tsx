@@ -9,7 +9,6 @@ import { NetworkContext } from "../providers/network.provider";
 import useNftCreateContract from "../hooks/useNftCreateContract.hook";
 import useNftMarketContract from "../hooks/useNftMarketContract.hook";
 
-import { PINATA_KEY } from "@/configs/constants";
 import { TokensContext } from "../providers/nft-tokens.provider";
 import { CustomTokensContext } from "../providers/custom-tokens.provider";
 
@@ -74,17 +73,6 @@ export default function MintPage() {
       nftCreateContract
     ) {
       try {
-        const data = new FormData();
-        data.append("file", nftImage);
-        data.append("name", formInput.name);
-
-        const res = await fetch("/api/files", {
-          method: "POST",
-          body: data,
-        });
-
-        const { IpfsHash } = await res.json();
-
         const token_id =
           Number(
             (await nftCreateContract.methods.counter().call({
@@ -92,29 +80,24 @@ export default function MintPage() {
             })) as BigInt
           ) + 1;
 
-        const res2 = await fetch(
-          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${PINATA_KEY}`,
-            },
-            body: JSON.stringify({
-              token_id,
-              name: formInput.name,
-              description: formInput.description,
-              image: `ipfs://${IpfsHash}`,
-            }),
-          }
-        );
-        const { IpfsHash: IpfsCID } = await res2.json();
+        const data = new FormData();
+        data.append("file", nftImage);
+        data.append("name", formInput.name);
+        data.append("token_id", token_id.toString());
+        data.append("description", formInput.description);
+
+        const res = await fetch("/api/files", {
+          method: "POST",
+          body: data,
+        });
+
+        const { IpfsCID } = await res.json();
 
         const ipfsURI = "ipfs://" + IpfsCID;
-
-        const resp = await nftCreateContract?.methods
+        await nftCreateContract.methods
           .mint_token(ipfsURI)
           .send({ from: address, value: "75000000000000" });
+
         refreshTokens();
         refreshCustomTokens();
         setNftImage("");
@@ -135,13 +118,6 @@ export default function MintPage() {
       nftCreateContract
     ) {
       try {
-        const data = new FormData();
-        data.append("file", nftImage);
-        data.append("name", formInput.name);
-
-        const res = await fetch("/api/files", { method: "POST", body: data });
-        const { IpfsHash } = await res.json();
-
         const token_id =
           Number(
             (await nftCreateContract.methods.counter().call({
@@ -149,24 +125,14 @@ export default function MintPage() {
             })) as BigInt
           ) + 1;
 
-        const res2 = await fetch(
-          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${PINATA_KEY}`,
-            },
-            body: JSON.stringify({
-              token_id,
-              name: formInput.name,
-              description: formInput.description,
-              image: `ipfs://${IpfsHash}`,
-              token_price: Number(formInput.price * 1e18).toString(),
-            }),
-          }
-        );
-        const { IpfsHash: IpfsCID } = await res2.json();
+        const data = new FormData();
+        data.append("file", nftImage);
+        data.append("name", formInput.name);
+        data.append("token_id", token_id.toString());
+        data.append("description", formInput.description);
+
+        const res = await fetch("/api/files", { method: "POST", body: data });
+        const { IpfsCID } = await res.json();
 
         const ipfsURI = "ipfs://" + IpfsCID;
         const resp = await nftCreateContract.methods
@@ -177,7 +143,7 @@ export default function MintPage() {
           const token_id = Number(
             resp.events.TokenWrapperCreated.returnValues.token_id
           );
-          const resp2 = await nftMarketContract?.methods
+          await nftMarketContract?.methods
             .create_nft_asset(
               network.contracts.nftCreateContract,
               token_id,
@@ -185,6 +151,7 @@ export default function MintPage() {
             )
             .send({ from: address, value: "25000000000000" });
         }
+        
         refreshTokens();
         refreshCustomTokens();
         setNftImage("");
