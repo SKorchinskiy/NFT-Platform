@@ -29,10 +29,6 @@ export default function useNftMarketContract() {
         network.contracts.marketCreateContract,
         { from: address || DEFAULT_READ_WALLET }
       );
-      console.log(
-        "updated market create contract to ",
-        network.contracts.marketCreateContract
-      );
       setMarketContract(contract);
     };
     if (provider && network) {

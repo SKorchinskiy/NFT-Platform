@@ -45,7 +45,6 @@ export default function CustomTokensProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const getPurchasedTokens = async () => {
-      console.log("neeetetqewweqweqweqwqeqweq", { network });
       try {
         setIsLoading(true);
         if (nftCreateContract && marketCreateContract) {
