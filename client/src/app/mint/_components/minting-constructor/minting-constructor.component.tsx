@@ -5,6 +5,7 @@ import styles from "./minting-constructor.module.css";
 import StatusPlate from "@/app/portal/_components/status-plate/status-plate.component";
 import { Fragment, useContext } from "react";
 import { AddressContext } from "@/app/providers/address.provider";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 type MintingConstructorProps = {
   nftImage: File | string;
@@ -20,6 +21,8 @@ export default function MintingConstructor({
   formInput,
 }: MintingConstructorProps) {
   const { address } = useContext(AddressContext);
+
+  const { network } = useContext(NetworkContext);
 
   return (
     <div className={styles["minting-constructor-container"]}>
@@ -83,7 +86,7 @@ export default function MintingConstructor({
             <b>Price: </b>
           </span>
           {formInput.price ? (
-            formInput.price + " ETH"
+            formInput.price.toString() + " " + network.symbol
           ) : (
             <div className={styles["input-filler"]}></div>
           )}

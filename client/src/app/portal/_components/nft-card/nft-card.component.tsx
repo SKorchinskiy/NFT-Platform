@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { NFT } from "@/app/types/nft.type";
 import { AddressContext } from "@/app/providers/address.provider";
 import StatusPlate from "../status-plate/status-plate.component";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 export enum Status {
   NONE,
@@ -29,6 +30,7 @@ export default function NFTCard({
   initTokenHandler,
 }: CardProps) {
   const { address } = useContext(AddressContext);
+  const { network } = useContext(NetworkContext);
 
   return (
     <div
@@ -66,7 +68,7 @@ export default function NFTCard({
           </p>
           <p>
             <b>Price: </b>
-            {Number(nft.token_price) / 1e18} ETH
+            {(Number(nft.token_price) / 1e18).toString() + " " + network.symbol}
           </p>
         </div>
       </div>

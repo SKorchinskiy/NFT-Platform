@@ -88,7 +88,7 @@ export default function NFTBuyingDetails({
           })()}
         </p>
         <p>
-          <b>Price:</b> {Number(nft.token_price) / 1e18} ETH
+          <b>Price:</b> {(Number(nft.token_price) / 1e18).toString() + " " + network.symbol}
         </p>
       </div>
       <div className={styles["nft-interactive-container"]}>

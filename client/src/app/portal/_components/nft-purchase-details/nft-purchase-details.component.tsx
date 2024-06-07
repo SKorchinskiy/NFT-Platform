@@ -1,8 +1,12 @@
 import { NFT } from "@/app/types/nft.type";
 import styles from "./nft-purchase-details.module.css";
 import { Status } from "../nft-card/nft-card.component";
+import { useContext } from "react";
+import { NetworkContext } from "@/app/providers/network.provider";
 
 export default function NFTPurchaseDetails({ nft }: { nft: NFT }) {
+  const { network } = useContext(NetworkContext);
+
   return (
     <div className={styles["nft-details-container"]}>
       <div className={styles["nft-details-info"]}>
@@ -35,7 +39,7 @@ export default function NFTPurchaseDetails({ nft }: { nft: NFT }) {
           })()}
         </p>
         <p>
-          <b>Price:</b> {Number(nft.token_price) / 1e18} ETH
+          <b>Price:</b> {(Number(nft.token_price) / 1e18).toString() + " " + network.symbol}
         </p>
       </div>
     </div>
