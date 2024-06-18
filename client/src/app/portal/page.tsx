@@ -43,19 +43,6 @@ export default function Portal() {
     [address, marketCustomTokens, marketTokens]
   );
 
-  if (typeof window === "undefined" || !(window as any).ethereum) {
-    return <h1>Install Metamask - https://metamask.io/download/</h1>;
-  } else if (!address) {
-    return (
-      <div className={styles["connection-container"]}>
-        <div className={styles["connection-container-content"]}>
-          <p>Please, connect via Metamask to proceed</p>
-          <ConnectWallet />
-        </div>
-      </div>
-    );
-  }
-
   return address ? (
     <div>
       {isTokensDataLoading || tokens.length ? (

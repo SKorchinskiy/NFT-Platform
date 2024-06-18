@@ -19,6 +19,7 @@ import AuctionsProvider from "./providers/auctions.provider";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { useEffect, useState } from "react";
 import { loadSlim } from "@tsparticles/slim";
+import ProviderInstallation from "./_components/provider-installation/provider-installation.component";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -129,7 +130,9 @@ export default function RootLayout({
                             }}
                           >
                             <Navbar />
-                            {children}
+                            <ProviderInstallation>
+                              {children}
+                            </ProviderInstallation>
                             <ActionPopup />
                             <Footer />
                           </div>
