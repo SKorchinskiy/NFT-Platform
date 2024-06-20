@@ -220,3 +220,95 @@ The project is deployed using Google Cloud Platform. You can check it [here](htt
 ## Higher level overview
 
 ![Application Workflow](https://drive.google.com/uc?id=1PzMJPDo7woQIpnYwebordinzSYPc7XBM)
+> [!NOTE]
+>As you can see from the workflow above, to interact with a target blockchain network, a digital wallet is used (MetaMask). Each node in the network has an EVM (Ethereum Virtual Machine), which stores developed smart contracts, which you can find in the /contracts folder. The interactions with a node in the selected network are done by using the MetaMask + Web3.js library, which enables interactions with developed smart contracts for the client side.
+>
+>In addition, a Pinata service is used to enable interactions with decentralized file storage (IPFS), where media and metadata about each token are stored.
+>
+>Finally, to enable global accessability for all users, the cloud infrastructure of the Google Cloud Platform is used. Using this GitHub repo, Cloud Build triggers a project build each time the changes to the repo are made using Dockerfile from the /client folder. After an updated project is built, Cloud Run allocates resources to make a new version of the platform available. The Secret Manager service of GCP is used to store APIs and private keys for 3rd party interactions, which are only accessible for the running Cloud Run instances, which were granted access to use data from Secret Manager.
+
+### Detailed description
+
+- **Authentication via MetaMask**
+
+![](https://drive.google.com/uc?id=12-c-pHU_HXu0UmAoXG3xUzdwzhvfVcr-)
+
+- **Personal Portal: section with personal tokens from custom collection**
+
+![](https://drive.google.com/uc?id=1mEsI1PkcbxTfH75-7-vagHsVG_V25FUi)
+
+- **Personal Portal: section with active personal tokens for sale**
+
+![](https://drive.google.com/uc?id=1twZhxbuZ1sOG5qyNTyW6wPO7ouDf8UqW)
+
+- **Personal Portal: section with sold personal tokens on the platform**
+
+![](https://drive.google.com/uc?id=19sM-0TKv2A0eC23_SUntjYw9ncYMZas1)
+
+- **Personal Portal: section with minted personal tokens on the platform**
+
+![](https://drive.google.com/uc?id=1fmYXpxPDwLE-NJKtPoKwt-0eZG93Ew7u)
+
+- **Modal for token listing**
+
+![](https://drive.google.com/uc?id=1Hb3NVqUsqdPquA7Kh6M9e-8F6ebr6Qp1)
+
+- **Modal for token listing cancelation**
+
+![](https://drive.google.com/uc?id=1aHSApB-x-0oaPqW0jhkC7Tgwy-SpMCJb)
+
+- **Modal with sold token's information**
+
+![](https://drive.google.com/uc?id=1WWeY86-dgx7hliOTKTa29vZbFsLgiYJ4)
+
+- **Modal to purchase a token**
+
+![](https://drive.google.com/uc?id=1EUjRznWJPUz8FQZb7ZRnrT1ByPcfH20f)
+
+- **Main page carousel**
+
+![](https://drive.google.com/uc?id=1W3gYB79uzuNBxLGAbI3v_Fm_W7QBlzI5)
+
+- **Main page tokens-for-sale section**
+
+![](https://drive.google.com/uc?id=166lqtzCHtEVmOzGzqC6Zmwx73R1m_LaO)
+
+- **Main page minted-tokens-for-sale section**
+
+![](https://drive.google.com/uc?id=1SlOPayWE-9d3GmtDwQuFKV1UTdXemiOV)
+
+- **Main page recently-purchased-tokens section**
+
+![](https://drive.google.com/uc?id=1H7N1Wm0xcNDNpsXZpBQbqwAkKHsTsrl6)
+
+- **Main page token-auctions section**
+
+![](https://drive.google.com/uc?id=1Rw667W39DpN17jUOanmjVJAKyh_-AFCy)
+
+- **Minting page**
+
+![](https://drive.google.com/uc?id=1qp289Q6fOjbszmFXsGUsrT8IQE-oM9Gq)
+
+- **Minted token with AI-model**
+
+![](https://drive.google.com/uc?id=1LdNYzbWsNWTJ04FtRxvMzhOx4uakUSyF)
+
+- **Listed AI-based token**
+
+![](https://drive.google.com/uc?id=1dWr4wADaQ9rzwnc6kPZNhAigUFKF0Y9R)
+
+- **Auctions page**
+
+![](https://drive.google.com/uc?id=1fbZic8yCGwkhO2rc0g9P1F0lyE5az4xb)
+
+- **Created auction info**
+
+![](https://drive.google.com/uc?id=1ECQecDDG5pzM8EKzDByL2y2bKg061Qqz)
+
+- **Created auction page**
+
+![](https://drive.google.com/uc?id=1ObTkXo6ZKq7YldnuJXanJyl34P4yxcKh)
+
+- **Completed auction bids**
+
+![](https://drive.google.com/uc?id=1hLL5csGzvQF9qnJz80ky_h2YzZ_cdVO_)
