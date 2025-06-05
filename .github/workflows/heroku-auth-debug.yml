@@ -1,0 +1,33 @@
+name: Heroku Auth Debug
+
+# You can trigger this on demand from the Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      # (Optional) Checkout is not strictly required for this test; included for parity
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Show Heroku CLI version
+        run: |
+          heroku --version
+
+      - name: Confirm HEROKU_API_KEY is set
+        run: |
+          # GitHub will mask the actual secret, but you should see "HEROKU_API_KEY is ***"
+          echo "HEROKU_API_KEY is ${{ secrets.HEROKU_API_KEY }}"
+
+      - name: Check Heroku authentication
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku auth:whoami
