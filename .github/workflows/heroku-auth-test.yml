@@ -1,0 +1,20 @@
+name: Test Heroku API Key
+
+on:
+  workflow_dispatch:
+
+jobs:
+  heroku-auth-check:
+    name: Verify HEROKU_API_KEY
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Check Heroku authentication
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku auth:whoami
