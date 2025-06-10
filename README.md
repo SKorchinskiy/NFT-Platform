@@ -215,7 +215,7 @@
 
 ## Project Workflow
 
-The project is deployed using Google Cloud Platform. You can check it [here](https://nft-platform-s27gxnquya-uc.a.run.app/marketplace)
+The project is deployed using Google Cloud Platform (GCP). You can check it [here](https://nft-platform-s27gxnquya-uc.a.run.app/marketplace)
 
 ## Higher level overview
 
